@@ -53,7 +53,7 @@ export default function Game() {
     setHydrated(true);
   }, []);
 
-  const revealCount = Math.min(guesses.length + 1, 6);
+  const revealCount = gameState === "playing" ? Math.min(guesses.length + 1, 6) : 6;
 
   const loadPuzzleByNumber = useCallback((num: number) => {
     const clamped = Math.max(1, Math.min(todayNumber, num));
