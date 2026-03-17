@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { getCluesForGame, getRandomPuzzle } from "@/lib/puzzle";
-import { GAMES_DB, GAME_TITLES } from "@/lib/games";
+import { getCluesForGame, getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
+import { GAME_TITLES } from "@/lib/games";
 import { loadStats, saveStats, loadGameState, saveGameState } from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import GameCard from "./GameCard";
@@ -21,6 +21,7 @@ export default function Game() {
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const todayNumber = useMemo(() => getPuzzleNumber(), []);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
@@ -29,26 +30,17 @@ export default function Game() {
 
     const savedGame = loadGameState();
     if (savedGame) {
-      const game =
-        GAMES_DB.find((g) => g.title === savedGame.gameTitle) ??
-        getRandomPuzzle().game;
-
-      const restoredPuzzle: DailyPuzzle = {
-        puzzleNumber: savedGame.puzzleNumber,
-        game,
-        clues: getCluesForGame(game),
-      };
-
-      setPuzzle(restoredPuzzle);
+      const restored = getPuzzleForNumber(savedGame.puzzleNumber);
+      setPuzzle(restored);
       setGuesses(savedGame.guesses);
 
       if (savedGame.completed) {
         const won =
-          savedGame.guesses[savedGame.guesses.length - 1] === game.title;
+          savedGame.guesses[savedGame.guesses.length - 1] === restored.game.title;
         setGameState(won ? "won" : "lost");
       }
     } else {
-      const next = getRandomPuzzle();
+      const next = getDailyPuzzle();
       setPuzzle(next);
       saveGameState({
         puzzleNumber: next.puzzleNumber,
@@ -63,8 +55,9 @@ export default function Game() {
 
   const revealCount = Math.min(guesses.length + 1, 6);
 
-  const handleNewGame = useCallback(() => {
-    const next = getRandomPuzzle();
+  const loadPuzzleByNumber = useCallback((num: number) => {
+    const clamped = Math.max(1, Math.min(todayNumber, num));
+    const next = getPuzzleForNumber(clamped);
     setPuzzle(next);
     setGuesses([]);
     setGameState("playing");
@@ -74,7 +67,7 @@ export default function Game() {
       guesses: [],
       completed: false,
     });
-  }, []);
+  }, [todayNumber]);
 
   const handleGuess = useCallback(
     (title: string) => {
@@ -155,6 +148,15 @@ export default function Game() {
     }
   }, [guesses, puzzle]);
 
+  const dateLabel = useMemo(() => {
+    const date = getDateForPuzzleNumber(puzzle?.puzzleNumber ?? todayNumber);
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }, [puzzle?.puzzleNumber, todayNumber]);
+
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
     return (
@@ -175,15 +177,30 @@ export default function Game() {
           >
             frame<span className="text-zinc-500">guessr</span>
           </h1>
-          <p className="text-xs text-zinc-600 mt-0.5">#{puzzle.puzzleNumber}</p>
+          <p className="text-xs text-zinc-600 mt-0.5">
+            {dateLabel} · Day #{puzzle.puzzleNumber}
+          </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={handleNewGame}
-            className="text-xs px-3 py-1.5 bg-zinc-900 text-zinc-300 rounded-md border border-zinc-700 hover:bg-zinc-800 transition-colors"
-          >
-            New game
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => loadPuzzleByNumber(puzzle.puzzleNumber - 1)}
+              disabled={puzzle.puzzleNumber <= 1}
+              className="text-xs px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 disabled:opacity-40"
+            >
+              ←
+            </button>
+            <span className="text-xs text-zinc-500 min-w-[4rem] text-center">
+              Day #{puzzle.puzzleNumber}
+            </span>
+            <button
+              onClick={() => loadPuzzleByNumber(puzzle.puzzleNumber + 1)}
+              disabled={puzzle.puzzleNumber >= todayNumber}
+              className="text-xs px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 disabled:opacity-40"
+            >
+              →
+            </button>
+          </div>
           {gameState !== "playing" && (
             <ShareButton
               guesses={guesses}

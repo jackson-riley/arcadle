@@ -1,7 +1,9 @@
 import { GAMES_DB } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
-const EPOCH = new Date("2026-01-01T00:00:00Z");
+// Local midnight on Jan 1, 2026 so puzzle numbers and dates
+// line up with the player's local calendar day.
+const EPOCH = new Date(2026, 0, 1);
 
 /** Puzzle number (1-indexed) based on days since epoch */
 export function getPuzzleNumber(): number {
@@ -9,9 +11,14 @@ export function getPuzzleNumber(): number {
   return Math.floor((now.getTime() - EPOCH.getTime()) / 86_400_000) + 1;
 }
 
-/** Deterministic daily puzzle selection */
-export function getDailyPuzzle(): DailyPuzzle {
-  const num = getPuzzleNumber();
+/** Date (local) corresponding to a given puzzle number */
+export function getDateForPuzzleNumber(num: number): Date {
+  const msOffset = (num - 1) * 86_400_000;
+  return new Date(EPOCH.getTime() + msOffset);
+}
+
+/** Deterministic puzzle selection for a given puzzle number */
+export function getPuzzleForNumber(num: number): DailyPuzzle {
   const index = ((num - 1) % GAMES_DB.length + GAMES_DB.length) % GAMES_DB.length;
   const game = GAMES_DB[index];
   return {
@@ -21,16 +28,10 @@ export function getDailyPuzzle(): DailyPuzzle {
   };
 }
 
-/** Random puzzle selection on each game load */
-export function getRandomPuzzle(): DailyPuzzle {
+/** Deterministic daily puzzle selection based on today's date */
+export function getDailyPuzzle(): DailyPuzzle {
   const num = getPuzzleNumber();
-  const index = Math.floor(Math.random() * GAMES_DB.length);
-  const game = GAMES_DB[index];
-  return {
-    puzzleNumber: num,
-    game,
-    clues: getCluesForGame(game),
-  };
+  return getPuzzleForNumber(num);
 }
 
 /**
