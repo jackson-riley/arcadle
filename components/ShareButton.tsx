@@ -13,7 +13,7 @@ export default function ShareButton({ guesses, maxGuesses, won, puzzleNumber }: 
   const [copied, setCopied] = useState(false);
 
   const handleShare = () => {
-    const squares = guesses.map((_, i) =>
+    const squares: string[] = guesses.map((_, i) =>
       i === guesses.length - 1 && won ? "🟩" : "🟥"
     );
     while (squares.length < maxGuesses) squares.push("⬛");
