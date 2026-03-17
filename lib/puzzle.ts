@@ -48,9 +48,9 @@ export function getDailyPuzzle(): DailyPuzzle {
  */
 export function getCluesForGame(game: GameEntry): Clue[] {
   return [
-    { label: "LENGTH", value: game.length },
-    { label: "PLATFORMS", value: game.platforms },
     { label: "YEAR", value: String(game.year) },
+    { label: "PLATFORMS", value: game.platforms },
+    { label: "LENGTH", value: game.length },
     { label: "GENRE", value: game.genre },
     { label: "DEVELOPER", value: game.developer },
     { label: "CORE LOOP", value: game.coreLoop },
