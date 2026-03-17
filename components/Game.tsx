@@ -28,9 +28,10 @@ export default function Game() {
     const savedStats = loadStats();
     setStats(savedStats);
 
-    const savedGame = loadGameState();
+    const todaysNumber = getPuzzleNumber();
+    const savedGame = loadGameState(todaysNumber);
     if (savedGame) {
-      const restored = getPuzzleForNumber(savedGame.puzzleNumber);
+      const restored = getPuzzleForNumber(todaysNumber);
       setPuzzle(restored);
       setGuesses(savedGame.guesses);
 
@@ -44,7 +45,6 @@ export default function Game() {
       setPuzzle(next);
       saveGameState({
         puzzleNumber: next.puzzleNumber,
-        gameTitle: next.game.title,
         guesses: [],
         completed: false,
       });
@@ -57,16 +57,23 @@ export default function Game() {
 
   const loadPuzzleByNumber = useCallback((num: number) => {
     const clamped = Math.max(1, Math.min(todayNumber, num));
+    const saved = loadGameState(clamped);
     const next = getPuzzleForNumber(clamped);
     setPuzzle(next);
-    setGuesses([]);
-    setGameState("playing");
-    saveGameState({
-      puzzleNumber: next.puzzleNumber,
-      gameTitle: next.game.title,
-      guesses: [],
-      completed: false,
+    setGuesses(saved?.guesses ?? []);
+    setGameState(() => {
+      if (!saved || !saved.completed) return "playing";
+      const won =
+        saved.guesses[saved.guesses.length - 1] === next.game.title;
+      return won ? "won" : "lost";
     });
+    if (!saved) {
+      saveGameState({
+        puzzleNumber: next.puzzleNumber,
+        guesses: [],
+        completed: false,
+      });
+    }
   }, [todayNumber]);
 
   const handleGuess = useCallback(
@@ -113,14 +120,11 @@ export default function Game() {
         });
       }
 
-      if (puzzle) {
-        saveGameState({
-          puzzleNumber: puzzle.puzzleNumber,
-          gameTitle: puzzle.game.title,
-          guesses: newGuesses,
-          completed: won || lost,
-        });
-      }
+      saveGameState({
+        puzzleNumber: puzzle.puzzleNumber,
+        guesses: newGuesses,
+        completed: won || lost,
+      });
     },
     [gameState, guesses, puzzle]
   );
@@ -138,14 +142,12 @@ export default function Game() {
       saveStats(updated);
       return updated;
     });
-    if (puzzle) {
-      saveGameState({
-        puzzleNumber: puzzle.puzzleNumber,
-        gameTitle: puzzle.game.title,
-        guesses,
-        completed: true,
-      });
-    }
+    if (!puzzle) return;
+    saveGameState({
+      puzzleNumber: puzzle.puzzleNumber,
+      guesses,
+      completed: true,
+    });
   }, [guesses, puzzle]);
 
   const dateLabel = useMemo(() => {
