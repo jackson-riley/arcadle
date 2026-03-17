@@ -31,22 +31,33 @@ export function saveStats(stats: PlayerStats): void {
 }
 
 /**
- * Save/load today's game state so refreshing doesn't reset progress.
- * Keyed by puzzle number so yesterday's state doesn't carry over.
+ * Save/load the current game session so refreshing doesn't reset progress.
+ * We always restore the last saved session, regardless of date.
  */
-interface SavedGameState {
+export interface SavedGameState {
   puzzleNumber: number;
+  gameTitle: string;
   guesses: string[];
   completed: boolean;
 }
 
-export function loadGameState(puzzleNumber: number): SavedGameState | null {
+export function loadGameState(): SavedGameState | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(GAME_STATE_KEY);
     if (!raw) return null;
     const state: SavedGameState = JSON.parse(raw);
-    return state.puzzleNumber === puzzleNumber ? state : null;
+
+    // Basic shape validation so older saved data doesn't break restore
+    if (
+      typeof state.puzzleNumber !== "number" ||
+      typeof state.gameTitle !== "string" ||
+      !Array.isArray(state.guesses)
+    ) {
+      return null;
+    }
+
+    return state;
   } catch {
     return null;
   }

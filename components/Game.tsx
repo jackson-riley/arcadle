@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { getRandomPuzzle } from "@/lib/puzzle";
-import { GAME_TITLES } from "@/lib/games";
+import { getCluesForGame, getRandomPuzzle } from "@/lib/puzzle";
+import { GAMES_DB, GAME_TITLES } from "@/lib/games";
 import { loadStats, saveStats, loadGameState, saveGameState } from "@/lib/storage";
-import type { GameState, PlayerStats } from "@/lib/types";
+import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
 import ClueStack from "./ClueStack";
@@ -15,8 +15,7 @@ import ShareButton from "./ShareButton";
 const MAX_GUESSES = 6;
 
 export default function Game() {
-  const puzzle = useMemo(() => getRandomPuzzle(), []);
-
+  const [puzzle, setPuzzle] = useState<DailyPuzzle | null>(null);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [gameState, setGameState] = useState<GameState>("playing");
   const [stats, setStats] = useState<PlayerStats | null>(null);
@@ -28,22 +27,58 @@ export default function Game() {
     const savedStats = loadStats();
     setStats(savedStats);
 
-    const savedGame = loadGameState(puzzle.puzzleNumber);
+    const savedGame = loadGameState();
     if (savedGame) {
+      const game =
+        GAMES_DB.find((g) => g.title === savedGame.gameTitle) ??
+        getRandomPuzzle().game;
+
+      const restoredPuzzle: DailyPuzzle = {
+        puzzleNumber: savedGame.puzzleNumber,
+        game,
+        clues: getCluesForGame(game),
+      };
+
+      setPuzzle(restoredPuzzle);
       setGuesses(savedGame.guesses);
+
       if (savedGame.completed) {
-        const won = savedGame.guesses[savedGame.guesses.length - 1] === puzzle.game.title;
+        const won =
+          savedGame.guesses[savedGame.guesses.length - 1] === game.title;
         setGameState(won ? "won" : "lost");
       }
+    } else {
+      const next = getRandomPuzzle();
+      setPuzzle(next);
+      saveGameState({
+        puzzleNumber: next.puzzleNumber,
+        gameTitle: next.game.title,
+        guesses: [],
+        completed: false,
+      });
     }
+
     setHydrated(true);
-  }, [puzzle]);
+  }, []);
 
   const revealCount = Math.min(guesses.length + 1, 6);
 
+  const handleNewGame = useCallback(() => {
+    const next = getRandomPuzzle();
+    setPuzzle(next);
+    setGuesses([]);
+    setGameState("playing");
+    saveGameState({
+      puzzleNumber: next.puzzleNumber,
+      gameTitle: next.game.title,
+      guesses: [],
+      completed: false,
+    });
+  }, []);
+
   const handleGuess = useCallback(
     (title: string) => {
-      if (gameState !== "playing") return;
+      if (gameState !== "playing" || !puzzle) return;
 
       const newGuesses = [...guesses, title];
       setGuesses(newGuesses);
@@ -70,7 +105,6 @@ export default function Game() {
           saveStats(updated);
           return updated;
         });
-        saveGameState({ puzzleNumber: puzzle.puzzleNumber, guesses: newGuesses, completed: true });
       } else if (lost) {
         setGameState("lost");
         setStats((prev) => {
@@ -84,9 +118,15 @@ export default function Game() {
           saveStats(updated);
           return updated;
         });
-        saveGameState({ puzzleNumber: puzzle.puzzleNumber, guesses: newGuesses, completed: true });
-      } else {
-        saveGameState({ puzzleNumber: puzzle.puzzleNumber, guesses: newGuesses, completed: false });
+      }
+
+      if (puzzle) {
+        saveGameState({
+          puzzleNumber: puzzle.puzzleNumber,
+          gameTitle: puzzle.game.title,
+          guesses: newGuesses,
+          completed: won || lost,
+        });
       }
     },
     [gameState, guesses, puzzle]
@@ -105,11 +145,18 @@ export default function Game() {
       saveStats(updated);
       return updated;
     });
-    saveGameState({ puzzleNumber: puzzle.puzzleNumber, guesses, completed: true });
+    if (puzzle) {
+      saveGameState({
+        puzzleNumber: puzzle.puzzleNumber,
+        gameTitle: puzzle.game.title,
+        guesses,
+        completed: true,
+      });
+    }
   }, [guesses, puzzle]);
 
   // Don't render until hydrated to avoid localStorage mismatch
-  if (!hydrated) {
+  if (!hydrated || !puzzle) {
     return (
       <div className="w-full max-w-lg px-4 pt-20 text-center">
         <div className="text-zinc-700 text-sm">Loading...</div>
@@ -131,6 +178,12 @@ export default function Game() {
           <p className="text-xs text-zinc-600 mt-0.5">#{puzzle.puzzleNumber}</p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={handleNewGame}
+            className="text-xs px-3 py-1.5 bg-zinc-900 text-zinc-300 rounded-md border border-zinc-700 hover:bg-zinc-800 transition-colors"
+          >
+            New game
+          </button>
           {gameState !== "playing" && (
             <ShareButton
               guesses={guesses}
