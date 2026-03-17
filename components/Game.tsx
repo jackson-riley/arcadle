@@ -177,7 +177,7 @@ export default function Game() {
             className="text-xl font-bold tracking-tight"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.03em" }}
           >
-            frame<span className="text-zinc-500">guessr</span>
+            arca<span className="text-zinc-500">dle</span>
           </h1>
           <p className="text-xs text-zinc-600 mt-0.5">
             {dateLabel} · Day #{puzzle.puzzleNumber}
