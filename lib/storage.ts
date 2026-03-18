@@ -1,7 +1,11 @@
 import { PlayerStats } from "./types";
 
-const STATS_KEY = "frameguessr-stats";
-const GAME_STATE_KEY_PREFIX = "frameguessr-state-";
+const STATS_KEY = "ludle-stats";
+const GAME_STATE_KEY_PREFIX = "ludle-state-";
+
+// Back-compat keys (migrate from older names)
+const LEGACY_STATS_KEY = "frameguessr-stats";
+const LEGACY_GAME_STATE_KEY_PREFIX = "frameguessr-state-";
 
 const DEFAULT_STATS: PlayerStats = {
   played: 0,
@@ -15,7 +19,16 @@ export function loadStats(): PlayerStats {
   if (typeof window === "undefined") return DEFAULT_STATS;
   try {
     const raw = localStorage.getItem(STATS_KEY);
-    return raw ? { ...DEFAULT_STATS, ...JSON.parse(raw) } : DEFAULT_STATS;
+    if (raw) return { ...DEFAULT_STATS, ...JSON.parse(raw) };
+
+    // Migrate legacy stats if present
+    const legacyRaw = localStorage.getItem(LEGACY_STATS_KEY);
+    if (legacyRaw) {
+      localStorage.setItem(STATS_KEY, legacyRaw);
+      return { ...DEFAULT_STATS, ...JSON.parse(legacyRaw) };
+    }
+
+    return DEFAULT_STATS;
   } catch {
     return DEFAULT_STATS;
   }
@@ -43,7 +56,9 @@ export interface SavedGameState {
 export function loadGameState(puzzleNumber: number): SavedGameState | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(`${GAME_STATE_KEY_PREFIX}${puzzleNumber}`);
+    const raw =
+      localStorage.getItem(`${GAME_STATE_KEY_PREFIX}${puzzleNumber}`) ??
+      localStorage.getItem(`${LEGACY_GAME_STATE_KEY_PREFIX}${puzzleNumber}`);
     if (!raw) return null;
     const state: SavedGameState = JSON.parse(raw);
 

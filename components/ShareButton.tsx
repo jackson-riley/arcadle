@@ -18,7 +18,7 @@ export default function ShareButton({ guesses, maxGuesses, won, puzzleNumber }: 
     );
     while (squares.length < maxGuesses) squares.push("⬛");
 
-    const text = `🎮 Arcadle #${puzzleNumber}\n${won ? guesses.length : "X"}/${maxGuesses}\n\n${squares.join("")}`;
+    const text = `🎮 Ludle #${puzzleNumber}\n${won ? guesses.length : "X"}/${maxGuesses}\n\n${squares.join("")}`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);

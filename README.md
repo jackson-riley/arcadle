@@ -1,4 +1,4 @@
-# FrameGuessr
+# Ludle
 
 A daily video game guessing game. Players get progressive clues (and eventually a pixelated screenshot) to identify a video game in 6 guesses or fewer.
 
@@ -14,7 +14,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Architecture
 
 ```
-frameguessr/
+ludle/
 ├── app/
 │   ├── layout.tsx          # Root layout, fonts, metadata
 │   ├── page.tsx            # Daily puzzle page

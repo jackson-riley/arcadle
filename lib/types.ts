@@ -1,5 +1,5 @@
 // ============================================================
-// Core types for FrameGuessr
+// Core types for Ludle
 // Pin this file in Cursor chat context so the AI always
 // knows your data shapes.
 // ============================================================
