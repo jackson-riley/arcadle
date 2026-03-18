@@ -326,14 +326,21 @@ export default function Game() {
           >
             Today
           </button>
-          {gameState !== "playing" && (
+          <div
+            className={`transition-opacity duration-200 ${
+              gameState === "playing"
+                ? "opacity-30 pointer-events-none"
+                : "opacity-100"
+            }`}
+            aria-hidden={gameState === "playing"}
+          >
             <ShareButton
               guesses={guesses}
               maxGuesses={MAX_GUESSES}
               won={gameState === "won"}
               puzzleNumber={puzzle.puzzleNumber}
             />
-          )}
+          </div>
           <button
             onClick={() => setShowStats(true)}
             className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
