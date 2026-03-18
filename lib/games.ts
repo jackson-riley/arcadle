@@ -13,8 +13,34 @@ import { GameEntry } from "./types";
  *   Bad: "A platformer about climbing a mountain." (that's a description, not a loop)
  *   The loop should be recognizable to someone who's played the game and
  *   unmistakable once combined with the other 5 clues.
- */
-export const GAMES_DB: GameEntry[] = [
+*/
+
+// Seeded shuffle so we can re-randomize the ordering once while keeping the
+// daily puzzle mapping consistent across reloads.
+const SHUFFLE_SEED = 1710001;
+
+function mulberry32(a: number): () => number {
+  return () => {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const out = [...arr];
+  const rnd = mulberry32(seed);
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    const tmp = out[i];
+    out[i] = out[j];
+    out[j] = tmp;
+  }
+  return out;
+}
+
+const RAW_GAMES_DB: GameEntry[] = [
   // ============================================================
   // INDIE / EXPERIMENTAL
   // ============================================================
@@ -2126,6 +2152,8 @@ export const GAMES_DB: GameEntry[] = [
     color: "#2e4057",
   },
 ];
+
+export const GAMES_DB: GameEntry[] = seededShuffle(RAW_GAMES_DB, SHUFFLE_SEED);
 
 /** Sorted title list for autocomplete — deduplicated */
 export const GAME_TITLES = GAMES_DB.map((g) => g.title)
