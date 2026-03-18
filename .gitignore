@@ -8,7 +8,7 @@ node_modules
 dist
 out
 
-public/screenshots
+public/screenshots/*/options
 
 # Cursor / editor
 .cursor
