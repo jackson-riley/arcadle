@@ -19,6 +19,39 @@ if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET) {
   process.exit(1);
 }
 
+const FORCE = process.argv.includes("--force");
+const ONLY_SLUG_ARG = process.argv.find((a) => a.startsWith("--only-slug="));
+const ONLY_SLUG = ONLY_SLUG_ARG ? ONLY_SLUG_ARG.split("=")[1] : null;
+
+function normalizeTitle(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function diceCoefficient(aTokens: string[], bTokens: string[]): number {
+  const b = new Set(bTokens);
+  const aUnique = new Set(aTokens);
+  let intersection = 0;
+
+  // Avoid iterating over Set directly (TS target/es5 build compatibility).
+  const seen = new Set<string>();
+  for (const t of aTokens) {
+    if (seen.has(t)) continue;
+    seen.add(t);
+    if (b.has(t)) intersection += 1;
+  }
+
+  const denom = aUnique.size + b.size;
+  if (denom === 0) return 0;
+  return (2 * intersection) / denom;
+}
+
 async function getTwitchToken(): Promise<string> {
   const res = await fetch("https://id.twitch.tv/oauth2/token", {
     method: "POST",
@@ -64,21 +97,22 @@ async function main() {
 
   for (const game of GAMES_DB) {
     const slug = slugify(game.title);
+    if (ONLY_SLUG && slug !== ONLY_SLUG) continue;
     const gameDir = path.join(screenshotsRoot, slug);
     const originalPath = path.join(gameDir, "original.jpg");
 
-    if (fs.existsSync(originalPath)) {
-      console.log(`Skipping ${game.title} (already has original.jpg)`);
+    if (fs.existsSync(originalPath) && !FORCE) {
+      console.log(`Skipping ${game.title} (already has original.jpg). Use --force to overwrite.`);
       continue;
     }
 
     console.log(`Fetching screenshot for ${game.title}...`);
 
     try {
-      // 1. Find game in IGDB by name
-      const games = await igdbQuery<{ id: number }>(
+      // 1. Find game in IGDB by name (then pick the best match)
+      const games = await igdbQuery<{ id: number; name?: string; rating_count?: number }>(
         "games",
-        `search "${game.title}"; fields id; limit 1;`,
+        `search "${game.title}"; fields id, name, rating_count; limit 20;`,
         token
       );
 
@@ -87,12 +121,41 @@ async function main() {
         continue;
       }
 
-      const igdbId = games[0].id;
+      const qNorm = normalizeTitle(game.title);
+      const qTokens = qNorm.split(" ").filter(Boolean);
 
-      // 2. Get screenshots for that game
-      const shots = await igdbQuery<{ image_id: string }>(
+      const exactMatches = games.filter((g) => normalizeTitle(g.name ?? "") === qNorm);
+      const chooseBest = (cands: Array<{ id: number; rating_count?: number }>) => {
+        let best = cands[0];
+        for (const cand of cands) {
+          if ((cand.rating_count ?? 0) > (best.rating_count ?? 0)) best = cand;
+        }
+        return best;
+      };
+
+      let picked = exactMatches.length ? chooseBest(exactMatches) : null;
+
+      if (!picked) {
+        // Otherwise, fall back to token similarity (helps with punctuation/aliases).
+        let best = games[0];
+        let bestScore = -1;
+        for (const cand of games) {
+          const candTokens = normalizeTitle(cand.name ?? "").split(" ").filter(Boolean);
+          const score = diceCoefficient(qTokens, candTokens);
+          if (score > bestScore) {
+            bestScore = score;
+            best = cand;
+          }
+        }
+        picked = best;
+      }
+
+      const igdbId = picked.id;
+
+      // 2. Get screenshots for that game (pick the biggest one)
+      const shots = await igdbQuery<{ image_id: string; width?: number; height?: number }>(
         "screenshots",
-        `fields image_id; where game = ${igdbId}; limit 1;`,
+        `fields image_id, width, height; where game = ${igdbId}; limit 20;`,
         token
       );
 
@@ -101,7 +164,19 @@ async function main() {
         continue;
       }
 
-      const imageId = shots[0].image_id;
+      let bestShot = shots[0];
+      let bestArea = -1;
+      for (const s of shots) {
+        const w = typeof s.width === "number" ? s.width : 0;
+        const h = typeof s.height === "number" ? s.height : 0;
+        const area = w * h;
+        if (area > bestArea) {
+          bestArea = area;
+          bestShot = s;
+        }
+      }
+
+      const imageId = bestShot.image_id;
       const imageUrl = `https://images.igdb.com/igdb/image/upload/t_1080p/${imageId}.jpg`;
 
       const imgRes = await fetch(imageUrl);

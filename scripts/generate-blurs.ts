@@ -10,6 +10,9 @@ const BLUR_SIGMAS = [40, 30, 20, 10, 2, 0];
 const WIDTH = 889;
 const HEIGHT = 500;
 
+const ONLY_SLUG_ARG = process.argv.find((a) => a.startsWith("--only-slug="));
+const ONLY_SLUG = ONLY_SLUG_ARG ? ONLY_SLUG_ARG.split("=")[1] : null;
+
 async function processGameDir(dir: string) {
   const originalPath = path.join(dir, "original.jpg");
   if (!fs.existsSync(originalPath)) return;
@@ -60,6 +63,10 @@ async function main() {
     .filter((p) => fs.statSync(p).isDirectory());
 
   for (const dir of gameDirs) {
+    if (ONLY_SLUG) {
+      const base = path.basename(dir);
+      if (base !== ONLY_SLUG) continue;
+    }
     await processGameDir(dir);
   }
 

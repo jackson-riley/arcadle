@@ -17,7 +17,7 @@ import { GameEntry } from "./types";
 
 // Seeded shuffle so we can re-randomize the ordering once while keeping the
 // daily puzzle mapping consistent across reloads.
-const SHUFFLE_SEED = 1710001;
+const SHUFFLE_SEED = 1710002;
 
 function mulberry32(a: number): () => number {
   return () => {
@@ -2153,7 +2153,35 @@ const RAW_GAMES_DB: GameEntry[] = [
   },
 ];
 
-export const GAMES_DB: GameEntry[] = seededShuffle(RAW_GAMES_DB, SHUFFLE_SEED);
+// Exclude games that don't have generated screenshots available.
+const EXCLUDED_TITLES_FOR_SCREENSHOTS = new Set<string>([
+  "FEZ",
+  "God of War (2018)",
+  "Half-Life 2",
+  "Resident Evil 4 (2023)",
+  "Resident Evil 2 (2019)",
+  "Demon's Souls (2020)",
+  "Silent Hill 2 (2024)",
+  "Dishonored",
+  "Mario Kart 8 Deluxe",
+  "Bayonetta",
+  "Xenoblade Chronicles 3",
+  "Sonic the Hedgehog 2",
+  "Pokémon Red and Blue",
+  "Half-Life",
+  "Half-Life: Alyx",
+  "Civilization VI",
+  "Counter-Strike: Global Offensive",
+  "Fall Guys",
+  "World of Warcraft",
+  "Call of Duty 4: Modern Warfare",
+  "Rust",
+]);
+
+export const GAMES_DB: GameEntry[] = seededShuffle(
+  RAW_GAMES_DB.filter((g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)),
+  SHUFFLE_SEED
+);
 
 /** Sorted title list for autocomplete — deduplicated */
 export const GAME_TITLES = GAMES_DB.map((g) => g.title)
