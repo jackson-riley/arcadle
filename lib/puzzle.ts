@@ -41,14 +41,16 @@ export function getDailyPuzzle(): DailyPuzzle {
 }
 
 /**
- * Clue reveal order. Each wrong guess reveals the next clue.
- * Players start seeing clue[0] (length) before their first guess.
+ * Clue reveal order.
+ * - Players see clue[0] before any guesses.
+ * - Each new guess reveals the next clue while the game is still in progress.
+ * - When the game ends (win or give up), all clues are revealed at once.
  *
  * Ordering rationale:
- *   1. Length — broad bucket (dozens of 6–8 hour games exist)
- *   2. Platforms — narrows by ecosystem (PS4 exclusive? everywhere?)
- *   3. Year — combined with length + platform, field shrinks fast
- *   4. Genre — the pivot where it starts clicking
+ *   1. Genre — great starting point; gives the player a chance to guess correctly early
+ *   2. Length — broad bucket (dozens of 6–8 hour games exist)
+ *   3. Platforms — narrows by ecosystem (PS4 exclusive? everywhere?)
+ *   4. Year — combined with length + platform, field shrinks fast
  *   5. Developer — basically confirms for anyone paying attention
  *   6. Core loop — the kill shot; describes what you *do* in the game
  */
