@@ -5,7 +5,8 @@ import sharp from "sharp";
 const root = path.join(__dirname, "..");
 const screenshotsRoot = path.join(root, "public", "screenshots");
 
-const BLUR_SIGMAS = [40, 30, 20, 12, 6, 0];
+// Blur radii for reveal levels 1–6 (last one is almost sharp; solved uses clean image)
+const BLUR_SIGMAS = [40, 32, 24, 16, 8, 2];
 const WIDTH = 889;
 const HEIGHT = 500;
 

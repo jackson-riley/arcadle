@@ -107,9 +107,12 @@ export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
 
       {/* Title overlay on solve */}
       {solved && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
           <span className="text-2xl font-bold text-white tracking-wide drop-shadow-lg">
             {game.title}
+          </span>
+          <span className="mt-2 text-[10px] uppercase tracking-[0.2em] text-zinc-300/70">
+            Screenshots © IGDB / Twitch
           </span>
         </div>
       )}
