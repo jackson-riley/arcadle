@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import type { GameEntry } from "@/lib/types";
+import { slugify } from "@/lib/slug";
 
 interface GameCardProps {
   game: GameEntry;
@@ -20,14 +22,33 @@ interface GameCardProps {
  *      and serve different images per level (prevents devtools cheating)
  */
 export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   const blur = solved ? 0 : Math.max(0, 30 - revealLevel * 5);
   const saturation = solved ? 100 : 30 + revealLevel * 14;
+
+  const slug = slugify(game.title);
+  const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
+  const imageSrc = solved
+    ? `/screenshots/${slug}/solved.jpg`
+    : `/screenshots/${slug}/blur-${levelIndex}.jpg`;
 
   return (
     <div
       className="relative w-full aspect-video rounded-lg overflow-hidden"
       style={{ background: "#111" }}
     >
+      {/* Screenshot layer (if available) */}
+      {!imageError && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageSrc}
+          alt={game.title}
+          className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+          onError={() => setImageError(true)}
+        />
+      )}
+
       {/* Background gradient layers */}
       <div
         className="absolute inset-0 transition-all duration-700 ease-out"
