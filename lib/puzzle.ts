@@ -1,20 +1,26 @@
 import { GAMES_DB } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
-// Local midnight on Jan 1, 2026 so puzzle numbers and dates
-// line up with the player's local calendar day.
-const EPOCH = new Date(2026, 0, 1);
+// Anchor date for Day #1 (local calendar date: Jan 1, 2026).
+// We compute puzzle numbers using UTC-midnight timestamps derived from
+// local calendar components to avoid DST off-by-one issues.
+const EPOCH_Y = 2026;
+const EPOCH_M = 0; // Jan (0-indexed)
+const EPOCH_D = 1;
 
 /** Puzzle number (1-indexed) based on days since epoch */
 export function getPuzzleNumber(): number {
   const now = new Date();
-  return Math.floor((now.getTime() - EPOCH.getTime()) / 86_400_000) + 1;
+  const utcToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const utcEpoch = Date.UTC(EPOCH_Y, EPOCH_M, EPOCH_D);
+  return Math.floor((utcToday - utcEpoch) / 86_400_000) + 1;
 }
 
 /** Date (local) corresponding to a given puzzle number */
 export function getDateForPuzzleNumber(num: number): Date {
-  const msOffset = (num - 1) * 86_400_000;
-  return new Date(EPOCH.getTime() + msOffset);
+  const d = new Date(EPOCH_Y, EPOCH_M, EPOCH_D);
+  d.setDate(d.getDate() + (num - 1));
+  return d;
 }
 
 /** Deterministic puzzle selection for a given puzzle number */

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getCluesForGame, getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
 import { GAME_TITLES } from "@/lib/games";
 import { loadStats, saveStats, loadGameState, saveGameState } from "@/lib/storage";
@@ -21,7 +21,12 @@ export default function Game() {
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-  const todayNumber = useMemo(() => getPuzzleNumber(), []);
+  const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
+  const todayNumberRef = useRef(todayNumber);
+
+  useEffect(() => {
+    todayNumberRef.current = todayNumber;
+  }, [todayNumber]);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
@@ -29,6 +34,7 @@ export default function Game() {
     setStats(savedStats);
 
     const todaysNumber = getPuzzleNumber();
+    setTodayNumber(todaysNumber);
     const savedGame = loadGameState(todaysNumber);
     if (savedGame) {
       const restored = getPuzzleForNumber(todaysNumber);
@@ -53,10 +59,95 @@ export default function Game() {
     setHydrated(true);
   }, []);
 
+  // Roll over to the next puzzle at local midnight (without requiring reload).
+  // Only auto-switch if the player is currently on "today".
+  useEffect(() => {
+    const syncIfDayChanged = () => {
+      const newToday = getPuzzleNumber();
+      const prevToday = todayNumberRef.current;
+
+      // Always keep the "today" bound fresh, but only auto-advance puzzles
+      // when the day actually rolls over.
+      if (newToday !== prevToday) {
+        setTodayNumber(newToday);
+
+        // If user was on the previous "today", advance them.
+        if (puzzle && puzzle.puzzleNumber === prevToday) {
+          const saved = loadGameState(newToday);
+          const next = getPuzzleForNumber(newToday);
+          setPuzzle(next);
+          setGuesses(saved?.guesses ?? []);
+          setGameState(() => {
+            if (!saved || !saved.completed) return "playing";
+            const won =
+              saved.guesses[saved.guesses.length - 1] === next.game.title;
+            return won ? "won" : "lost";
+          });
+          if (!saved) {
+            saveGameState({
+              puzzleNumber: newToday,
+              guesses: [],
+              completed: false,
+            });
+          }
+        }
+      } else {
+        // Still update state in case something else changed it earlier
+        setTodayNumber(newToday);
+      }
+
+      // Ensure ref is up-to-date even if state update is async
+      todayNumberRef.current = newToday;
+    };
+
+    const scheduleNextMidnight = () => {
+      const now = new Date();
+      const nextMidnight = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+        0,
+        0,
+        1
+      );
+      const ms = Math.max(1_000, nextMidnight.getTime() - now.getTime());
+      return window.setTimeout(() => {
+        syncIfDayChanged();
+        scheduleId = scheduleNextMidnight();
+      }, ms);
+    };
+
+    // Immediate sync (covers "tab was sleeping past midnight" cases)
+    syncIfDayChanged();
+
+    // Also sync when tab becomes active again
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") syncIfDayChanged();
+    };
+    window.addEventListener("focus", syncIfDayChanged);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    // Fallback periodic sync (browsers can throttle timers in background)
+    const intervalId = window.setInterval(syncIfDayChanged, 60_000);
+    let scheduleId = scheduleNextMidnight();
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(scheduleId);
+      window.removeEventListener("focus", syncIfDayChanged);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [puzzle]);
+
   const revealCount = gameState === "playing" ? Math.min(guesses.length + 1, 6) : 6;
 
+  const maxDayNumber = useMemo(
+    () => Math.max(todayNumber, puzzle?.puzzleNumber ?? 1),
+    [todayNumber, puzzle?.puzzleNumber]
+  );
+
   const loadPuzzleByNumber = useCallback((num: number) => {
-    const clamped = Math.max(1, Math.min(todayNumber, num));
+    const clamped = Math.max(1, Math.min(maxDayNumber, num));
     const saved = loadGameState(clamped);
     const next = getPuzzleForNumber(clamped);
     setPuzzle(next);
@@ -74,7 +165,7 @@ export default function Game() {
         completed: false,
       });
     }
-  }, [todayNumber]);
+  }, [maxDayNumber]);
 
   const handleGuess = useCallback(
     (title: string) => {
@@ -197,7 +288,7 @@ export default function Game() {
             </span>
             <button
               onClick={() => loadPuzzleByNumber(puzzle.puzzleNumber + 1)}
-              disabled={puzzle.puzzleNumber >= todayNumber}
+              disabled={puzzle.puzzleNumber >= maxDayNumber}
               className="text-xs px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 disabled:opacity-40"
             >
               →
