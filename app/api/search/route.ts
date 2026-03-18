@@ -53,31 +53,52 @@ export async function GET(req: NextRequest) {
     const clientId = getClientId();
     if (!clientId) throw new Error("Missing client id");
 
-    // Note: filtering by `category = 0` looks like it returns empty results for some titles
-    // (category field can be missing/undefined in search results). We'll fetch broadly and
-    // keep it to a small limit, then dedupe/sort.
-    const body = `search "${escapeIgdbSearch(q)}"; fields name; limit 10;`;
-    const res = await fetch("https://api.igdb.com/v4/games", {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-      cache: "no-store",
-    });
+    const baseHeaders = {
+      "Client-ID": clientId,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "text/plain",
+    } as const;
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error("IGDB /games failed", res.status, text);
-      return NextResponse.json<string[]>([]);
+    // IGDB doesn't allow `sort` together with `search`.
+    // We'll use `search` for relevancy, then filter/sort client-side by rating_count.
+    const needle = escapeIgdbSearch(q);
+
+    const query = `search "${needle}"; fields name, rating_count, category; limit 50;`;
+
+    async function run(body: string) {
+      const res = await fetch("https://api.igdb.com/v4/games", {
+        method: "POST",
+        headers: baseHeaders,
+        body,
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("IGDB /games failed", res.status, text);
+        return [] as Array<{ name?: string }>;
+      }
+      return (await res.json()) as Array<{ name?: string }>;
     }
 
-    const games = (await res.json()) as Array<{ name?: string }>;
-    const names = games
-      .map((g) => g.name)
-      .filter((n): n is string => Boolean(n && n.trim()));
+    const games = await run(query);
+
+    const filtered = games
+      .filter((g: any) => g && typeof g.name === "string")
+      // `category` is often missing in search results, so we can't reliably filter DLC here.
+      // Use rating_count as a proxy for "well-known".
+      .filter(
+        (g: any) => (typeof g.rating_count === "number" ? g.rating_count : 0) > 5
+      );
+
+    filtered.sort(
+      (a: any, b: any) =>
+        (b.rating_count ?? 0) - (a.rating_count ?? 0)
+    );
+
+    const names = filtered
+      .map((g: any) => g.name as string)
+      .filter((n): n is string => Boolean(n && n.trim()))
+      .slice(0, 8);
 
     const uniqueSorted = Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
     return NextResponse.json(uniqueSorted);
