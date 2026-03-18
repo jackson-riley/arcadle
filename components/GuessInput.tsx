@@ -4,35 +4,83 @@ import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 
 interface GuessInputProps {
   onGuess: (title: string) => void;
-  gameTitles: string[];
   disabled?: boolean;
 }
 
-export default function GuessInput({ onGuess, gameTitles, disabled }: GuessInputProps) {
+export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   const [value, setValue] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const requestSeqRef = useRef(0);
 
-  const suggestions = useMemo(() => {
-    if (!value.trim()) return [];
-    const q = value.toLowerCase();
-    return gameTitles.filter((t) => t.toLowerCase().includes(q)).slice(0, 8);
-  }, [value, gameTitles]);
+  const shownSuggestions = useMemo(() => suggestions.slice(0, 8), [suggestions]);
+  const selectedSuggestion = useMemo(
+    () => (selectedIndex >= 0 ? shownSuggestions[selectedIndex] : null),
+    [selectedIndex, shownSuggestions]
+  );
+
+  const exactMatch = useMemo(() => {
+    const q = value.trim().toLowerCase();
+    if (!q) return null;
+    return shownSuggestions.find((s) => s.toLowerCase() === q) ?? null;
+  }, [value, shownSuggestions]);
+
+  const canSubmit = Boolean(selectedSuggestion || exactMatch);
 
   useEffect(() => {
     setSelectedIndex(-1);
-  }, [suggestions.length]);
+  }, [shownSuggestions.length]);
+
+  useEffect(() => {
+    const q = value.trim();
+    if (!q || q.length < 2) {
+      setSuggestions([]);
+      setLoading(false);
+      return;
+    }
+
+    const seq = ++requestSeqRef.current;
+    setLoading(true);
+    const controller = new AbortController();
+    const t = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, {
+          signal: controller.signal,
+        });
+        const data = (await res.json()) as string[];
+        if (requestSeqRef.current === seq) {
+          setSuggestions(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        // ignore (aborts + transient failures)
+      } finally {
+        if (requestSeqRef.current === seq) setLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(t);
+      controller.abort();
+    };
+  }, [value]);
 
   const submit = useCallback(
     (title: string) => {
-      if (!title.trim()) return;
-      const match = gameTitles.find((t) => t.toLowerCase() === title.toLowerCase());
-      if (match) {
-        onGuess(match);
-        setValue("");
-      }
+      const trimmed = title.trim();
+      if (!trimmed) return;
+      // Only allow submitting a title the user selected (or an exact match in the list).
+      const allowed =
+        shownSuggestions.find((s) => s.toLowerCase() === trimmed.toLowerCase()) ??
+        null;
+      if (!allowed) return;
+
+      onGuess(allowed);
+      setValue("");
+      setSuggestions([]);
     },
-    [onGuess, gameTitles]
+    [onGuess, shownSuggestions]
   );
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -44,11 +92,8 @@ export default function GuessInput({ onGuess, gameTitles, disabled }: GuessInput
       setSelectedIndex((i) => Math.max(i - 1, -1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-        submit(suggestions[selectedIndex]);
-      } else if (suggestions.length === 1) {
-        submit(suggestions[0]);
-      }
+      if (selectedSuggestion) submit(selectedSuggestion);
+      else if (exactMatch) submit(exactMatch);
     } else if (e.key === "Escape") {
       setValue("");
     }
@@ -72,10 +117,11 @@ export default function GuessInput({ onGuess, gameTitles, disabled }: GuessInput
           spellCheck={false}
         />
         <button
-          onClick={() =>
-            submit(selectedIndex >= 0 ? suggestions[selectedIndex] : value)
-          }
-          disabled={disabled || !value.trim()}
+          onClick={() => {
+            if (selectedSuggestion) submit(selectedSuggestion);
+            else if (exactMatch) submit(exactMatch);
+          }}
+          disabled={disabled || !canSubmit}
           className="px-5 py-3 bg-zinc-100 text-zinc-900 font-semibold rounded-lg
                      hover:bg-white disabled:opacity-20 transition-all"
         >
@@ -83,9 +129,12 @@ export default function GuessInput({ onGuess, gameTitles, disabled }: GuessInput
         </button>
       </div>
 
-      {suggestions.length > 0 && (
+      {value.trim().length >= 2 && (shownSuggestions.length > 0 || loading) && (
         <ul className="absolute z-50 w-full mt-1 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden shadow-xl max-h-60 overflow-y-auto">
-          {suggestions.map((s, i) => (
+          {loading && (
+            <li className="px-4 py-2.5 text-sm text-zinc-500">Searching…</li>
+          )}
+          {shownSuggestions.map((s, i) => (
             <li
               key={s}
               onClick={() => submit(s)}

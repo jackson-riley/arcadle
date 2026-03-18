@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getCluesForGame, getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
-import { GAME_TITLES } from "@/lib/games";
 import { loadStats, saveStats, loadGameState, saveGameState } from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import GameCard from "./GameCard";
@@ -22,11 +21,17 @@ export default function Game() {
   const [showStats, setShowStats] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
+  const [followToday, setFollowToday] = useState(true);
   const todayNumberRef = useRef(todayNumber);
+  const followTodayRef = useRef(followToday);
 
   useEffect(() => {
     todayNumberRef.current = todayNumber;
   }, [todayNumber]);
+
+  useEffect(() => {
+    followTodayRef.current = followToday;
+  }, [followToday]);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
@@ -40,6 +45,7 @@ export default function Game() {
       const restored = getPuzzleForNumber(todaysNumber);
       setPuzzle(restored);
       setGuesses(savedGame.guesses);
+      setFollowToday(true);
 
       if (savedGame.completed) {
         const won =
@@ -49,6 +55,7 @@ export default function Game() {
     } else {
       const next = getDailyPuzzle();
       setPuzzle(next);
+      setFollowToday(true);
       saveGameState({
         puzzleNumber: next.puzzleNumber,
         guesses: [],
@@ -71,8 +78,8 @@ export default function Game() {
       if (newToday !== prevToday) {
         setTodayNumber(newToday);
 
-        // If user was on the previous "today", advance them.
-        if (puzzle && puzzle.puzzleNumber === prevToday) {
+        // Only auto-advance if we're following "today" AND currently on it.
+        if (followTodayRef.current && puzzle && puzzle.puzzleNumber === prevToday) {
           const saved = loadGameState(newToday);
           const next = getPuzzleForNumber(newToday);
           setPuzzle(next);
@@ -147,6 +154,7 @@ export default function Game() {
   );
 
   const loadPuzzleByNumber = useCallback((num: number) => {
+    setFollowToday(false);
     const clamped = Math.max(1, Math.min(maxDayNumber, num));
     const saved = loadGameState(clamped);
     const next = getPuzzleForNumber(clamped);
@@ -166,6 +174,24 @@ export default function Game() {
       });
     }
   }, [maxDayNumber]);
+
+  const jumpToToday = useCallback(() => {
+    setFollowToday(true);
+    const n = getPuzzleNumber();
+    setTodayNumber(n);
+    const saved = loadGameState(n);
+    const next = getPuzzleForNumber(n);
+    setPuzzle(next);
+    setGuesses(saved?.guesses ?? []);
+    setGameState(() => {
+      if (!saved || !saved.completed) return "playing";
+      const won = saved.guesses[saved.guesses.length - 1] === next.game.title;
+      return won ? "won" : "lost";
+    });
+    if (!saved) {
+      saveGameState({ puzzleNumber: n, guesses: [], completed: false });
+    }
+  }, []);
 
   const handleGuess = useCallback(
     (title: string) => {
@@ -294,6 +320,12 @@ export default function Game() {
               →
             </button>
           </div>
+          <button
+            onClick={jumpToToday}
+            className="text-xs px-3 py-1.5 bg-zinc-900 text-zinc-300 rounded-md border border-zinc-700 hover:bg-zinc-800 transition-colors"
+          >
+            Today
+          </button>
           {gameState !== "playing" && (
             <ShareButton
               guesses={guesses}
@@ -350,7 +382,7 @@ export default function Game() {
         {/* Input */}
         {gameState === "playing" && (
           <>
-            <GuessInput onGuess={handleGuess} gameTitles={GAME_TITLES} />
+            <GuessInput onGuess={handleGuess} />
             <button
               onClick={handleGiveUp}
               className="text-xs text-zinc-700 hover:text-zinc-500 transition-colors self-center"
