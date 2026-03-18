@@ -297,7 +297,7 @@ export default function Game() {
             lud<span className="text-zinc-500">le</span>
           </h1>
           <p className="text-xs text-zinc-600 mt-0.5">
-            {dateLabel} · Day #{puzzle.puzzleNumber}
+            {dateLabel} {/* · Day #{puzzle.puzzleNumber} */}
           </p>
         </div>
         <div className="flex gap-2">
