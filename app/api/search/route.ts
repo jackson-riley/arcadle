@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { GAME_TITLES } from "@/lib/games";
 
 let cachedToken: { token: string; expiresAtMs: number } | null = null;
 
@@ -49,6 +50,12 @@ export async function GET(req: NextRequest) {
   if (q.length < 2) return NextResponse.json<string[]>([]);
 
   try {
+    const lowerQ = q.toLowerCase();
+
+    const localMatches = GAME_TITLES.filter((title) =>
+      title.toLowerCase().includes(lowerQ)
+    );
+
     const token = await getTwitchToken();
     const clientId = getClientId();
     if (!clientId) throw new Error("Missing client id");
@@ -59,11 +66,12 @@ export async function GET(req: NextRequest) {
       "Content-Type": "text/plain",
     } as const;
 
-    // IGDB doesn't allow `sort` together with `search`.
-    // We'll use `search` for relevancy, then filter/sort client-side by rating_count.
     const needle = escapeIgdbSearch(q);
 
-    const query = `search "${needle}"; fields name, rating_count, category; limit 50;`;
+    const query =
+      `search "${needle}"; ` +
+      `fields name, rating_count, category; ` +
+      `limit 50;`;
 
     const run = async (body: string) => {
       const res = await fetch("https://api.igdb.com/v4/games", {
@@ -81,27 +89,38 @@ export async function GET(req: NextRequest) {
     };
 
     const games = await run(query);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("IGDB games raw count", games.length, "for query", q);
+    }
 
-    const filtered = games
+    const filteredIgdb = games
       .filter((g: any) => g && typeof g.name === "string")
-      // `category` is often missing in search results, so we can't reliably filter DLC here.
-      // Use rating_count as a proxy for "well-known".
-      .filter(
-        (g: any) => (typeof g.rating_count === "number" ? g.rating_count : 0) > 5
-      );
+      // Prefer main games with a decent number of ratings when possible
+      .filter((g: any) => g.category === 0 && (g.rating_count ?? 0) > 15);
 
-    filtered.sort(
-      (a: any, b: any) =>
-        (b.rating_count ?? 0) - (a.rating_count ?? 0)
+    const rankedIgdb = (filteredIgdb.length > 0 ? filteredIgdb : games).sort(
+      (a: any, b: any) => (b.rating_count ?? 0) - (a.rating_count ?? 0)
     );
 
-    const names = filtered
+    const igdbNames = rankedIgdb
       .map((g: any) => g.name as string)
       .filter((n): n is string => Boolean(n && n.trim()))
-      .slice(0, 8);
+      .slice(0, 5);
 
-    const uniqueSorted = Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
-    return NextResponse.json(uniqueSorted);
+    const merged: string[] = [];
+    const seen = new Set<string>();
+
+    const addName = (name: string) => {
+      const key = name.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      merged.push(name);
+    };
+
+    for (const name of localMatches.slice(0, 4)) addName(name);
+    for (const name of igdbNames) addName(name);
+
+    return NextResponse.json(merged.slice(0, 8));
   } catch (err) {
     console.error("Search route error", err);
     if (process.env.NODE_ENV !== "production") {
