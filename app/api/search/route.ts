@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
 
     const query = `search "${needle}"; fields name, rating_count, category; limit 50;`;
 
-    async function run(body: string) {
+    const run = async (body: string) => {
       const res = await fetch("https://api.igdb.com/v4/games", {
         method: "POST",
         headers: baseHeaders,
@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
         return [] as Array<{ name?: string }>;
       }
       return (await res.json()) as Array<{ name?: string }>;
-    }
+    };
 
     const games = await run(query);
 
