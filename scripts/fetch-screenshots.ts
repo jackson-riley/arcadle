@@ -52,6 +52,52 @@ function diceCoefficient(aTokens: string[], bTokens: string[]): number {
   return (2 * intersection) / denom;
 }
 
+type IgdbGameSearchResult = {
+  id: number;
+  name?: string;
+  screenshots?: number[];
+  first_release_date?: number;
+};
+
+async function searchGame(
+  title: string,
+  developer: string,
+  year: number,
+  token: string
+): Promise<IgdbGameSearchResult | null> {
+  const games = await igdbQuery<IgdbGameSearchResult>(
+    "games",
+    `search "${title}"; fields name, screenshots, first_release_date; limit 10;`,
+    token
+  );
+
+  if (!games.length) return null;
+
+  const hasScreenshots = (g: IgdbGameSearchResult): boolean =>
+    Array.isArray(g.screenshots) && g.screenshots.length > 0;
+  const queryTitleNorm = normalizeTitle(title);
+  const isNameMatch = (g: IgdbGameSearchResult): boolean =>
+    normalizeTitle(g.name ?? "") === queryTitleNorm;
+  const releaseYear = (g: IgdbGameSearchResult): number | null => {
+    if (typeof g.first_release_date !== "number") return null;
+    return new Date(g.first_release_date * 1000).getFullYear();
+  };
+
+  const nameAndYearAndScreenshots = games.find((g) => {
+    if (!hasScreenshots(g) || !isNameMatch(g)) return false;
+    const y = releaseYear(g);
+    return y !== null && Math.abs(y - year) <= 1;
+  });
+  if (nameAndYearAndScreenshots) return nameAndYearAndScreenshots;
+
+  const nameAndScreenshots = games.find(
+    (g) => hasScreenshots(g) && isNameMatch(g)
+  );
+  if (nameAndScreenshots) return nameAndScreenshots;
+
+  return games.find(hasScreenshots) ?? null;
+}
+
 async function getTwitchToken(): Promise<string> {
   const res = await fetch("https://id.twitch.tv/oauth2/token", {
     method: "POST",
@@ -109,45 +155,16 @@ async function main() {
     console.log(`Fetching screenshot for ${game.title}...`);
 
     try {
-      // 1. Find game in IGDB by name (then pick the best match)
-      const games = await igdbQuery<{ id: number; name?: string; rating_count?: number }>(
-        "games",
-        `search "${game.title}"; fields id, name, rating_count; limit 20;`,
+      // 1. Find game in IGDB by title and prefer release-year-consistent matches.
+      const picked = await searchGame(
+        game.title,
+        game.developer,
+        game.year,
         token
       );
-
-      if (!games.length) {
+      if (!picked) {
         console.warn(`No IGDB match for "${game.title}"`);
         continue;
-      }
-
-      const qNorm = normalizeTitle(game.title);
-      const qTokens = qNorm.split(" ").filter(Boolean);
-
-      const exactMatches = games.filter((g) => normalizeTitle(g.name ?? "") === qNorm);
-      const chooseBest = (cands: Array<{ id: number; rating_count?: number }>) => {
-        let best = cands[0];
-        for (const cand of cands) {
-          if ((cand.rating_count ?? 0) > (best.rating_count ?? 0)) best = cand;
-        }
-        return best;
-      };
-
-      let picked = exactMatches.length ? chooseBest(exactMatches) : null;
-
-      if (!picked) {
-        // Otherwise, fall back to token similarity (helps with punctuation/aliases).
-        let best = games[0];
-        let bestScore = -1;
-        for (const cand of games) {
-          const candTokens = normalizeTitle(cand.name ?? "").split(" ").filter(Boolean);
-          const score = diceCoefficient(qTokens, candTokens);
-          if (score > bestScore) {
-            bestScore = score;
-            best = cand;
-          }
-        }
-        picked = best;
       }
 
       const igdbId = picked.id;

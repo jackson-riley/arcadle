@@ -2155,6 +2155,7 @@ const RAW_GAMES_DB: GameEntry[] = [
 const EXCLUDED_TITLES_FOR_SCREENSHOTS = new Set<string>([
   "FEZ",
   "God of War (2018)",
+  "Journey",
   "Half-Life 2",
   "Resident Evil 4 (2023)",
   "Resident Evil 2 (2019)",
