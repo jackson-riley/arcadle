@@ -13,8 +13,8 @@ import { GameEntry } from "./types";
  *   unmistakable once combined with the other clues.
 */
 
-// Seeded shuffle so we can re-randomize the ordering once while keeping the
-// daily puzzle mapping consistent across reloads.
+// Base seed for the first launch year (2026). Each later calendar year gets a
+// new derived seed on Jan 1 so the daily order rerandomizes (see getGamesOrderForYear).
 const SHUFFLE_SEED = 1710005;
 
 function mulberry32(a: number): () => number {
@@ -4035,12 +4035,30 @@ const EXCLUDED_TITLES_FOR_SCREENSHOTS = new Set<string>([
   "Rust",
 ]);
 
-export const GAMES_DB: GameEntry[] = seededShuffle(
-  RAW_GAMES_DB.filter((g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)),
-  SHUFFLE_SEED
+const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
+  (g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)
 );
 
+/** Puzzle epoch year — must keep using SHUFFLE_SEED so existing 2026 dailies stay stable. */
+const LAUNCH_SHUFFLE_YEAR = 2026;
+
+function shuffleSeedForCalendarYear(year: number): number {
+  if (year === LAUNCH_SHUFFLE_YEAR) return SHUFFLE_SEED;
+  let h = (SHUFFLE_SEED ^ year) >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+  h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
+/** Order of games for a given calendar year (local date of that puzzle). Rerolls each Jan 1. */
+export function getGamesOrderForYear(year: number): GameEntry[] {
+  return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
+}
+
+/** Full list in 2026 order (screenshots, tooling). Puzzle selection uses getGamesOrderForYear in puzzle.ts */
+export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR);
+
 /** Sorted title list for autocomplete — deduplicated */
-export const GAME_TITLES = GAMES_DB.map((g) => g.title)
+export const GAME_TITLES = PLAYABLE_GAMES_BASE.map((g) => g.title)
   .filter((title, index, arr) => arr.indexOf(title) === index)
   .sort();

@@ -1,4 +1,4 @@
-import { GAMES_DB } from "./games";
+import { getGamesOrderForYear } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
 // Anchor date for Day #1 (local calendar date: Jan 1, 2026).
@@ -25,8 +25,11 @@ export function getDateForPuzzleNumber(num: number): Date {
 
 /** Deterministic puzzle selection for a given puzzle number */
 export function getPuzzleForNumber(num: number): DailyPuzzle {
-  const index = ((num - 1) % GAMES_DB.length + GAMES_DB.length) % GAMES_DB.length;
-  const game = GAMES_DB[index];
+  const date = getDateForPuzzleNumber(num);
+  const year = date.getFullYear();
+  const games = getGamesOrderForYear(year);
+  const index = ((num - 1) % games.length + games.length) % games.length;
+  const game = games[index];
   return {
     puzzleNumber: num,
     game,
