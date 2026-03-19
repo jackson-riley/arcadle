@@ -13,7 +13,7 @@ const LEGACY_GAME_STATE_KEY_PREFIX = "frameguessr-state-";
  * next visit, all ludle/frameguessr localStorage keys are cleared for that browser.
  */
 const DATA_VERSION_KEY = "ludle-data-version";
-export const LUDLE_DATA_VERSION = 2;
+export const LUDLE_DATA_VERSION = 3;
 
 function wipeLudleLocalStorage(): void {
   const toRemove: string[] = [];

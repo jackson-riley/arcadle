@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getCluesForGame, getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
+import { getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
 import {
   ensureLudleDataVersion,
   loadStats,
@@ -28,17 +28,11 @@ export default function Game() {
   const [showStats, setShowStats] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
-  const [followToday, setFollowToday] = useState(true);
   const todayNumberRef = useRef(todayNumber);
-  const followTodayRef = useRef(followToday);
 
   useEffect(() => {
     todayNumberRef.current = todayNumber;
   }, [todayNumber]);
-
-  useEffect(() => {
-    followTodayRef.current = followToday;
-  }, [followToday]);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
@@ -53,7 +47,6 @@ export default function Game() {
       const restored = getPuzzleForNumber(todaysNumber);
       setPuzzle(restored);
       setGuesses(savedGame.guesses);
-      setFollowToday(true);
 
       if (savedGame.completed) {
         const won =
@@ -63,7 +56,6 @@ export default function Game() {
     } else {
       const next = getDailyPuzzle();
       setPuzzle(next);
-      setFollowToday(true);
       saveGameState({
         puzzleNumber: next.puzzleNumber,
         guesses: [],
@@ -86,8 +78,8 @@ export default function Game() {
       if (newToday !== prevToday) {
         setTodayNumber(newToday);
 
-        // Only auto-advance if we're following "today" AND currently on it.
-        if (followTodayRef.current && puzzle && puzzle.puzzleNumber === prevToday) {
+        // Auto-advance when viewing today's puzzle and the calendar day rolls over.
+        if (puzzle && puzzle.puzzleNumber === prevToday) {
           const saved = loadGameState(newToday);
           const next = getPuzzleForNumber(newToday);
           setPuzzle(next);
@@ -163,51 +155,6 @@ export default function Game() {
   // Visual blur: 6 stages (final guess improves blur only).
   const revealLevel =
     gameState === "playing" ? Math.min(guesses.length + 1, MAX_GUESSES) : MAX_GUESSES;
-
-  const maxDayNumber = useMemo(
-    () => Math.max(todayNumber, puzzle?.puzzleNumber ?? 1),
-    [todayNumber, puzzle?.puzzleNumber]
-  );
-
-  const loadPuzzleByNumber = useCallback((num: number) => {
-    setFollowToday(false);
-    const clamped = Math.max(1, Math.min(maxDayNumber, num));
-    const saved = loadGameState(clamped);
-    const next = getPuzzleForNumber(clamped);
-    setPuzzle(next);
-    setGuesses(saved?.guesses ?? []);
-    setGameState(() => {
-      if (!saved || !saved.completed) return "playing";
-      const won =
-        saved.guesses[saved.guesses.length - 1] === next.game.title;
-      return won ? "won" : "lost";
-    });
-    if (!saved) {
-      saveGameState({
-        puzzleNumber: next.puzzleNumber,
-        guesses: [],
-        completed: false,
-      });
-    }
-  }, [maxDayNumber]);
-
-  const jumpToToday = useCallback(() => {
-    setFollowToday(true);
-    const n = getPuzzleNumber();
-    setTodayNumber(n);
-    const saved = loadGameState(n);
-    const next = getPuzzleForNumber(n);
-    setPuzzle(next);
-    setGuesses(saved?.guesses ?? []);
-    setGameState(() => {
-      if (!saved || !saved.completed) return "playing";
-      const won = saved.guesses[saved.guesses.length - 1] === next.game.title;
-      return won ? "won" : "lost";
-    });
-    if (!saved) {
-      saveGameState({ puzzleNumber: n, guesses: [], completed: false });
-    }
-  }, []);
 
   const handleGuess = useCallback(
     (title: string) => {
@@ -313,35 +260,10 @@ export default function Game() {
             lud<span className="text-zinc-500">le</span>
           </h1>
           <p className="text-xs text-zinc-600 mt-0.5">
-            {dateLabel} {/* · Day #{puzzle.puzzleNumber} */}
+            {dateLabel} · Day #{puzzle.puzzleNumber}
           </p>
         </div>
         <div className="flex gap-2">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => loadPuzzleByNumber(puzzle.puzzleNumber - 1)}
-              disabled={puzzle.puzzleNumber <= 1}
-              className="text-xs px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 disabled:opacity-40"
-            >
-              ←
-            </button>
-            <span className="text-xs text-zinc-500 min-w-[4rem] text-center">
-              Day #{puzzle.puzzleNumber}
-            </span>
-            <button
-              onClick={() => loadPuzzleByNumber(puzzle.puzzleNumber + 1)}
-              disabled={puzzle.puzzleNumber >= maxDayNumber}
-              className="text-xs px-2 py-1 rounded-md border border-zinc-700 text-zinc-400 disabled:opacity-40"
-            >
-              →
-            </button>
-          </div>
-          <button
-            onClick={jumpToToday}
-            className="text-xs px-3 py-1.5 bg-zinc-900 text-zinc-300 rounded-md border border-zinc-700 hover:bg-zinc-800 transition-colors"
-          >
-            Today
-          </button>
           <div
             className={`transition-opacity duration-200 ${
               gameState === "playing"
