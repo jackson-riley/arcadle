@@ -12,6 +12,8 @@ const HEIGHT = 500;
 
 const ONLY_SLUG_ARG = process.argv.find((a) => a.startsWith("--only-slug="));
 const ONLY_SLUG = ONLY_SLUG_ARG ? ONLY_SLUG_ARG.split("=")[1] : null;
+const FORCE = process.argv.includes("--force");
+const scriptStat = fs.statSync(__filename);
 
 async function processGameDir(dir: string) {
   const originalPath = path.join(dir, "original.jpg");
@@ -26,9 +28,14 @@ async function processGameDir(dir: string) {
 
   // Skip if all outputs exist and are newer than original
   if (
-    outputs.every(
-      (p) => fs.existsSync(p) && fs.statSync(p).mtimeMs >= originalStat.mtimeMs
-    )
+    !FORCE &&
+    outputs.every((p) => {
+      if (!fs.existsSync(p)) return false;
+      const outMtime = fs.statSync(p).mtimeMs;
+      return (
+        outMtime >= originalStat.mtimeMs && outMtime >= scriptStat.mtimeMs
+      );
+    })
   ) {
     console.log(`Skipping ${dir} (blurs up to date)`);
     return;
@@ -36,7 +43,24 @@ async function processGameDir(dir: string) {
 
   console.log(`Generating blurs for ${dir}`);
 
-  const img = sharp(originalPath).resize(WIDTH, HEIGHT, { fit: "cover" });
+  const metadata = await sharp(originalPath).metadata();
+  const fullWidth = metadata.width;
+  const fullHeight = metadata.height;
+
+  if (!fullWidth || !fullHeight) {
+    throw new Error(`Unable to read image dimensions for ${originalPath}`);
+  }
+
+  const cropTop = Math.floor(fullHeight * 0.1);
+  const croppedHeight = Math.floor(fullHeight * 0.8);
+  const img = sharp(originalPath)
+    .extract({
+      left: 0,
+      top: cropTop,
+      width: fullWidth,
+      height: croppedHeight,
+    })
+    .resize(WIDTH, HEIGHT, { fit: "cover" });
 
   await Promise.all(
     BLUR_SIGMAS.map(async (sigma, idx) => {
