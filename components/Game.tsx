@@ -12,6 +12,7 @@ import StatsModal from "./StatsModal";
 import ShareButton from "./ShareButton";
 
 const MAX_GUESSES = 6;
+const MAX_TEXT_CLUES = 4;
 
 export default function Game() {
   const [puzzle, setPuzzle] = useState<DailyPuzzle | null>(null);
@@ -146,7 +147,15 @@ export default function Game() {
     };
   }, [puzzle]);
 
-  const revealCount = gameState === "playing" ? Math.min(guesses.length + 1, 6) : 6;
+  // Text clues: 4 total. Clue[0] is visible before guess 1.
+  const revealCount =
+    gameState === "playing"
+      ? Math.min(guesses.length + 1, MAX_TEXT_CLUES)
+      : MAX_TEXT_CLUES;
+
+  // Visual blur: 6 stages (final guess improves blur only).
+  const revealLevel =
+    gameState === "playing" ? Math.min(guesses.length + 1, MAX_GUESSES) : MAX_GUESSES;
 
   const maxDayNumber = useMemo(
     () => Math.max(todayNumber, puzzle?.puzzleNumber ?? 1),
@@ -354,7 +363,7 @@ export default function Game() {
         {/* Visual card */}
         <GameCard
           game={puzzle.game}
-          revealLevel={revealCount}
+          revealLevel={revealLevel}
           solved={gameState !== "playing"}
         />
 

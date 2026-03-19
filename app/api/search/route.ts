@@ -83,14 +83,14 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
   if (q.length < 2) return NextResponse.json<string[]>([]);
 
+  const lowerQ = q.toLowerCase();
+  const localMatches = GAME_TITLES.filter((title) =>
+    title.toLowerCase().includes(lowerQ)
+  );
+
   try {
-    const lowerQ = q.toLowerCase();
     const cacheKey = getIgdbCacheKey(lowerQ);
     const cacheTtlMs = 5 * 60_000; // 5 minutes
-
-    const localMatches = GAME_TITLES.filter((title) =>
-      title.toLowerCase().includes(lowerQ)
-    );
 
     let token: string | null = null;
     try {
@@ -138,16 +138,22 @@ export async function GET(req: NextRequest) {
 
     const run = async (body: string) => {
       const fetchOnce = async (accessToken: string) => {
-        return fetch("https://api.igdb.com/v4/games", {
-          method: "POST",
-          headers: buildHeaders(accessToken),
-          body,
-          cache: "no-store",
-        });
+        try {
+          return await fetch("https://api.igdb.com/v4/games", {
+            method: "POST",
+            headers: buildHeaders(accessToken),
+            body,
+            cache: "no-store",
+          });
+        } catch (err) {
+          console.error("IGDB fetch failed", err);
+          return null;
+        }
       };
 
       // First attempt with the token we have.
       let res = await fetchOnce(token);
+      if (!res) return [] as Array<{ name?: string }>;
 
       // If the token was rejected, refresh once and retry.
       if (res.status === 401) {
@@ -159,6 +165,8 @@ export async function GET(req: NextRequest) {
           // ignore and fall through to error handling below
         }
       }
+
+      if (!res) return [] as Array<{ name?: string }>;
 
       if (!res.ok) {
         const text = await res.text().catch(() => "");
@@ -208,13 +216,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(merged.slice(0, 8));
   } catch (err) {
     console.error("Search route error", err);
-    if (process.env.NODE_ENV !== "production") {
-      return NextResponse.json(
-        { error: (err as Error)?.message ?? "Unknown error" },
-        { status: 500 }
-      );
-    }
-    return NextResponse.json<string[]>([]);
+    // Never hard-fail autocomplete if IGDB is down/unreachable.
+    return NextResponse.json(localMatches.slice(0, 8));
   }
 }
 

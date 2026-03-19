@@ -3,16 +3,14 @@ import { GameEntry } from "./types";
 /**
  * Static game database.
  *
- * CLUE ORDER: length → platforms → year → genre → developer → coreLoop
+ * CLUE ORDER: genre → platforms → year → developer → coreLoop
  *
  * WRITING GUIDELINES:
- * - length: First-playthrough estimate. Be specific ("6–8 hours") not vague ("medium").
- *   Include qualifiers when relevant ("40–60 hours for main story, 100+ for completion").
  * - coreLoop: One sentence describing what you DO, not what the game IS ABOUT.
  *   Good: "Dash, wall-climb, and air-dash through precision platforming rooms, dying and retrying in seconds."
  *   Bad: "A platformer about climbing a mountain." (that's a description, not a loop)
  *   The loop should be recognizable to someone who's played the game and
- *   unmistakable once combined with the other 5 clues.
+ *   unmistakable once combined with the other clues.
 */
 
 // Seeded shuffle so we can re-randomize the ordering once while keeping the

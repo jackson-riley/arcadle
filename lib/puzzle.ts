@@ -49,18 +49,14 @@ export function getDailyPuzzle(): DailyPuzzle {
  * Ordering rationale:
  *   1. Genre — great starting point; gives the player a chance to guess correctly early
  *   2. Platforms — narrows by ecosystem (PS4 exclusive? everywhere?)
- *   3. Length — broad bucket (dozens of 6–8 hour games exist)
- *   4. Year — combined with length + platform, field shrinks fast
- *   5. Developer — basically confirms for anyone paying attention
- *   6. Core loop — the kill shot; describes what you *do* in the game
+ *   3. Year — combined with genre + platform, field shrinks fast
+ *   4. Developer — basically confirms for anyone paying attention
  */
 export function getCluesForGame(game: GameEntry): Clue[] {
   return [
     { label: "GENRE", value: game.genre },
     { label: "PLATFORMS", value: game.platforms },
-    { label: "LENGTH", value: game.length },
     { label: "YEAR", value: String(game.year) },
     { label: "DEVELOPER", value: game.developer },
-    { label: "CORE LOOP", value: game.coreLoop },
   ];
 }

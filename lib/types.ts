@@ -11,7 +11,6 @@ export interface GameEntry {
   year: number;
   genre: string;
   platforms: string;
-  /** Typical first-playthrough length, e.g. "15–20 hours" */
   length: string;
   /** One-sentence description of the core gameplay loop */
   coreLoop: string;

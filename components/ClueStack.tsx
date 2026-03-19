@@ -23,7 +23,7 @@ export default function ClueStack({ clues, revealCount }: ClueStackProps) {
         </div>
       ))}
 
-      {revealCount < 6 && (
+      {revealCount < clues.length && (
         <div className="flex items-start gap-3 text-sm">
           <span className="text-zinc-700 font-mono text-xs mt-0.5 w-24 shrink-0 text-right tracking-wider">
             {clues[revealCount]?.label}
