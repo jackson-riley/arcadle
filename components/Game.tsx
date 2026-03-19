@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getCluesForGame, getDailyPuzzle, getPuzzleForNumber, getPuzzleNumber, getDateForPuzzleNumber } from "@/lib/puzzle";
-import { loadStats, saveStats, loadGameState, saveGameState } from "@/lib/storage";
+import {
+  ensureLudleDataVersion,
+  loadStats,
+  saveStats,
+  loadGameState,
+  saveGameState,
+} from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
@@ -36,6 +42,7 @@ export default function Game() {
 
   // Hydrate from localStorage after mount
   useEffect(() => {
+    ensureLudleDataVersion();
     const savedStats = loadStats();
     setStats(savedStats);
 

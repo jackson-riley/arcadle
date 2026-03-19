@@ -7,6 +7,41 @@ const GAME_STATE_KEY_PREFIX = "ludle-state-";
 const LEGACY_STATS_KEY = "frameguessr-stats";
 const LEGACY_GAME_STATE_KEY_PREFIX = "frameguessr-state-";
 
+/**
+ * Bump this when the daily puzzle lineup / shuffle changes in a way that makes
+ * old saved guesses and stats misleading (e.g. new games in the pool). On the
+ * next visit, all ludle/frameguessr localStorage keys are cleared for that browser.
+ */
+const DATA_VERSION_KEY = "ludle-data-version";
+export const LUDLE_DATA_VERSION = 2;
+
+function wipeLudleLocalStorage(): void {
+  const toRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || key === DATA_VERSION_KEY) continue;
+    if (key.startsWith("ludle-") || key.startsWith("frameguessr-")) {
+      toRemove.push(key);
+    }
+  }
+  for (const key of toRemove) {
+    localStorage.removeItem(key);
+  }
+}
+
+/** Call once on client boot before loadStats / loadGameState. */
+export function ensureLudleDataVersion(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const current = localStorage.getItem(DATA_VERSION_KEY);
+    if (current === String(LUDLE_DATA_VERSION)) return;
+    wipeLudleLocalStorage();
+    localStorage.setItem(DATA_VERSION_KEY, String(LUDLE_DATA_VERSION));
+  } catch {
+    // localStorage unavailable — ignore
+  }
+}
+
 const DEFAULT_STATS: PlayerStats = {
   played: 0,
   wins: 0,
