@@ -4,9 +4,6 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ludle.gg"),
-  icons: {
-    icon: "/favicon.svg",
-  },
   title: "Ludle — Daily Video Game Guessing Game",
   description:
     "Guess today's video game from progressive clues and blurred screenshots. A new puzzle every day.",
