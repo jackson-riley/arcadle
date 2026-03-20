@@ -3,12 +3,31 @@ import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ludle — Daily Video Game Guessing",
-  description: "Guess the video game from progressive clues. A new puzzle every day.",
+  metadataBase: new URL("https://ludle.gg"),
+  title: "Ludle — Daily Video Game Guessing Game",
+  description:
+    "Guess today's video game from progressive clues and blurred screenshots. A new puzzle every day.",
   openGraph: {
-    title: "Ludle",
-    description: "Can you guess today's video game?",
+    title: "Ludle — Daily Video Game Guessing Game",
+    description:
+      "Guess today's video game from progressive clues and blurred screenshots. A new puzzle every day.",
+    url: "https://ludle.gg",
+    siteName: "Ludle",
+    images: [
+      {
+        url: "https://ludle.gg/og.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ludle — Daily Video Game Guessing Game",
+    description:
+      "Guess today's video game from progressive clues and blurred screenshots.",
+    images: ["https://ludle.gg/og.png"],
   },
 };
 
