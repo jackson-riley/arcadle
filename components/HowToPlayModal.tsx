@@ -47,8 +47,8 @@ export default function HowToPlayModal({ onPlay, onClose }: HowToPlayModalProps)
 
         <div className="rounded-lg bg-zinc-950/80 border border-zinc-800/80 p-4 mb-5 space-y-3">
           <div className="flex justify-center gap-1 text-lg leading-none tracking-tight">
-            <span aria-hidden>🟩</span>
             <span aria-hidden>🟥</span>
+            <span aria-hidden>🟩</span>
             <span aria-hidden>⬛</span>
             <span aria-hidden>⬛</span>
             <span aria-hidden>⬛</span>
@@ -57,15 +57,15 @@ export default function HowToPlayModal({ onPlay, onClose }: HowToPlayModalProps)
           <ul className="text-xs text-zinc-500 space-y-2">
             <li className="flex gap-2">
               <span className="shrink-0" aria-hidden>
-                🟩
-              </span>
-              <span>correct guess</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="shrink-0" aria-hidden>
                 🟥
               </span>
               <span>wrong guess</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="shrink-0" aria-hidden>
+                🟩
+              </span>
+              <span>correct guess</span>
             </li>
             <li className="flex gap-2">
               <span className="shrink-0" aria-hidden>
