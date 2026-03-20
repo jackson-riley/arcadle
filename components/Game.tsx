@@ -8,6 +8,8 @@ import {
   saveStats,
   loadGameState,
   saveGameState,
+  hasLudleVisitedBefore,
+  markLudleVisited,
 } from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import GameCard from "./GameCard";
@@ -15,6 +17,7 @@ import GuessInput from "./GuessInput";
 import ClueStack from "./ClueStack";
 import GuessHistory from "./GuessHistory";
 import StatsModal from "./StatsModal";
+import HowToPlayModal from "./HowToPlayModal";
 import ShareButton from "./ShareButton";
 
 const MAX_GUESSES = 6;
@@ -69,6 +72,7 @@ export default function Game() {
   const [gameState, setGameState] = useState<GameState>("playing");
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [showStats, setShowStats] = useState(false);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
   const todayNumberRef = useRef(todayNumber);
@@ -104,6 +108,10 @@ export default function Game() {
         guesses: [],
         completed: false,
       });
+    }
+
+    if (!hasLudleVisitedBefore()) {
+      setShowHowToPlay(true);
     }
 
     setHydrated(true);
@@ -321,6 +329,15 @@ export default function Game() {
             />
           </div>
           <button
+            type="button"
+            onClick={() => setShowHowToPlay(true)}
+            className="text-xs px-2.5 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium min-w-[2rem]"
+            aria-label="How to play"
+          >
+            ?
+          </button>
+          <button
+            type="button"
             onClick={() => setShowStats(true)}
             className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
           >
@@ -397,6 +414,17 @@ export default function Game() {
           </div>
         )}
       </div>
+
+      {/* How to play */}
+      {showHowToPlay && (
+        <HowToPlayModal
+          onPlay={() => {
+            markLudleVisited();
+            setShowHowToPlay(false);
+          }}
+          onClose={() => setShowHowToPlay(false)}
+        />
+      )}
 
       {/* Stats modal */}
       {showStats && stats && (

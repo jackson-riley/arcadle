@@ -1,5 +1,7 @@
 import { PlayerStats } from "./types";
 
+const HAS_VISITED_KEY = "ludle-has-visited";
+
 const STATS_KEY = "ludle-stats";
 const GAME_STATE_KEY_PREFIX = "ludle-state-";
 
@@ -75,6 +77,24 @@ export function saveStats(stats: PlayerStats): void {
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
   } catch {
     // localStorage full or unavailable — fail silently
+  }
+}
+
+export function hasLudleVisitedBefore(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    return localStorage.getItem(HAS_VISITED_KEY) === "1";
+  } catch {
+    return true;
+  }
+}
+
+export function markLudleVisited(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(HAS_VISITED_KEY, "1");
+  } catch {
+    // ignore
   }
 }
 
