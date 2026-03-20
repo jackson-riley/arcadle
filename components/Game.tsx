@@ -20,6 +20,49 @@ import ShareButton from "./ShareButton";
 const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
 
+function getMsUntilLocalMidnight(): number {
+  const now = new Date();
+  const next = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+    0,
+    0,
+    0,
+    0
+  );
+  return next.getTime() - now.getTime();
+}
+
+function formatCountdownHms(ms: number): string {
+  const totalSeconds = Math.floor(Math.max(0, ms) / 1000);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${h}h ${m}m ${s}s`;
+}
+
+function NextPuzzleCountdown() {
+  const [countdown, setCountdown] = useState(() =>
+    formatCountdownHms(getMsUntilLocalMidnight())
+  );
+
+  useEffect(() => {
+    const tick = () => {
+      setCountdown(formatCountdownHms(getMsUntilLocalMidnight()));
+    };
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  return (
+    <p className="text-zinc-500 text-sm mt-3">
+      Next puzzle in{" "}
+      <span className="tabular-nums text-zinc-400">{countdown}</span>
+    </p>
+  );
+}
+
 export default function Game() {
   const [puzzle, setPuzzle] = useState<DailyPuzzle | null>(null);
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -350,6 +393,7 @@ export default function Game() {
                 </p>
               </div>
             )}
+            <NextPuzzleCountdown />
           </div>
         )}
       </div>
