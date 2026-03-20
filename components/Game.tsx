@@ -146,10 +146,10 @@ export default function Game() {
     };
   }, [puzzle]);
 
-  // Text clues: 4 total. Clue[0] is visible before guess 1.
+  // Text clues: 4 total. None before the first guess; each guess reveals one more (capped at 4).
   const revealCount =
     gameState === "playing"
-      ? Math.min(guesses.length + 1, MAX_TEXT_CLUES)
+      ? Math.min(guesses.length, MAX_TEXT_CLUES)
       : MAX_TEXT_CLUES;
 
   // Visual blur: 6 stages (final guess improves blur only).
