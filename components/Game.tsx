@@ -400,6 +400,7 @@ export default function Game() {
               maxGuesses={MAX_GUESSES}
               won={gameState === "won"}
               puzzleNumber={puzzle.puzzleNumber}
+              isArchive={isArchiveView}
             />
           </div>
           <button

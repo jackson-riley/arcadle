@@ -7,9 +7,16 @@ interface ShareButtonProps {
   maxGuesses: number;
   won: boolean;
   puzzleNumber: number;
+  isArchive?: boolean;
 }
 
-export default function ShareButton({ guesses, maxGuesses, won, puzzleNumber }: ShareButtonProps) {
+export default function ShareButton({
+  guesses,
+  maxGuesses,
+  won,
+  puzzleNumber,
+  isArchive,
+}: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = () => {
@@ -18,7 +25,13 @@ export default function ShareButton({ guesses, maxGuesses, won, puzzleNumber }: 
     );
     while (squares.length < maxGuesses) squares.push("⬛");
 
-    const text = `🎮 Ludle #${puzzleNumber}\n${won ? guesses.length : "X"}/${maxGuesses}\n\n${squares.join("")}`;
+    const headline = isArchive
+      ? `🎮 Ludle #${puzzleNumber} (Archive)`
+      : `🎮 Ludle #${puzzleNumber}`;
+
+    const text = `${headline}\n${won ? guesses.length : "X"}/${maxGuesses}\n\n${squares.join(
+      ""
+    )}\n\nhttps://ludle.gg`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
