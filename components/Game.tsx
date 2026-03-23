@@ -315,6 +315,14 @@ export default function Game() {
       year: "numeric",
     });
   }, [puzzle?.puzzleNumber, todayNumber]);
+  const mobileDateLabel = useMemo(() => {
+    const date = getDateForPuzzleNumber(puzzle?.puzzleNumber ?? todayNumber);
+    return date.toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "2-digit",
+    });
+  }, [puzzle?.puzzleNumber, todayNumber]);
 
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
@@ -340,7 +348,7 @@ export default function Game() {
           >
             lud<span className="text-zinc-500">le</span>
           </h1>
-          <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500">
+          <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500 whitespace-nowrap">
             <button
               type="button"
               onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
@@ -351,7 +359,8 @@ export default function Game() {
               ←
             </button>
             <span className="tabular-nums font-medium">
-              Day {puzzle.puzzleNumber} · {dateLabel}
+              Day {puzzle.puzzleNumber} · <span className="sm:hidden">{mobileDateLabel}</span>
+              <span className="hidden sm:inline">{dateLabel}</span>
             </span>
             <button
               type="button"
