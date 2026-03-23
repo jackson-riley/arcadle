@@ -81,6 +81,25 @@ export default function Game() {
     todayNumberRef.current = todayNumber;
   }, [todayNumber]);
 
+  const applyPuzzleNumber = useCallback((num: number) => {
+    const today = todayNumberRef.current;
+    if (num < 1 || num > today) return;
+
+    const p = getPuzzleForNumber(num);
+    const saved = loadGameState(num);
+    setPuzzle(p);
+    setGuesses(saved?.guesses ?? []);
+    if (saved?.completed) {
+      const won = saved.guesses[saved.guesses.length - 1] === p.game.title;
+      setGameState(won ? "won" : "lost");
+    } else {
+      setGameState("playing");
+    }
+    if (!saved) {
+      saveGameState({ puzzleNumber: num, guesses: [], completed: false });
+    }
+  }, []);
+
   // Hydrate from localStorage after mount
   useEffect(() => {
     ensureLudleDataVersion();
@@ -216,39 +235,44 @@ export default function Game() {
 
       const won = title === puzzle.game.title;
       const lost = !won && newGuesses.length >= MAX_GUESSES;
+      const trackStats = puzzle.puzzleNumber === todayNumber;
 
       if (won) {
         setGameState("won");
-        setStats((prev) => {
-          const s = prev || loadStats();
-          const newStreak = s.streak + 1;
-          const updated: PlayerStats = {
-            played: s.played + 1,
-            wins: s.wins + 1,
-            streak: newStreak,
-            maxStreak: Math.max(s.maxStreak, newStreak),
-            distribution: {
-              ...s.distribution,
-              [newGuesses.length]: (s.distribution[newGuesses.length] || 0) + 1,
-            },
-            lastPlayed: new Date().toISOString(),
-          };
-          saveStats(updated);
-          return updated;
-        });
+        if (trackStats) {
+          setStats((prev) => {
+            const s = prev || loadStats();
+            const newStreak = s.streak + 1;
+            const updated: PlayerStats = {
+              played: s.played + 1,
+              wins: s.wins + 1,
+              streak: newStreak,
+              maxStreak: Math.max(s.maxStreak, newStreak),
+              distribution: {
+                ...s.distribution,
+                [newGuesses.length]: (s.distribution[newGuesses.length] || 0) + 1,
+              },
+              lastPlayed: new Date().toISOString(),
+            };
+            saveStats(updated);
+            return updated;
+          });
+        }
       } else if (lost) {
         setGameState("lost");
-        setStats((prev) => {
-          const s = prev || loadStats();
-          const updated: PlayerStats = {
-            ...s,
-            played: s.played + 1,
-            streak: 0,
-            lastPlayed: new Date().toISOString(),
-          };
-          saveStats(updated);
-          return updated;
-        });
+        if (trackStats) {
+          setStats((prev) => {
+            const s = prev || loadStats();
+            const updated: PlayerStats = {
+              ...s,
+              played: s.played + 1,
+              streak: 0,
+              lastPlayed: new Date().toISOString(),
+            };
+            saveStats(updated);
+            return updated;
+          });
+        }
       }
 
       saveGameState({
@@ -257,35 +281,37 @@ export default function Game() {
         completed: won || lost,
       });
     },
-    [gameState, guesses, puzzle]
+    [gameState, guesses, puzzle, todayNumber]
   );
 
   const handleGiveUp = useCallback(() => {
     setGameState("lost");
-    setStats((prev) => {
-      const s = prev || loadStats();
-      const updated: PlayerStats = {
-        ...s,
-        played: s.played + 1,
-        streak: 0,
-        lastPlayed: new Date().toISOString(),
-      };
-      saveStats(updated);
-      return updated;
-    });
+    if (puzzle && puzzle.puzzleNumber === todayNumber) {
+      setStats((prev) => {
+        const s = prev || loadStats();
+        const updated: PlayerStats = {
+          ...s,
+          played: s.played + 1,
+          streak: 0,
+          lastPlayed: new Date().toISOString(),
+        };
+        saveStats(updated);
+        return updated;
+      });
+    }
     if (!puzzle) return;
     saveGameState({
       puzzleNumber: puzzle.puzzleNumber,
       guesses,
       completed: true,
     });
-  }, [guesses, puzzle]);
+  }, [guesses, puzzle, todayNumber]);
 
   const dateLabel = useMemo(() => {
     const date = getDateForPuzzleNumber(puzzle?.puzzleNumber ?? todayNumber);
     return date.toLocaleDateString(undefined, {
       month: "short",
-      day: "numeric",
+      day: "2-digit",
       year: "numeric",
     });
   }, [puzzle?.puzzleNumber, todayNumber]);
@@ -299,6 +325,10 @@ export default function Game() {
     );
   }
 
+  const isArchiveView = puzzle.puzzleNumber !== todayNumber;
+  const canGoBack = puzzle.puzzleNumber > 1;
+  const canGoForward = puzzle.puzzleNumber < todayNumber;
+
   return (
     <div className="w-full max-w-lg px-4">
       {/* Header */}
@@ -310,7 +340,38 @@ export default function Game() {
           >
             lud<span className="text-zinc-500">le</span>
           </h1>
-          <p className="text-xs text-zinc-600 mt-0.5">{dateLabel}</p>
+          <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500">
+            <button
+              type="button"
+              onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
+              disabled={!canGoBack}
+              className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800"
+              aria-label="Previous day"
+            >
+              ←
+            </button>
+            <span className="tabular-nums font-medium">
+              Day {puzzle.puzzleNumber} · {dateLabel}
+            </span>
+            <button
+              type="button"
+              onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
+              disabled={!canGoForward}
+              className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800"
+              aria-label="Next day"
+            >
+              →
+            </button>
+            {isArchiveView && (
+              <button
+                type="button"
+                onClick={() => applyPuzzleNumber(todayNumber)}
+                className="text-[11px] px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium"
+              >
+                Today
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           <div
@@ -353,6 +414,11 @@ export default function Game() {
           revealLevel={revealLevel}
           solved={gameState !== "playing"}
         />
+        {isArchiveView && (
+          <p className="text-center text-xs text-zinc-600 -mt-1">
+            Archive — stats not tracked
+          </p>
+        )}
 
         {/* Guess progress */}
         <GuessHistory
@@ -410,7 +476,7 @@ export default function Game() {
                 </p>
               </div>
             )}
-            <NextPuzzleCountdown />
+            {!isArchiveView && <NextPuzzleCountdown />}
           </div>
         )}
       </div>
