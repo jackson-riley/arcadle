@@ -76,6 +76,9 @@ export default function Game() {
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
   const todayNumberRef = useRef(todayNumber);
+  const [statsTrackedForPuzzle, setStatsTrackedForPuzzle] = useState<
+    boolean | undefined
+  >(undefined);
 
   useEffect(() => {
     todayNumberRef.current = todayNumber;
@@ -89,6 +92,7 @@ export default function Game() {
     const saved = loadGameState(num);
     setPuzzle(p);
     setGuesses(saved?.guesses ?? []);
+    setStatsTrackedForPuzzle(saved?.statsTracked);
     if (saved?.completed) {
       const won = saved.guesses[saved.guesses.length - 1] === p.game.title;
       setGameState(won ? "won" : "lost");
@@ -96,7 +100,12 @@ export default function Game() {
       setGameState("playing");
     }
     if (!saved) {
-      saveGameState({ puzzleNumber: num, guesses: [], completed: false });
+      saveGameState({
+        puzzleNumber: num,
+        guesses: [],
+        completed: false,
+        statsTracked: false,
+      });
     }
   }, []);
 
@@ -113,6 +122,7 @@ export default function Game() {
       const restored = getPuzzleForNumber(todaysNumber);
       setPuzzle(restored);
       setGuesses(savedGame.guesses);
+      setStatsTrackedForPuzzle(savedGame.statsTracked);
 
       if (savedGame.completed) {
         const won =
@@ -122,10 +132,12 @@ export default function Game() {
     } else {
       const next = getDailyPuzzle();
       setPuzzle(next);
+      setStatsTrackedForPuzzle(false);
       saveGameState({
         puzzleNumber: next.puzzleNumber,
         guesses: [],
         completed: false,
+        statsTracked: false,
       });
     }
 
@@ -154,6 +166,7 @@ export default function Game() {
           const next = getPuzzleForNumber(newToday);
           setPuzzle(next);
           setGuesses(saved?.guesses ?? []);
+          setStatsTrackedForPuzzle(saved?.statsTracked);
           setGameState(() => {
             if (!saved || !saved.completed) return "playing";
             const won =
@@ -165,6 +178,7 @@ export default function Game() {
               puzzleNumber: newToday,
               guesses: [],
               completed: false,
+              statsTracked: false,
             });
           }
         }
@@ -236,6 +250,8 @@ export default function Game() {
       const won = title === puzzle.game.title;
       const lost = !won && newGuesses.length >= MAX_GUESSES;
       const trackStats = puzzle.puzzleNumber === todayNumber;
+      const completed = won || lost;
+      const statsTracked = completed && trackStats;
 
       if (won) {
         setGameState("won");
@@ -278,13 +294,15 @@ export default function Game() {
       saveGameState({
         puzzleNumber: puzzle.puzzleNumber,
         guesses: newGuesses,
-        completed: won || lost,
+        completed,
+        statsTracked,
       });
     },
     [gameState, guesses, puzzle, todayNumber]
   );
 
   const handleGiveUp = useCallback(() => {
+    const statsTracked = !!(puzzle && puzzle.puzzleNumber === todayNumber);
     setGameState("lost");
     if (puzzle && puzzle.puzzleNumber === todayNumber) {
       setStats((prev) => {
@@ -304,6 +322,7 @@ export default function Game() {
       puzzleNumber: puzzle.puzzleNumber,
       guesses,
       completed: true,
+      statsTracked,
     });
   }, [guesses, puzzle, todayNumber]);
 
@@ -319,6 +338,9 @@ export default function Game() {
   const isArchiveView = puzzle.puzzleNumber !== todayNumber;
   const canGoBack = puzzle.puzzleNumber > 1;
   const canGoForward = puzzle.puzzleNumber < todayNumber;
+  const showArchiveLabel =
+    isArchiveView &&
+    (gameState === "playing" || statsTrackedForPuzzle === false);
 
   return (
     <div className="w-full max-w-lg px-4">
@@ -405,9 +427,9 @@ export default function Game() {
           revealLevel={revealLevel}
           solved={gameState !== "playing"}
         />
-        {isArchiveView && (
+        {showArchiveLabel && (
           <p className="text-center text-xs text-zinc-600 -mt-1">
-            Archive — stats not tracked
+            Archive
           </p>
         )}
 

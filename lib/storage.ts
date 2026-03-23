@@ -106,6 +106,13 @@ export interface SavedGameState {
   puzzleNumber: number;
   guesses: string[];
   completed: boolean;
+  /**
+   * True if this puzzle was completed while it was the "today" puzzle, meaning
+   * stats were tracked for it.
+   *
+   * Older saved states may not have this field.
+   */
+  statsTracked?: boolean;
 }
 
 export function loadGameState(puzzleNumber: number): SavedGameState | null {
