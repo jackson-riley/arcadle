@@ -341,7 +341,7 @@ export default function Game() {
             >
               ←
             </button>
-            <span className="tabular-nums font-medium">
+            <span className="tabular-nums font-medium min-w-[4.5rem] text-center">
               Day {puzzle.puzzleNumber}
             </span>
             <button
