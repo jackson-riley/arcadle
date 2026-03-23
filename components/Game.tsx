@@ -318,8 +318,8 @@ export default function Game() {
   const mobileDateLabel = useMemo(() => {
     const date = getDateForPuzzleNumber(puzzle?.puzzleNumber ?? todayNumber);
     return date.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
+      month: "numeric",
+      day: "numeric",
       year: "2-digit",
     });
   }, [puzzle?.puzzleNumber, todayNumber]);
@@ -340,15 +340,15 @@ export default function Game() {
   return (
     <div className="w-full max-w-lg px-4">
       {/* Header */}
-      <header className="pt-6 pb-4 flex items-center justify-between">
-        <div>
+      <header className="pt-6 pb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="w-full flex items-start justify-between sm:w-auto">
           <h1
             className="text-xl font-bold tracking-tight"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.03em" }}
           >
             lud<span className="text-zinc-500">le</span>
           </h1>
-          <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500 whitespace-nowrap">
+          <div className="hidden sm:flex items-center gap-1.5 mt-1 text-xs text-zinc-500 whitespace-nowrap">
             <button
               type="button"
               onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
@@ -381,38 +381,70 @@ export default function Game() {
               </button>
             )}
           </div>
-        </div>
-        <div className="flex gap-2">
-          <div
-            className={`transition-opacity duration-200 ${
-              gameState === "playing"
-                ? "opacity-30 pointer-events-none"
-                : "opacity-100"
-            }`}
-            aria-hidden={gameState === "playing"}
-          >
-            <ShareButton
-              guesses={guesses}
-              maxGuesses={MAX_GUESSES}
-              won={gameState === "won"}
-              puzzleNumber={puzzle.puzzleNumber}
-            />
+          <div className="flex gap-2">
+            <div
+              className={`transition-opacity duration-200 ${
+                gameState === "playing"
+                  ? "opacity-30 pointer-events-none"
+                  : "opacity-100"
+              }`}
+              aria-hidden={gameState === "playing"}
+            >
+              <ShareButton
+                guesses={guesses}
+                maxGuesses={MAX_GUESSES}
+                won={gameState === "won"}
+                puzzleNumber={puzzle.puzzleNumber}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowHowToPlay(true)}
+              className="text-xs px-2.5 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium min-w-[2rem]"
+              aria-label="How to play"
+            >
+              ?
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowStats(true)}
+              className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
+            >
+              Stats
+            </button>
           </div>
+        </div>
+        <div className="sm:hidden flex items-center justify-center gap-1.5 text-xs text-zinc-500 whitespace-nowrap">
           <button
             type="button"
-            onClick={() => setShowHowToPlay(true)}
-            className="text-xs px-2.5 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium min-w-[2rem]"
-            aria-label="How to play"
+            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
+            disabled={!canGoBack}
+            className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800"
+            aria-label="Previous day"
           >
-            ?
+            ←
           </button>
+          <span className="tabular-nums font-medium">
+            Day {puzzle.puzzleNumber} · {mobileDateLabel}
+          </span>
           <button
             type="button"
-            onClick={() => setShowStats(true)}
-            className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
+            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
+            disabled={!canGoForward}
+            className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800"
+            aria-label="Next day"
           >
-            Stats
+            →
           </button>
+          {isArchiveView && (
+            <button
+              type="button"
+              onClick={() => applyPuzzleNumber(todayNumber)}
+              className="text-[11px] px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium"
+            >
+              Today
+            </button>
+          )}
         </div>
       </header>
 
