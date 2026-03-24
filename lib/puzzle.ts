@@ -1,4 +1,4 @@
-import { getGamesOrderForYear } from "./games";
+import { getGamesOrderForYear, selectNthPlayableFromShuffled } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
 // Anchor date for Day #1 (local calendar date: Jan 1, 2026).
@@ -23,13 +23,15 @@ export function getDateForPuzzleNumber(num: number): Date {
   return d;
 }
 
-/** Deterministic puzzle selection for a given puzzle number */
+/** Deterministic puzzle selection for a given puzzle number.
+ * Uses skip-based selection: shuffle full DB, then pick Nth non-excluded game.
+ * Excluding a game only removes that day from the calendar; it doesn't shift others. */
 export function getPuzzleForNumber(num: number): DailyPuzzle {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
-  const games = getGamesOrderForYear(year);
-  const index = ((num - 1) % games.length + games.length) % games.length;
-  const game = games[index];
+  const shuffled = getGamesOrderForYear(year);
+  const whichPlayable = num - 1; // 0-indexed position in the playable sequence
+  const game = selectNthPlayableFromShuffled(shuffled, whichPlayable);
   return {
     puzzleNumber: num,
     game,

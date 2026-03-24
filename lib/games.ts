@@ -4056,13 +4056,41 @@ function shuffleSeedForCalendarYear(year: number): number {
   return (h ^ (h >>> 16)) >>> 0;
 }
 
-/** Order of games for a given calendar year (local date of that puzzle). Rerolls each Jan 1. */
+/** Order of games for a given calendar year (local date of that puzzle). Rerolls each Jan 1.
+ * Shuffles the FULL RAW_GAMES_DB; exclusions are applied at puzzle selection time so they
+ * don't shift other days' puzzles. */
 export function getGamesOrderForYear(year: number): GameEntry[] {
-  return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
+  return seededShuffle(RAW_GAMES_DB, shuffleSeedForCalendarYear(year));
 }
 
-/** Full list in 2026 order (screenshots, tooling). Puzzle selection uses getGamesOrderForYear in puzzle.ts */
-export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR);
+/** Returns the Nth playable (non-excluded) game when walking through a shuffled order.
+ * Used by puzzle selection so exclusions only remove that day, not shift others. */
+export function selectNthPlayableFromShuffled(
+  shuffled: GameEntry[],
+  n: number
+): GameEntry {
+  let count = 0;
+  for (const game of shuffled) {
+    if (EXCLUDED_TITLES_FOR_SCREENSHOTS.has(game.title)) continue;
+    if (count === n) return game;
+    count++;
+  }
+  // Wrap around: n may exceed playable count
+  const totalPlayable = count;
+  const wrapped = ((n % totalPlayable) + totalPlayable) % totalPlayable;
+  count = 0;
+  for (const game of shuffled) {
+    if (EXCLUDED_TITLES_FOR_SCREENSHOTS.has(game.title)) continue;
+    if (count === wrapped) return game;
+    count++;
+  }
+  throw new Error("No playable games in database");
+}
+
+/** Full list of playable games in 2026 order (screenshots, tooling). Excludes games without screenshots. */
+export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR).filter(
+  (g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)
+);
 
 /** Sorted title list for autocomplete — deduplicated */
 export const GAME_TITLES = PLAYABLE_GAMES_BASE.map((g) => g.title)
