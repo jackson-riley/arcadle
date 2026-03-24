@@ -4067,6 +4067,7 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "Divinity: Original Sin 2",
   "Phasmophobia",
   "Paper Mario: The Thousand-Year Door",
+  "Skyrim",
 ]);
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
