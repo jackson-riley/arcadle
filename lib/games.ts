@@ -2478,13 +2478,13 @@ const RAW_GAMES_DB: GameEntry[] = [
   // ============================================================
   {
     title: "MLB The Show 24",
-    developer: "ustwo Games",
-    year: 2014,
-    genre: "Puzzle",
-    platforms: "Mobile, PC",
-    length: "1.5–2 hours",
-    coreLoop: "Guide a silent princess through impossible architecture by rotating and sliding Escher-like structures to create paths that only work from specific perspectives.",
-    color: "#e8a0bf",
+    developer: "San Diego Studio",
+    year: 2024,
+    genre: "Sports",
+    platforms: "PS4, PS5, Xbox One, Xbox Series, Switch",
+    length: "Open-ended",
+    coreLoop: "Play full baseball games with real MLB rosters, timing swing mechanics and pitch placement, building a Diamond Dynasty team through card packs or grinding a Road to the Show career mode.",
+    color: "#1a5276",
   },
   {
     title: "Pokémon Go",
@@ -4063,6 +4063,10 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "Overwatch 2",
   "Dead Space (2023)",
   "Spelunky",
+  "Warhammer 40,000: Space Marine 2",
+  "Divinity: Original Sin 2",
+  "Phasmophobia",
+  "Paper Mario: The Thousand-Year Door",
 ]);
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
