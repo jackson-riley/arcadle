@@ -4044,7 +4044,26 @@ const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
 
 // New exclusions added after launch. Applied as skips when selecting puzzles.
 // Adding here only removes that day from the calendar; it does not shift other days.
-const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([]);
+const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
+  "The Talos Principle",
+  "Shadow of Mordor",
+  "Hades",
+  "Dying Light",
+  "Star Wars Jedi: Fallen Order",
+  "Batman: Arkham City",
+  "Monster Hunter Rise",
+  "Ori and the Blind Forest",
+  "Ghost Trick: Phantom Detective",
+  "The Elder Scrolls III: Morrowind",
+  "NBA 2K24",
+  "Dark Souls II",
+  "Dark Souls II: Scholar of the First Sin",
+  "Mortal Kombat 1",
+  "The Stanley Parable: Ultra Deluxe",
+  "Overwatch 2",
+  "Dead Space (2023)",
+  "Spelunky",
+]);
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
   (g) => !ORIGINAL_EXCLUDED_TITLES.has(g.title)
