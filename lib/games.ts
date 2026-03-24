@@ -4011,8 +4011,9 @@ const RAW_GAMES_DB: GameEntry[] = [
   },
 ];
 
-// Exclude games that don't have generated screenshots available.
-const EXCLUDED_TITLES_FOR_SCREENSHOTS = new Set<string>([
+// Exclusion set that existed at launch. Used to build PLAYABLE_GAMES_BASE (shuffle input).
+// Never modify — the shuffle order is frozen from this set.
+const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
   "FEZ",
   "God of War (2018)",
   "Journey",
@@ -4041,8 +4042,12 @@ const EXCLUDED_TITLES_FOR_SCREENSHOTS = new Set<string>([
   "Rust",
 ]);
 
+// New exclusions added after launch. Applied as skips when selecting puzzles.
+// Adding here only removes that day from the calendar; it does not shift other days.
+const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([]);
+
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
-  (g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)
+  (g) => !ORIGINAL_EXCLUDED_TITLES.has(g.title)
 );
 
 /** Puzzle epoch year — must keep using SHUFFLE_SEED so existing 2026 dailies stay stable. */
@@ -4057,21 +4062,22 @@ function shuffleSeedForCalendarYear(year: number): number {
 }
 
 /** Order of games for a given calendar year (local date of that puzzle). Rerolls each Jan 1.
- * Shuffles the FULL RAW_GAMES_DB; exclusions are applied at puzzle selection time so they
- * don't shift other days' puzzles. */
+ * Shuffles PLAYABLE_GAMES_BASE (frozen from ORIGINAL_EXCLUDED_TITLES). Additional exclusions
+ * are applied as skips at puzzle selection time. */
 export function getGamesOrderForYear(year: number): GameEntry[] {
-  return seededShuffle(RAW_GAMES_DB, shuffleSeedForCalendarYear(year));
+  return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
 }
 
-/** Returns the Nth playable (non-excluded) game when walking through a shuffled order.
- * Used by puzzle selection so exclusions only remove that day, not shift others. */
+/** Returns the Nth playable game when walking through a shuffled order, skipping
+ * ADDITIONAL_EXCLUDED_TITLES. The shuffle input already excludes ORIGINAL_EXCLUDED_TITLES.
+ * Used by puzzle selection so new exclusions only remove that day, not shift others. */
 export function selectNthPlayableFromShuffled(
   shuffled: GameEntry[],
   n: number
 ): GameEntry {
   let count = 0;
   for (const game of shuffled) {
-    if (EXCLUDED_TITLES_FOR_SCREENSHOTS.has(game.title)) continue;
+    if (ADDITIONAL_EXCLUDED_TITLES.has(game.title)) continue;
     if (count === n) return game;
     count++;
   }
@@ -4080,19 +4086,21 @@ export function selectNthPlayableFromShuffled(
   const wrapped = ((n % totalPlayable) + totalPlayable) % totalPlayable;
   count = 0;
   for (const game of shuffled) {
-    if (EXCLUDED_TITLES_FOR_SCREENSHOTS.has(game.title)) continue;
+    if (ADDITIONAL_EXCLUDED_TITLES.has(game.title)) continue;
     if (count === wrapped) return game;
     count++;
   }
   throw new Error("No playable games in database");
 }
 
-/** Full list of playable games in 2026 order (screenshots, tooling). Excludes games without screenshots. */
+/** Full list of playable games in 2026 order (screenshots, tooling). Excludes additional exclusions. */
 export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR).filter(
-  (g) => !EXCLUDED_TITLES_FOR_SCREENSHOTS.has(g.title)
+  (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
 );
 
-/** Sorted title list for autocomplete — deduplicated */
-export const GAME_TITLES = PLAYABLE_GAMES_BASE.map((g) => g.title)
+/** Sorted title list for autocomplete — deduplicated, excludes additional exclusions */
+export const GAME_TITLES = PLAYABLE_GAMES_BASE.filter(
+  (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
+).map((g) => g.title)
   .filter((title, index, arr) => arr.indexOf(title) === index)
   .sort();
