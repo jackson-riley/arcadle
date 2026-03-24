@@ -4087,27 +4087,23 @@ export function getGamesOrderForYear(year: number): GameEntry[] {
   return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
 }
 
-/** Returns the Nth playable game when walking through a shuffled order, skipping
- * ADDITIONAL_EXCLUDED_TITLES. The shuffle input already excludes ORIGINAL_EXCLUDED_TITLES.
- * Used by puzzle selection so new exclusions only remove that day, not shift others. */
-export function selectNthPlayableFromShuffled(
+/** Returns the game for a day using a fixed index mapping. Day N maps to shuffled index
+ * (N-1 + epochOffset). If that game is excluded, substitutes the next non-excluded game
+ * after that index (wrapping). Day N+1's mapping is independent — exclusions only affect
+ * that one day. */
+export function selectGameForFixedIndex(
   shuffled: GameEntry[],
-  n: number
+  preferredIndex: number
 ): GameEntry {
-  let count = 0;
-  for (const game of shuffled) {
-    if (ADDITIONAL_EXCLUDED_TITLES.has(game.title)) continue;
-    if (count === n) return game;
-    count++;
-  }
-  // Wrap around: n may exceed playable count
-  const totalPlayable = count;
-  const wrapped = ((n % totalPlayable) + totalPlayable) % totalPlayable;
-  count = 0;
-  for (const game of shuffled) {
-    if (ADDITIONAL_EXCLUDED_TITLES.has(game.title)) continue;
-    if (count === wrapped) return game;
-    count++;
+  const len = shuffled.length;
+  const idx = ((preferredIndex % len) + len) % len;
+  const primary = shuffled[idx];
+  if (!ADDITIONAL_EXCLUDED_TITLES.has(primary.title)) return primary;
+  // Find next non-excluded after idx (wrap around)
+  for (let i = 1; i < len; i++) {
+    const j = (idx + i) % len;
+    const game = shuffled[j];
+    if (!ADDITIONAL_EXCLUDED_TITLES.has(game.title)) return game;
   }
   throw new Error("No playable games in database");
 }
