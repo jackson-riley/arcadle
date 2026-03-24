@@ -1,12 +1,15 @@
 import { getGamesOrderForYear, selectNthPlayableFromShuffled } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
-// Anchor date for Day #1 (local calendar date: Jan 1, 2026).
+// Anchor date for Day #1 (local calendar date: March 20, 2026).
 // We compute puzzle numbers using UTC-midnight timestamps derived from
 // local calendar components to avoid DST off-by-one issues.
 const EPOCH_Y = 2026;
-const EPOCH_M = 0; // Jan (0-indexed)
-const EPOCH_D = 1;
+const EPOCH_M = 2; // March (0-indexed)
+const EPOCH_D = 20;
+
+// Offset so Day 1 (March 20) maps to the same game as old Day 79 (Jan 1 + 78 days = March 20).
+const EPOCH_INDEX_OFFSET = 78;
 
 /** Puzzle number (1-indexed) based on days since epoch */
 export function getPuzzleNumber(): number {
@@ -25,12 +28,12 @@ export function getDateForPuzzleNumber(num: number): Date {
 
 /** Deterministic puzzle selection for a given puzzle number.
  * Uses skip-based selection: shuffle full DB, then pick Nth non-excluded game.
- * Excluding a game only removes that day from the calendar; it doesn't shift others. */
+ * EPOCH_INDEX_OFFSET ensures Day 1 (March 20) matches old Day 79's game. */
 export function getPuzzleForNumber(num: number): DailyPuzzle {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
   const shuffled = getGamesOrderForYear(year);
-  const whichPlayable = num - 1; // 0-indexed position in the playable sequence
+  const whichPlayable = (num - 1) + EPOCH_INDEX_OFFSET; // Day 1 = old Day 79's index
   const game = selectNthPlayableFromShuffled(shuffled, whichPlayable);
   return {
     puzzleNumber: num,
