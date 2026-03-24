@@ -2,12 +2,12 @@ import { PlayerStats } from "./types";
 
 const HAS_VISITED_KEY = "ludle-has-visited";
 
-const STATS_KEY = "ludle-stats";
-const GAME_STATE_KEY_PREFIX = "ludle-state-";
+const STATS_KEY = "ludle-stats-v2";
+const GAME_STATE_KEY_PREFIX = "ludle-state-v2-";
 
-// Back-compat keys (migrate from older names)
-const LEGACY_STATS_KEY = "frameguessr-stats";
-const LEGACY_GAME_STATE_KEY_PREFIX = "frameguessr-state-";
+// Back-compat keys (no migration — v2 is a fresh start)
+const LEGACY_STATS_KEY = "ludle-stats-unused";
+const LEGACY_GAME_STATE_KEY_PREFIX = "ludle-state-unused-";
 
 /**
  * Bump this when the daily puzzle lineup / shuffle changes in a way that makes
@@ -15,7 +15,7 @@ const LEGACY_GAME_STATE_KEY_PREFIX = "frameguessr-state-";
  * next visit, all ludle/frameguessr localStorage keys are cleared for that browser.
  */
 const DATA_VERSION_KEY = "ludle-data-version";
-export const LUDLE_DATA_VERSION = 3;
+export const LUDLE_DATA_VERSION = 4;
 
 function wipeLudleLocalStorage(): void {
   const toRemove: string[] = [];

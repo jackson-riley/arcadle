@@ -249,7 +249,7 @@ export default function Game() {
 
       const won = title === puzzle.game.title;
       const lost = !won && newGuesses.length >= MAX_GUESSES;
-      const trackStats = puzzle.puzzleNumber === todayNumber;
+      const trackStats = puzzle.puzzleNumber === todayNumber; // Only today's puzzle affects stats
       const completed = won || lost;
       const statsTracked = completed && trackStats;
 
@@ -338,9 +338,7 @@ export default function Game() {
   const isArchiveView = puzzle.puzzleNumber !== todayNumber;
   const canGoBack = puzzle.puzzleNumber > 1;
   const canGoForward = puzzle.puzzleNumber < todayNumber;
-  const showArchiveLabel =
-    isArchiveView &&
-    (gameState === "playing" || statsTrackedForPuzzle === false);
+  const showArchiveLabel = isArchiveView && gameState === "playing";
 
   return (
     <div className="w-full max-w-lg px-4">
@@ -354,15 +352,16 @@ export default function Game() {
             lud<span className="text-zinc-500">le</span>
           </h1>
           <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500 whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
-              disabled={!canGoBack}
-              className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800"
-              aria-label="Previous day"
-            >
-              ←
-            </button>
+            {canGoBack && (
+              <button
+                type="button"
+                onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
+                className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors"
+                aria-label="Previous day"
+              >
+                ←
+              </button>
+            )}
             <span className="tabular-nums font-medium min-w-[4.5rem] text-center">
               Day {puzzle.puzzleNumber}
             </span>
