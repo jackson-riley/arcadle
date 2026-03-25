@@ -1870,7 +1870,7 @@ const RAW_GAMES_DB: GameEntry[] = [
     color: "#be0000",
   },
   {
-    title: "Rainbow Six Siege",
+    title: "Tom Clancy's Rainbow Six Siege",
     developer: "Ubisoft Montreal",
     year: 2015,
     genre: "Tactical FPS",
@@ -3650,7 +3650,7 @@ const RAW_GAMES_DB: GameEntry[] = [
     color: "#2c3e50",
   },
   {
-    title: "Halo Reach",
+    title: "Halo: Reach",
     developer: "Bungie",
     year: 2010,
     genre: "FPS",
@@ -4079,6 +4079,13 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "The Forest",
   "Elden Ring",
   "Dead by Daylight",
+  "Final Fantasy XV",
+  "Final Fantasy XIV",
+  "Final Fantasy VII",
+  "Far Cry 6",
+  "The Last of Us",
+  "Final Fantasy XVI",
+  "Tom Clancy's Rainbow Six Siege",
 ]);
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
