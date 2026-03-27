@@ -2917,7 +2917,7 @@ const RAW_GAMES_DB: GameEntry[] = [
   // STEALTH
   // ============================================================
   {
-    title: "Splinter Cell: Chaos Theory",
+    title: "Tom Clancy's Splinter Cell: Chaos Theory",
     developer: "Ubisoft Montreal",
     year: 2005,
     genre: "Stealth",
