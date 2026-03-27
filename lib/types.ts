@@ -5,8 +5,10 @@
 // ============================================================
 
 export interface GameEntry {
-  /** Canonical title — must match exactly for correct guesses */
+  /** Canonical title (display, storage, screenshot paths, autocomplete) */
   title: string;
+  /** Alternate names accepted as correct guesses (not added to autocomplete) */
+  aliases?: string[];
   developer: string;
   year: number;
   genre: string;

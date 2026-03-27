@@ -1871,6 +1871,7 @@ const RAW_GAMES_DB: GameEntry[] = [
   },
   {
     title: "Tom Clancy's Rainbow Six Siege",
+    aliases: ["Rainbow Six Siege"],
     developer: "Ubisoft Montreal",
     year: 2015,
     genre: "Tactical FPS",
@@ -2918,6 +2919,7 @@ const RAW_GAMES_DB: GameEntry[] = [
   // ============================================================
   {
     title: "Tom Clancy's Splinter Cell: Chaos Theory",
+    aliases: ["Splinter Cell: Chaos Theory"],
     developer: "Ubisoft Montreal",
     year: 2005,
     genre: "Stealth",

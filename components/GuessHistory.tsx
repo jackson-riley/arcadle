@@ -1,12 +1,15 @@
 "use client";
 
+import type { GameEntry } from "@/lib/types";
+import { guessMatchesGame } from "@/lib/guessMatch";
+
 interface GuessHistoryProps {
   guesses: string[];
   maxGuesses: number;
-  answer: string;
+  game: GameEntry;
 }
 
-export default function GuessHistory({ guesses, maxGuesses, answer }: GuessHistoryProps) {
+export default function GuessHistory({ guesses, maxGuesses, game }: GuessHistoryProps) {
   const slots = Array.from({ length: maxGuesses }, (_, i) => guesses[i] || null);
 
   return (
@@ -17,7 +20,7 @@ export default function GuessHistory({ guesses, maxGuesses, answer }: GuessHisto
           className={`flex-1 h-2 rounded-full transition-all duration-300 ${
             g === null
               ? "bg-zinc-800"
-              : g === answer
+              : guessMatchesGame(game, g)
               ? "bg-emerald-500"
               : "bg-red-500/70"
           }`}

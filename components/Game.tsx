@@ -12,6 +12,7 @@ import {
   markLudleVisited,
 } from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
+import { guessMatchesGame } from "@/lib/guessMatch";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
 import ClueStack from "./ClueStack";
@@ -94,7 +95,8 @@ export default function Game() {
     setGuesses(saved?.guesses ?? []);
     setStatsTrackedForPuzzle(saved?.statsTracked);
     if (saved?.completed) {
-      const won = saved.guesses[saved.guesses.length - 1] === p.game.title;
+      const last = saved.guesses[saved.guesses.length - 1];
+      const won = guessMatchesGame(p.game, last);
       setGameState(won ? "won" : "lost");
     } else {
       setGameState("playing");
@@ -125,8 +127,8 @@ export default function Game() {
       setStatsTrackedForPuzzle(savedGame.statsTracked);
 
       if (savedGame.completed) {
-        const won =
-          savedGame.guesses[savedGame.guesses.length - 1] === restored.game.title;
+        const last = savedGame.guesses[savedGame.guesses.length - 1];
+        const won = guessMatchesGame(restored.game, last);
         setGameState(won ? "won" : "lost");
       }
     } else {
@@ -169,8 +171,8 @@ export default function Game() {
           setStatsTrackedForPuzzle(saved?.statsTracked);
           setGameState(() => {
             if (!saved || !saved.completed) return "playing";
-            const won =
-              saved.guesses[saved.guesses.length - 1] === next.game.title;
+            const last = saved.guesses[saved.guesses.length - 1];
+            const won = guessMatchesGame(next.game, last);
             return won ? "won" : "lost";
           });
           if (!saved) {
@@ -247,7 +249,7 @@ export default function Game() {
       const newGuesses = [...guesses, title];
       setGuesses(newGuesses);
 
-      const won = title === puzzle.game.title;
+      const won = guessMatchesGame(puzzle.game, title);
       const lost = !won && newGuesses.length >= MAX_GUESSES;
       const trackStats = puzzle.puzzleNumber === todayNumber; // Only today's puzzle affects stats
       const completed = won || lost;
@@ -436,7 +438,7 @@ export default function Game() {
         <GuessHistory
           guesses={guesses}
           maxGuesses={MAX_GUESSES}
-          answer={puzzle.game.title}
+          game={puzzle.game}
         />
 
         {/* Clues */}
@@ -448,7 +450,7 @@ export default function Game() {
         {guesses.length > 0 && gameState === "playing" && (
           <div className="flex flex-wrap gap-1.5">
             {guesses
-              .filter((g) => g !== puzzle.game.title)
+              .filter((g) => !guessMatchesGame(puzzle.game, g))
               .map((g, i) => (
                 <span
                   key={i}
