@@ -340,7 +340,6 @@ export default function Game() {
   const isArchiveView = puzzle.puzzleNumber !== todayNumber;
   const canGoBack = puzzle.puzzleNumber > 1;
   const canGoForward = puzzle.puzzleNumber < todayNumber;
-  const showArchiveLabel = isArchiveView && gameState === "playing";
 
   return (
     <div className="w-full max-w-lg px-4">
@@ -428,7 +427,7 @@ export default function Game() {
           revealLevel={revealLevel}
           solved={gameState !== "playing"}
         />
-        {showArchiveLabel && (
+        {isArchiveView && (
           <p className="text-center text-xs text-zinc-600 -mt-1">
             Archive
           </p>

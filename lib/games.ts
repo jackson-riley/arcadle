@@ -4088,6 +4088,7 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "The Last of Us",
   "Final Fantasy XVI",
   "Tom Clancy's Rainbow Six Siege",
+  "Biomutant",
 ]);
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
