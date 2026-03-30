@@ -42,7 +42,8 @@ function normalizeArabicSingleDigitsToRoman(s: string): string {
   return s.replace(ARABIC_SINGLE_DIGIT_PATTERN, (d) => ARABIC_DIGIT_TO_ROMAN[d] ?? d);
 }
 
-function titlesMatch(guess: string, canonical: string): boolean {
+function titlesMatch(guess: unknown, canonical: unknown): boolean {
+  if (typeof guess !== "string" || typeof canonical !== "string") return false;
   const g = guess.trim();
   const c = canonical.trim();
   if (g === c) return true;
@@ -55,7 +56,8 @@ function titlesMatch(guess: string, canonical: string): boolean {
 }
 
 /** True if the guess equals the canonical title or any alias (trim; Roman/Arabic numeral variants). */
-export function guessMatchesGame(game: GameEntry, guess: string): boolean {
+export function guessMatchesGame(game: GameEntry, guess: string | undefined): boolean {
+  if (typeof guess !== "string") return false;
   if (titlesMatch(guess, game.title)) return true;
   return (game.aliases ?? []).some((a) => titlesMatch(guess, a));
 }
