@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { normalizeForTextMatch } from "@/lib/stringNormalize";
 
 interface GuessInputProps {
   onGuess: (title: string) => void;
@@ -22,9 +23,10 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   );
 
   const exactMatch = useMemo(() => {
-    const q = value.trim().toLowerCase();
+    const q = value.trim();
     if (!q) return null;
-    return shownSuggestions.find((s) => s.toLowerCase() === q) ?? null;
+    const key = normalizeForTextMatch(q);
+    return shownSuggestions.find((s) => normalizeForTextMatch(s) === key) ?? null;
   }, [value, shownSuggestions]);
 
   const canSubmit = Boolean(selectedSuggestion || exactMatch);
@@ -71,9 +73,9 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
       const trimmed = title.trim();
       if (!trimmed) return;
       // Only allow submitting a title the user selected (or an exact match in the list).
+      const key = normalizeForTextMatch(trimmed);
       const allowed =
-        shownSuggestions.find((s) => s.toLowerCase() === trimmed.toLowerCase()) ??
-        null;
+        shownSuggestions.find((s) => normalizeForTextMatch(s) === key) ?? null;
       if (!allowed) return;
 
       onGuess(allowed);

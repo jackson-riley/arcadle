@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GAME_TITLES } from "@/lib/games";
+import { normalizeForTextMatch } from "@/lib/stringNormalize";
 
 let cachedToken: { token: string; expiresAtMs: number } | null = null;
 let inFlightTokenRequest: Promise<string> | null = null;
@@ -84,8 +85,9 @@ export async function GET(req: NextRequest) {
   if (q.length < 2) return NextResponse.json<string[]>([]);
 
   const lowerQ = q.toLowerCase();
+  const matchQ = normalizeForTextMatch(q);
   const localMatches = GAME_TITLES.filter((title) =>
-    title.toLowerCase().includes(lowerQ)
+    normalizeForTextMatch(title).includes(matchQ)
   );
 
   try {
