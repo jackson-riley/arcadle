@@ -43,6 +43,9 @@ export default function StatsModal({
     };
   }, [globalStatsPuzzleNumber]);
 
+  const hasGlobalStats =
+    globalData != null && globalData.totalPlayers > 0;
+
   const dist = globalData?.guessDistribution ?? {};
   const maxGlobal = Math.max(
     1,
@@ -81,63 +84,60 @@ export default function StatsModal({
           ))}
         </div>
 
-        {(globalLoading || globalData) && (
-          <div className="mt-2 pt-6 border-t border-zinc-800">
-            <h3 className="text-zinc-100 text-sm font-semibold mb-3 tracking-wide">
-              Day {globalStatsPuzzleNumber} Stats
-            </h3>
-            {/* <p className="text-[11px] text-zinc-600 mb-3 tabular-nums">
-              Day {globalStatsPuzzleNumber}
-            </p> */}
-            {globalLoading ? (
-              <p className="text-zinc-500 text-sm">Loading...</p>
-            ) : globalData ? (
-              <>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
-                    <div className="text-xl font-bold text-zinc-100 tabular-nums">
-                      {globalData.totalPlayers}
-                    </div>
-                    <div className="text-[11px] text-zinc-500 mt-0.5">
-                      Total players
-                    </div>
+        <div className="mt-2 pt-6 border-t border-zinc-800">
+          <h3 className="text-zinc-100 text-sm font-semibold mb-3 tracking-wide">
+            Day {globalStatsPuzzleNumber} Stats
+          </h3>
+          {globalLoading ? (
+            <p className="text-zinc-500 text-sm">Loading...</p>
+          ) : hasGlobalStats ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
+                  <div className="text-xl font-bold text-zinc-100 tabular-nums">
+                    {globalData!.totalPlayers}
                   </div>
-                  <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
-                    <div className="text-xl font-bold text-zinc-100 tabular-nums">
-                      {globalData.totalPlayers > 0
-                        ? `${globalData.solveRate}%`
-                        : "—"}
-                    </div>
-                    <div className="text-[11px] text-zinc-500 mt-0.5">
-                      Solve rate
-                    </div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">
+                    Total players
                   </div>
                 </div>
-                <h4 className="text-zinc-400 text-xs font-mono tracking-wider mb-2 mt-5">
-                  GUESS DISTRIBUTION
-                </h4>
-                <div className="space-y-1">
-                  {[1, 2, 3, 4, 5, 6].map((n) => {
-                    const count = dist[n] ?? 0;
-                    return (
-                      <div key={n} className="flex items-center gap-2 text-sm">
-                        <span className="text-zinc-500 w-3 text-right">{n}</span>
-                        <div
-                          className="h-5 bg-zinc-700 rounded-sm flex items-center justify-end px-1.5 transition-all"
-                          style={{
-                            width: `${Math.max(8, (count / maxGlobal) * 100)}%`,
-                          }}
-                        >
-                          <span className="text-xs text-zinc-300">{count}</span>
-                        </div>
+                <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
+                  <div className="text-xl font-bold text-zinc-100 tabular-nums">
+                    {`${globalData!.solveRate}%`}
+                  </div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">
+                    Solve rate
+                  </div>
+                </div>
+              </div>
+              <h4 className="text-zinc-400 text-xs font-mono tracking-wider mb-2 mt-5">
+                GUESS DISTRIBUTION
+              </h4>
+              <div className="space-y-1">
+                {[1, 2, 3, 4, 5, 6].map((n) => {
+                  const count = dist[n] ?? 0;
+                  return (
+                    <div key={n} className="flex items-center gap-2 text-sm">
+                      <span className="text-zinc-500 w-3 text-right">{n}</span>
+                      <div
+                        className="h-5 bg-zinc-700 rounded-sm flex items-center justify-end px-1.5 transition-all"
+                        style={{
+                          width: `${Math.max(8, (count / maxGlobal) * 100)}%`,
+                        }}
+                      >
+                        <span className="text-xs text-zinc-300">{count}</span>
                       </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : null}
-          </div>
-        )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <p className="text-zinc-500 text-sm text-center py-2">
+              No Global Stats Available
+            </p>
+          )}
+        </div>
 
         <button
           onClick={onClose}
