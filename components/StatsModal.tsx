@@ -11,24 +11,34 @@ import {
 interface StatsModalProps {
   stats: PlayerStats;
   onClose: () => void;
+  /** When false (archive day), hide global “Today’s Puzzle” block and do not fetch. */
+  showTodaysGlobalStats: boolean;
   todayPuzzleNumber: number;
 }
 
 export default function StatsModal({
   stats,
   onClose,
+  showTodaysGlobalStats,
   todayPuzzleNumber,
 }: StatsModalProps) {
-  const [todaysLoading, setTodaysLoading] = useState(true);
+  const [todaysLoading, setTodaysLoading] = useState(
+    () => showTodaysGlobalStats
+  );
   const [todaysData, setTodaysData] = useState<GlobalStatsResponse | null>(
     null
   );
 
   useEffect(() => {
+    if (!showTodaysGlobalStats) {
+      setTodaysLoading(false);
+      setTodaysData(null);
+      return;
+    }
+
     let cancelled = false;
     setTodaysLoading(true);
     setTodaysData(null);
-    // Same calendar index as POST/Redis — parent `todayPuzzleNumber` can lag briefly after midnight.
     const n = getPuzzleNumber();
     if (
       process.env.NODE_ENV === "development" &&
@@ -53,7 +63,7 @@ export default function StatsModal({
     return () => {
       cancelled = true;
     };
-  }, [todayPuzzleNumber]);
+  }, [showTodaysGlobalStats, todayPuzzleNumber]);
 
   const dist = todaysData?.guessDistribution ?? {};
   const maxGlobal = Math.max(
@@ -114,7 +124,7 @@ export default function StatsModal({
           })}
         </div>
 
-        {(todaysLoading || todaysData) && (
+        {showTodaysGlobalStats && (todaysLoading || todaysData) && (
           <div className="mt-8 pt-6 border-t border-zinc-800">
             <h3 className="text-zinc-100 text-sm font-semibold mb-3 tracking-wide">
               Today&apos;s Puzzle
