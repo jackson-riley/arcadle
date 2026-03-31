@@ -32,6 +32,22 @@ import ShareButton from "./ShareButton";
 const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
 
+const HEADER_GHOST_BTN =
+  "rounded-lg border py-2 px-[14px] text-[13px] font-semibold tracking-[0.04em] " +
+  "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out " +
+  "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480] " +
+  "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)] " +
+  "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]";
+
+/** Same as HEADER_GHOST_BTN but equal horizontal padding for the single-char control. */
+const HEADER_GHOST_BTN_SQUARE =
+  "rounded-lg border py-2 px-2 text-[13px] font-semibold tracking-[0.04em] " +
+  "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out " +
+  "inline-flex min-w-[2.25rem] items-center justify-center " +
+  "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480] " +
+  "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)] " +
+  "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]";
+
 function saveGameStateMerged(state: SavedGameState): void {
   const prev = loadGameState(state.puzzleNumber);
   saveGameState({
@@ -401,7 +417,7 @@ export default function Game() {
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
     return (
-      <div className="w-full max-w-lg px-4 pt-20 text-center">
+      <div className="w-full max-w-lg px-5 pt-20 text-center">
         <div className="text-zinc-700 text-sm">Loading...</div>
       </div>
     );
@@ -412,81 +428,81 @@ export default function Game() {
   const canGoForward = puzzle.puzzleNumber < todayNumber;
 
   return (
-    <div className="w-full max-w-lg px-4">
-      {/* Header */}
-      <header className="pt-6 pb-4 flex items-start justify-between">
-        <div>
+    <div className="w-full max-w-lg px-5">
+      <header className="flex flex-col gap-1.5 border-b border-[rgba(255,255,255,0.04)] px-0 py-3.5 mb-4">
+        <div className="flex items-center justify-between gap-4">
           <h1
-            className="text-xl font-bold tracking-tight"
-            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.03em" }}
+            className="m-0 text-[30px] font-extrabold leading-none tracking-[-0.03em] lowercase"
+            style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            lud<span className="text-zinc-500">le</span>
+            <span style={{ color: "#E8E4DF" }}>lud</span>
+            <span style={{ color: "#A09A94" }}>le</span>
           </h1>
-          <div className="flex items-center gap-1.5 mt-1 text-xs text-zinc-500 whitespace-nowrap">
+          <div className="flex shrink-0 items-center gap-2">
+            <div
+              className={`transition-opacity duration-200 ${
+                gameState === "playing"
+                  ? "opacity-30 pointer-events-none"
+                  : "opacity-100"
+              }`}
+              aria-hidden={gameState === "playing"}
+            >
+              <ShareButton
+                guesses={guesses}
+                maxGuesses={MAX_GUESSES}
+                won={gameState === "won"}
+                puzzleNumber={puzzle.puzzleNumber}
+                isArchive={isArchiveView}
+              />
+            </div>
             <button
               type="button"
-              onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
-              disabled={!canGoBack}
-              className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800 outline-none focus:outline-none"
-              aria-label="Previous day"
+              onClick={() => setShowHowToPlay(true)}
+              className={HEADER_GHOST_BTN_SQUARE + " shrink-0 tabular-nums"}
+              aria-label="How to play"
             >
-              ←
+              ?
             </button>
-            <span className="tabular-nums font-medium min-w-[4.5rem] text-center">
-              Day {puzzle.puzzleNumber}
-            </span>
             <button
               type="button"
-              onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
-              disabled={!canGoForward}
-              className="text-sm px-1.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:pointer-events-none disabled:hover:bg-zinc-800 outline-none focus:outline-none"
-              aria-label="Next day"
+              onClick={() => setShowStats(true)}
+              className={HEADER_GHOST_BTN + " inline-flex items-center justify-center"}
             >
-              →
+              Stats
             </button>
-            {isArchiveView && (
-              <button
-                type="button"
-                onClick={() => applyPuzzleNumber(todayNumber)}
-                className="text-[11px] px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium"
-              >
-                Today
-              </button>
-            )}
           </div>
         </div>
-        <div className="flex gap-2">
-          <div
-            className={`transition-opacity duration-200 ${
-              gameState === "playing"
-                ? "opacity-30 pointer-events-none"
-                : "opacity-100"
-            }`}
-            aria-hidden={gameState === "playing"}
-          >
-            <ShareButton
-              guesses={guesses}
-              maxGuesses={MAX_GUESSES}
-              won={gameState === "won"}
-              puzzleNumber={puzzle.puzzleNumber}
-              isArchive={isArchiveView}
-            />
-          </div>
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 font-['DM_Sans',sans-serif] whitespace-nowrap">
           <button
             type="button"
-            onClick={() => setShowHowToPlay(true)}
-            className="text-xs px-2.5 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors font-medium min-w-[2rem]"
-            aria-label="How to play"
+            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
+            disabled={!canGoBack}
+            className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
+            aria-label="Previous day"
           >
-            ?
+            ←
           </button>
+          <span className="min-w-[4.25rem] text-center text-[13px] font-medium tabular-nums text-[#8A8480]">
+            Day {puzzle.puzzleNumber}
+          </span>
           <button
             type="button"
-            onClick={() => setShowStats(true)}
-            className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
+            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
+            disabled={!canGoForward}
+            className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
+            aria-label="Next day"
           >
-            Stats
+            →
           </button>
+          {isArchiveView && (
+            <button
+              type="button"
+              onClick={() => applyPuzzleNumber(todayNumber)}
+              className="ml-1 rounded-md px-2 py-0.5 text-[12px] font-medium text-[#6A6560] transition-colors hover:text-[#C8C4BF] outline-none focus-visible:ring-2 focus-visible:ring-white/10"
+            >
+              Today
+            </button>
+          )}
         </div>
       </header>
 

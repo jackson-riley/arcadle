@@ -41,8 +41,18 @@ export default function ShareButton({
 
   return (
     <button
+      type="button"
       onClick={handleShare}
-      className="text-xs px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-md hover:bg-zinc-700 transition-colors"
+      className={[
+        "inline-flex items-center justify-center rounded-lg border px-[14px] py-2 text-[13px] font-semibold tracking-[0.04em]",
+        "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out",
+        "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480]",
+        "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)]",
+        "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]",
+        copied && "text-[#C8C4BF]",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {copied ? "Copied!" : "Share"}
     </button>

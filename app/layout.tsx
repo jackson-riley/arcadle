@@ -44,7 +44,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
         />
       </head>
-      <body className="min-h-screen bg-zinc-950">
+      <body className="min-h-screen bg-[#111110]">
         {children}
         <Analytics />
       </body>
