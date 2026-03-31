@@ -38,6 +38,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
+        />
+      </head>
       <body className="min-h-screen bg-zinc-950">
         {children}
         <Analytics />

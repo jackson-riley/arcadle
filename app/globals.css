@@ -33,3 +33,83 @@ body {
 .animate-slide-up {
   animation: slideUp 0.4s ease-out forwards;
 }
+
+/* StatsModal — pure CSS timing; --d / --w / --bar-d set per element */
+@keyframes statsFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes statsModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes statsBarGrow {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--w);
+  }
+}
+
+@keyframes statsAmbientPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.stats-modal-overlay {
+  opacity: 0;
+  animation: statsFadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0.35s) both;
+}
+
+.stats-modal-card {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+  animation: statsModalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0.35s) both;
+}
+
+.stats-modal-fade-in {
+  opacity: 0;
+  animation: statsFadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d) both;
+}
+
+.stats-modal-bar-fill {
+  width: 0%;
+  animation: statsBarGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--bar-d) forwards;
+}
+
+.stats-modal-ambient {
+  opacity: 0;
+  animation: statsAmbientPulse 4s ease-in-out 0.85s infinite;
+}
+
+.stats-modal-close {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #c8c4bf;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.stats-modal-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #c8c4bf;
+}
