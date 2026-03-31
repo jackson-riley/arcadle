@@ -1,6 +1,35 @@
+import dns from "node:dns";
 import { NextRequest, NextResponse } from "next/server";
 import { GAME_TITLES } from "@/lib/games";
 import { normalizeForTextMatch } from "@/lib/stringNormalize";
+
+// Node 17+ prefers IPv6; some networks break Twitch OAuth on IPv6. Prefer IPv4 first.
+try {
+  if (typeof dns.setDefaultResultOrder === "function") {
+    dns.setDefaultResultOrder("ipv4first");
+  }
+} catch {
+  // non-Node (should not happen for this route)
+}
+
+function describeNetworkError(err: unknown): string {
+  if (err == null) return "unknown";
+  if (typeof err === "string") return err;
+  if (!(err instanceof Error)) return String(err);
+  const parts: string[] = [];
+  let e: unknown = err;
+  let depth = 0;
+  while (e instanceof Error && depth++ < 8) {
+    parts.push(e.message);
+    const code =
+      typeof (e as NodeJS.ErrnoException).code === "string"
+        ? (e as NodeJS.ErrnoException).code
+        : undefined;
+    if (code && !parts.includes(code)) parts.push(`(${code})`);
+    e = e.cause;
+  }
+  return parts.join(" → ");
+}
 
 let cachedToken: { token: string; expiresAtMs: number } | null = null;
 let inFlightTokenRequest: Promise<string> | null = null;
@@ -21,6 +50,40 @@ function getClientSecret() {
   return process.env.IGDB_CLIENT_SECRET || process.env.TWITCH_CLIENT_SECRET;
 }
 
+/** Twitch/IGDB occasionally hit transient TLS/network errors (e.g. ECONNRESET). */
+async function fetchTokenWithRetry(
+  clientId: string,
+  clientSecret: string,
+  retries = 4
+): Promise<Response> {
+  const body = new URLSearchParams({
+    client_id: clientId,
+    client_secret: clientSecret,
+    grant_type: "client_credentials",
+  });
+
+  const init: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+    cache: "no-store",
+    signal: AbortSignal.timeout(25_000),
+  };
+
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fetch("https://id.twitch.tv/oauth2/token", init);
+    } catch (err) {
+      lastErr = err;
+      if (attempt < retries - 1) {
+        await new Promise((r) => setTimeout(r, 200 * Math.pow(2, attempt)));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function getTwitchToken(): Promise<string> {
   const now = Date.now();
   if (cachedToken) {
@@ -39,17 +102,7 @@ async function getTwitchToken(): Promise<string> {
     const clientSecret = getClientSecret();
     if (!clientId || !clientSecret) throw new Error("Missing IGDB/Twitch credentials");
 
-    const res = await fetch("https://id.twitch.tv/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "client_credentials",
-      }),
-      // avoid cached edge responses
-      cache: "no-store",
-    });
+    const res = await fetchTokenWithRetry(clientId, clientSecret);
 
     if (!res.ok) throw new Error(`Token request failed: ${res.status}`);
 
@@ -100,7 +153,10 @@ export async function GET(req: NextRequest) {
     } catch (tokenErr) {
       // If Twitch/IGDB is temporarily unreachable, keep autocomplete working
       // with the local curated database instead of returning 500s.
-      console.error("IGDB token fetch failed", tokenErr);
+      console.warn(
+        "IGDB token unavailable (using local titles only):",
+        describeNetworkError(tokenErr)
+      );
     }
 
     if (!token) {

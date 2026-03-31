@@ -12,6 +12,11 @@ import {
   markLudleVisited,
 } from "@/lib/storage";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
+import {
+  localTodayString,
+  normalizeStreakStats,
+  streakAfterWin,
+} from "@/lib/streak";
 import { guessMatchesGame } from "@/lib/guessMatch";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
@@ -161,6 +166,7 @@ export default function Game() {
       // when the day actually rolls over.
       if (newToday !== prevToday) {
         setTodayNumber(newToday);
+        setStats(loadStats());
 
         // Auto-advance when viewing today's puzzle and the calendar day rolls over.
         if (puzzle && puzzle.puzzleNumber === prevToday) {
@@ -259,8 +265,9 @@ export default function Game() {
         setGameState("won");
         if (trackStats) {
           setStats((prev) => {
-            const s = prev || loadStats();
-            const newStreak = s.streak + 1;
+            const s = normalizeStreakStats(prev || loadStats());
+            const todayLocal = localTodayString();
+            const newStreak = streakAfterWin(s, todayLocal);
             const updated: PlayerStats = {
               played: s.played + 1,
               wins: s.wins + 1,
@@ -271,6 +278,7 @@ export default function Game() {
                 [newGuesses.length]: (s.distribution[newGuesses.length] || 0) + 1,
               },
               lastPlayed: new Date().toISOString(),
+              lastWinDate: todayLocal,
             };
             saveStats(updated);
             return updated;

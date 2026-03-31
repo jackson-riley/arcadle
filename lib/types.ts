@@ -44,6 +44,8 @@ export interface PlayerStats {
   distribution: Record<number, number>;
   /** ISO date string of last completed puzzle */
   lastPlayed?: string;
+  /** Local calendar day (YYYY-MM-DD) of the last win that counts toward streak */
+  lastWinDate?: string;
 }
 
 export interface GuessResult {

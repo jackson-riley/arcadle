@@ -1,4 +1,5 @@
 import { PlayerStats } from "./types";
+import { normalizeStreakStats } from "./streak";
 
 const HAS_VISITED_KEY = "ludle-has-visited";
 
@@ -56,13 +57,33 @@ export function loadStats(): PlayerStats {
   if (typeof window === "undefined") return DEFAULT_STATS;
   try {
     const raw = localStorage.getItem(STATS_KEY);
-    if (raw) return { ...DEFAULT_STATS, ...JSON.parse(raw) };
+    if (raw) {
+      const merged = { ...DEFAULT_STATS, ...JSON.parse(raw) } as PlayerStats;
+      const normalized = normalizeStreakStats(merged);
+      if (normalized.streak !== merged.streak) {
+        try {
+          localStorage.setItem(STATS_KEY, JSON.stringify(normalized));
+        } catch {
+          // ignore
+        }
+      }
+      return normalized;
+    }
 
     // Migrate legacy stats if present
     const legacyRaw = localStorage.getItem(LEGACY_STATS_KEY);
     if (legacyRaw) {
       localStorage.setItem(STATS_KEY, legacyRaw);
-      return { ...DEFAULT_STATS, ...JSON.parse(legacyRaw) };
+      const merged = { ...DEFAULT_STATS, ...JSON.parse(legacyRaw) } as PlayerStats;
+      const normalized = normalizeStreakStats(merged);
+      if (normalized.streak !== merged.streak) {
+        try {
+          localStorage.setItem(STATS_KEY, JSON.stringify(normalized));
+        } catch {
+          // ignore
+        }
+      }
+      return normalized;
     }
 
     return DEFAULT_STATS;
