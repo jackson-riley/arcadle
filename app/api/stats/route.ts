@@ -36,6 +36,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Invalid puzzleNumber" }, { status: 400 });
   }
 
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[stats API] GET Redis key", STATS_KEY(puzzleNumber));
+  }
+
   const empty = {
     totalPlayers: 0,
     solveRate: 0,
@@ -100,6 +104,10 @@ export async function POST(req: NextRequest) {
         : NaN;
   if (!Number.isFinite(pn) || pn < 1 || pn !== Math.floor(pn)) {
     return NextResponse.json({ error: "Invalid puzzleNumber" }, { status: 400 });
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[stats API] POST Redis key", STATS_KEY(pn));
   }
 
   if (typeof solved !== "boolean") {

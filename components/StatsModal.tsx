@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getPuzzleNumber } from "@/lib/puzzle";
 import type { PlayerStats } from "@/lib/types";
 import {
   fetchGlobalStats,
@@ -27,7 +28,19 @@ export default function StatsModal({
     let cancelled = false;
     setTodaysLoading(true);
     setTodaysData(null);
-    fetchGlobalStats(todayPuzzleNumber)
+    // Same calendar index as POST/Redis — parent `todayPuzzleNumber` can lag briefly after midnight.
+    const n = getPuzzleNumber();
+    if (
+      process.env.NODE_ENV === "development" &&
+      todayPuzzleNumber !== n
+    ) {
+      console.debug(
+        "[StatsModal] todayPuzzleNumber prop vs getPuzzleNumber()",
+        todayPuzzleNumber,
+        n
+      );
+    }
+    fetchGlobalStats(n)
       .then((d) => {
         if (!cancelled) setTodaysData(d);
       })

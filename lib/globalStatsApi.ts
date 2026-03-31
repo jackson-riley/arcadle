@@ -7,8 +7,12 @@ export type GlobalStatsResponse = {
 export async function fetchGlobalStats(
   puzzleNumber: number
 ): Promise<GlobalStatsResponse> {
+  const n = Math.floor(Number(puzzleNumber));
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[stats] GET puzzleNumber=", n);
+  }
   const res = await fetch(
-    `/api/stats?puzzleNumber=${encodeURIComponent(String(puzzleNumber))}`,
+    `/api/stats?puzzleNumber=${encodeURIComponent(String(n))}`,
     { cache: "no-store" }
   );
   if (!res.ok) throw new Error(`stats ${res.status}`);
@@ -21,10 +25,21 @@ export async function postPuzzleResult(body: {
   solved: boolean;
   playerId: string;
 }): Promise<void> {
+  const payload = {
+    ...body,
+    puzzleNumber: Math.floor(Number(body.puzzleNumber)),
+  };
+  if (process.env.NODE_ENV === "development") {
+    console.debug("[stats] POST", {
+      puzzleNumber: payload.puzzleNumber,
+      guesses: payload.guesses,
+      solved: payload.solved,
+    });
+  }
   const res = await fetch("/api/stats", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     throw new Error(`post stats ${res.status}`);

@@ -104,7 +104,9 @@ export default function Game() {
 
   const submitGlobalStatsIfNeeded = useCallback(
     async (puzzleNumber: number, guessList: string[], solved: boolean) => {
-      if (puzzleNumber !== todayNumberRef.current) return;
+      // Calendar day index — same source as Redis keys (not React state, which can lag after midnight).
+      const calendarToday = getPuzzleNumber();
+      if (puzzleNumber !== calendarToday) return;
       const playerId = getOrCreatePlayerId();
       if (!playerId) return;
       const saved = loadGameState(puzzleNumber);
@@ -278,13 +280,13 @@ export default function Game() {
   // Retry global stats if a previous submit failed (e.g. offline).
   useEffect(() => {
     if (!hydrated || !puzzle) return;
-    if (puzzle.puzzleNumber !== todayNumber) return;
+    if (puzzle.puzzleNumber !== getPuzzleNumber()) return;
     const saved = loadGameState(puzzle.puzzleNumber);
     if (!saved?.completed || saved.globalStatsSubmitted) return;
     const last = saved.guesses[saved.guesses.length - 1];
     const won = guessMatchesGame(puzzle.game, last);
     void submitGlobalStatsIfNeeded(puzzle.puzzleNumber, saved.guesses, won);
-  }, [hydrated, puzzle, todayNumber, submitGlobalStatsIfNeeded]);
+  }, [hydrated, puzzle, submitGlobalStatsIfNeeded]);
 
   // Text clues: 4 total. None before the first guess; each guess reveals one more (capped at 4).
   const revealCount =
@@ -356,7 +358,7 @@ export default function Game() {
         statsTracked,
       });
 
-      if (completed && puzzle.puzzleNumber === todayNumber) {
+      if (completed && puzzle.puzzleNumber === getPuzzleNumber()) {
         void submitGlobalStatsIfNeeded(
           puzzle.puzzleNumber,
           newGuesses,
@@ -390,7 +392,7 @@ export default function Game() {
       completed: true,
       statsTracked,
     });
-    if (puzzle.puzzleNumber === todayNumber) {
+    if (puzzle.puzzleNumber === getPuzzleNumber()) {
       void submitGlobalStatsIfNeeded(puzzle.puzzleNumber, guesses, false);
     }
   }, [guesses, puzzle, todayNumber, submitGlobalStatsIfNeeded]);
