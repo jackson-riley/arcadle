@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPuzzleNumber } from "@/lib/puzzle";
 import type { PlayerStats } from "@/lib/types";
 import {
   fetchGlobalStats,
@@ -11,61 +10,40 @@ import {
 interface StatsModalProps {
   stats: PlayerStats;
   onClose: () => void;
-  /** When false (archive day), hide global “Today’s Puzzle” block and do not fetch. */
-  showTodaysGlobalStats: boolean;
-  todayPuzzleNumber: number;
+  /** Which puzzle’s global aggregates to load (today or archive day). */
+  globalStatsPuzzleNumber: number;
 }
 
 export default function StatsModal({
   stats,
   onClose,
-  showTodaysGlobalStats,
-  todayPuzzleNumber,
+  globalStatsPuzzleNumber,
 }: StatsModalProps) {
-  const [todaysLoading, setTodaysLoading] = useState(
-    () => showTodaysGlobalStats
-  );
-  const [todaysData, setTodaysData] = useState<GlobalStatsResponse | null>(
+  const [globalLoading, setGlobalLoading] = useState(true);
+  const [globalData, setGlobalData] = useState<GlobalStatsResponse | null>(
     null
   );
 
   useEffect(() => {
-    if (!showTodaysGlobalStats) {
-      setTodaysLoading(false);
-      setTodaysData(null);
-      return;
-    }
-
     let cancelled = false;
-    setTodaysLoading(true);
-    setTodaysData(null);
-    const n = getPuzzleNumber();
-    if (
-      process.env.NODE_ENV === "development" &&
-      todayPuzzleNumber !== n
-    ) {
-      console.debug(
-        "[StatsModal] todayPuzzleNumber prop vs getPuzzleNumber()",
-        todayPuzzleNumber,
-        n
-      );
-    }
-    fetchGlobalStats(n)
+    setGlobalLoading(true);
+    setGlobalData(null);
+    fetchGlobalStats(globalStatsPuzzleNumber)
       .then((d) => {
-        if (!cancelled) setTodaysData(d);
+        if (!cancelled) setGlobalData(d);
       })
       .catch(() => {
-        if (!cancelled) setTodaysData(null);
+        if (!cancelled) setGlobalData(null);
       })
       .finally(() => {
-        if (!cancelled) setTodaysLoading(false);
+        if (!cancelled) setGlobalLoading(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [showTodaysGlobalStats, todayPuzzleNumber]);
+  }, [globalStatsPuzzleNumber]);
 
-  const dist = todaysData?.guessDistribution ?? {};
+  const dist = globalData?.guessDistribution ?? {};
   const maxGlobal = Math.max(
     1,
     ...[1, 2, 3, 4, 5, 6].map((n) => dist[n] ?? 0)
@@ -103,49 +81,31 @@ export default function StatsModal({
           ))}
         </div>
 
-        <h3 className="text-zinc-400 text-xs font-mono tracking-wider mb-2">
-          GUESS DISTRIBUTION
-        </h3>
-        <div className="space-y-1">
-          {[1, 2, 3, 4, 5, 6].map((n) => {
-            const count = stats.distribution[n] || 0;
-            const max = Math.max(1, ...Object.values(stats.distribution));
-            return (
-              <div key={n} className="flex items-center gap-2 text-sm">
-                <span className="text-zinc-500 w-3 text-right">{n}</span>
-                <div
-                  className="h-5 bg-zinc-700 rounded-sm flex items-center justify-end px-1.5 transition-all"
-                  style={{ width: `${Math.max(8, (count / max) * 100)}%` }}
-                >
-                  <span className="text-xs text-zinc-300">{count}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {showTodaysGlobalStats && (todaysLoading || todaysData) && (
-          <div className="mt-8 pt-6 border-t border-zinc-800">
+        {(globalLoading || globalData) && (
+          <div className="mt-2 pt-6 border-t border-zinc-800">
             <h3 className="text-zinc-100 text-sm font-semibold mb-3 tracking-wide">
-              Today&apos;s Puzzle
+              Day {globalStatsPuzzleNumber} Stats
             </h3>
-            {todaysLoading ? (
+            {/* <p className="text-[11px] text-zinc-600 mb-3 tabular-nums">
+              Day {globalStatsPuzzleNumber}
+            </p> */}
+            {globalLoading ? (
               <p className="text-zinc-500 text-sm">Loading...</p>
-            ) : todaysData ? (
+            ) : globalData ? (
               <>
-                <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
                     <div className="text-xl font-bold text-zinc-100 tabular-nums">
-                      {todaysData.totalPlayers}
+                      {globalData.totalPlayers}
                     </div>
                     <div className="text-[11px] text-zinc-500 mt-0.5">
-                      Total players today
+                      Total players
                     </div>
                   </div>
                   <div className="text-center rounded-lg bg-zinc-800/50 py-2.5 px-2">
                     <div className="text-xl font-bold text-zinc-100 tabular-nums">
-                      {todaysData.totalPlayers > 0
-                        ? `${todaysData.solveRate}%`
+                      {globalData.totalPlayers > 0
+                        ? `${globalData.solveRate}%`
                         : "—"}
                     </div>
                     <div className="text-[11px] text-zinc-500 mt-0.5">
@@ -153,7 +113,7 @@ export default function StatsModal({
                     </div>
                   </div>
                 </div>
-                <h4 className="text-zinc-400 text-xs font-mono tracking-wider mb-2">
+                <h4 className="text-zinc-400 text-xs font-mono tracking-wider mb-2 mt-5">
                   GUESS DISTRIBUTION
                 </h4>
                 <div className="space-y-1">
@@ -161,9 +121,7 @@ export default function StatsModal({
                     const count = dist[n] ?? 0;
                     return (
                       <div key={n} className="flex items-center gap-2 text-sm">
-                        <span className="text-zinc-500 w-3 text-right">
-                          {n}
-                        </span>
+                        <span className="text-zinc-500 w-3 text-right">{n}</span>
                         <div
                           className="h-5 bg-zinc-700 rounded-sm flex items-center justify-end px-1.5 transition-all"
                           style={{

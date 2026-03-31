@@ -408,8 +408,6 @@ export default function Game() {
   }
 
   const isArchiveView = puzzle.puzzleNumber !== todayNumber;
-  /** Calendar “today” — used for global stats UI + API (not React state, which can lag). */
-  const isViewingTodayPuzzle = puzzle.puzzleNumber === getPuzzleNumber();
   const canGoBack = puzzle.puzzleNumber > 1;
   const canGoForward = puzzle.puzzleNumber < todayNumber;
 
@@ -581,8 +579,7 @@ export default function Game() {
       {showStats && stats && (
         <StatsModal
           stats={stats}
-          showTodaysGlobalStats={isViewingTodayPuzzle}
-          todayPuzzleNumber={todayNumber}
+          globalStatsPuzzleNumber={puzzle.puzzleNumber}
           onClose={() => setShowStats(false)}
         />
       )}
