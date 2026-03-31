@@ -15,3 +15,5 @@ public/screenshots/*/options
 .vscode
 .idea
 
+.vercel
+.env*.local

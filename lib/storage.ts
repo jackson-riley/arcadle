@@ -100,6 +100,8 @@ export interface SavedGameState {
    * Older saved states may not have this field.
    */
   statsTracked?: boolean;
+  /** True after today's result was accepted by /api/stats (deduped server-side). */
+  globalStatsSubmitted?: boolean;
 }
 
 export function loadGameState(puzzleNumber: number): SavedGameState | null {

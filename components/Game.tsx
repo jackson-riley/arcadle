@@ -10,7 +10,10 @@ import {
   saveGameState,
   hasLudleVisitedBefore,
   markLudleVisited,
+  type SavedGameState,
 } from "@/lib/storage";
+import { getOrCreatePlayerId } from "@/lib/playerId";
+import { postPuzzleResult } from "@/lib/globalStatsApi";
 import type { DailyPuzzle, GameState, PlayerStats } from "@/lib/types";
 import {
   localTodayString,
@@ -28,6 +31,15 @@ import ShareButton from "./ShareButton";
 
 const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
+
+function saveGameStateMerged(state: SavedGameState): void {
+  const prev = loadGameState(state.puzzleNumber);
+  saveGameState({
+    ...state,
+    globalStatsSubmitted:
+      state.globalStatsSubmitted ?? prev?.globalStatsSubmitted,
+  });
+}
 
 function getMsUntilLocalMidnight(): number {
   const now = new Date();
@@ -90,6 +102,31 @@ export default function Game() {
     todayNumberRef.current = todayNumber;
   }, [todayNumber]);
 
+  const submitGlobalStatsIfNeeded = useCallback(
+    async (puzzleNumber: number, guessList: string[], solved: boolean) => {
+      if (puzzleNumber !== todayNumberRef.current) return;
+      const playerId = getOrCreatePlayerId();
+      if (!playerId) return;
+      const saved = loadGameState(puzzleNumber);
+      if (saved?.globalStatsSubmitted) return;
+      try {
+        await postPuzzleResult({
+          puzzleNumber,
+          guesses: guessList.length,
+          solved,
+          playerId,
+        });
+        const latest = loadGameState(puzzleNumber);
+        if (latest) {
+          saveGameStateMerged({ ...latest, globalStatsSubmitted: true });
+        }
+      } catch {
+        /* retried from effect below */
+      }
+    },
+    []
+  );
+
   const applyPuzzleNumber = useCallback((num: number) => {
     const today = todayNumberRef.current;
     if (num < 1 || num > today) return;
@@ -107,7 +144,7 @@ export default function Game() {
       setGameState("playing");
     }
     if (!saved) {
-      saveGameState({
+      saveGameStateMerged({
         puzzleNumber: num,
         guesses: [],
         completed: false,
@@ -140,7 +177,7 @@ export default function Game() {
       const next = getDailyPuzzle();
       setPuzzle(next);
       setStatsTrackedForPuzzle(false);
-      saveGameState({
+      saveGameStateMerged({
         puzzleNumber: next.puzzleNumber,
         guesses: [],
         completed: false,
@@ -182,7 +219,7 @@ export default function Game() {
             return won ? "won" : "lost";
           });
           if (!saved) {
-            saveGameState({
+            saveGameStateMerged({
               puzzleNumber: newToday,
               guesses: [],
               completed: false,
@@ -237,6 +274,17 @@ export default function Game() {
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [puzzle]);
+
+  // Retry global stats if a previous submit failed (e.g. offline).
+  useEffect(() => {
+    if (!hydrated || !puzzle) return;
+    if (puzzle.puzzleNumber !== todayNumber) return;
+    const saved = loadGameState(puzzle.puzzleNumber);
+    if (!saved?.completed || saved.globalStatsSubmitted) return;
+    const last = saved.guesses[saved.guesses.length - 1];
+    const won = guessMatchesGame(puzzle.game, last);
+    void submitGlobalStatsIfNeeded(puzzle.puzzleNumber, saved.guesses, won);
+  }, [hydrated, puzzle, todayNumber, submitGlobalStatsIfNeeded]);
 
   // Text clues: 4 total. None before the first guess; each guess reveals one more (capped at 4).
   const revealCount =
@@ -301,14 +349,22 @@ export default function Game() {
         }
       }
 
-      saveGameState({
+      saveGameStateMerged({
         puzzleNumber: puzzle.puzzleNumber,
         guesses: newGuesses,
         completed,
         statsTracked,
       });
+
+      if (completed && puzzle.puzzleNumber === todayNumber) {
+        void submitGlobalStatsIfNeeded(
+          puzzle.puzzleNumber,
+          newGuesses,
+          won
+        );
+      }
     },
-    [gameState, guesses, puzzle, todayNumber]
+    [gameState, guesses, puzzle, todayNumber, submitGlobalStatsIfNeeded]
   );
 
   const handleGiveUp = useCallback(() => {
@@ -328,13 +384,16 @@ export default function Game() {
       });
     }
     if (!puzzle) return;
-    saveGameState({
+    saveGameStateMerged({
       puzzleNumber: puzzle.puzzleNumber,
       guesses,
       completed: true,
       statsTracked,
     });
-  }, [guesses, puzzle, todayNumber]);
+    if (puzzle.puzzleNumber === todayNumber) {
+      void submitGlobalStatsIfNeeded(puzzle.puzzleNumber, guesses, false);
+    }
+  }, [guesses, puzzle, todayNumber, submitGlobalStatsIfNeeded]);
 
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
@@ -515,7 +574,11 @@ export default function Game() {
 
       {/* Stats modal */}
       {showStats && stats && (
-        <StatsModal stats={stats} onClose={() => setShowStats(false)} />
+        <StatsModal
+          stats={stats}
+          todayPuzzleNumber={todayNumber}
+          onClose={() => setShowStats(false)}
+        />
       )}
     </div>
   );
