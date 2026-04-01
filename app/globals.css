@@ -7,6 +7,15 @@
 :root {
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
   --font-display: 'Space Grotesk', system-ui, sans-serif;
+
+  /* Product green — base #50C878; change here to retheme */
+  --color-green: #50c878;
+  --color-green-light: #6ad68e;
+  --color-green-dim: #3d9a5c;
+  --color-green-surface: rgba(80, 200, 120, 0.06);
+  --color-green-border: rgba(80, 200, 120, 0.1);
+  --color-green-glow: rgba(80, 200, 120, 0.3);
+  --color-on-green: #1a1a18;
 }
 
 body {
@@ -112,4 +121,32 @@ body {
 .stats-modal-close:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #c8c4bf;
+}
+
+/* How to Play — primary CTA (canonical green) */
+.how-to-play-play {
+  background: var(--color-green);
+  color: var(--color-on-green);
+  font-family: Outfit, system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  border-radius: 10px;
+  border: none;
+  padding: 12px 16px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.how-to-play-play:hover {
+  background: var(--color-green-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--color-green-glow);
+}
+
+.how-to-play-play:focus-visible {
+  outline: 2px solid var(--color-green-light);
+  outline-offset: 2px;
 }

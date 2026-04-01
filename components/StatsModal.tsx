@@ -17,9 +17,6 @@ interface StatsModalProps {
 const TEXT_PRIMARY = "#E8E4DF";
 const TEXT_MUTED = "#8A8480";
 const NESTED_LABEL_COLOR = "#6A6560";
-const ACCENT = "#6AAA64";
-const ACCENT_LIGHT = "#7BC47B";
-const ACCENT_DIM = "#5A8A56";
 const BORDER_SUBTLE = "rgba(255,255,255,0.04)";
 const BORDER_CARD = "rgba(255,255,255,0.06)";
 
@@ -141,7 +138,7 @@ export default function StatsModal({
           className="stats-modal-ambient pointer-events-none absolute left-1/2 top-0 h-[200px] w-[min(120%,420px)] -translate-x-1/2 -translate-y-[35%] rounded-full"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(106,170,100,0.06) 0%, transparent 70%)",
+              "radial-gradient(ellipse at center, var(--color-green-surface) 0%, transparent 70%)",
           }}
           aria-hidden
         />
@@ -244,19 +241,19 @@ export default function StatsModal({
                     <div
                       className="rounded-[12px] border px-3 py-3 text-center"
                       style={{
-                        background: "rgba(106,170,100,0.06)",
-                        borderColor: "rgba(106,170,100,0.1)",
+                        background: "var(--color-green-surface)",
+                        borderColor: "var(--color-green-border)",
                       }}
                     >
                       <div
                         className="font-outfit text-[22px] font-bold tabular-nums leading-tight"
-                        style={{ color: ACCENT }}
+                        style={{ color: "var(--color-green)" }}
                       >
                         {`${globalData.solveRate}%`}
                       </div>
                       <div
                         className="mt-1 text-[11px] font-medium uppercase tracking-[0.1em]"
-                        style={{ color: ACCENT_DIM }}
+                        style={{ color: "var(--color-green-dim)" }}
                       >
                         Solve rate
                       </div>
@@ -307,9 +304,9 @@ export default function StatsModal({
                                 isWinningRow
                                   ? ({
                                       ...barGrowVars(growD, `${pct}%`),
-                                      background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_LIGHT})`,
-                                      boxShadow:
-                                        "0 0 20px rgba(106,170,100,0.3)",
+                                      background:
+                                        "linear-gradient(90deg, var(--color-green), var(--color-green-light))",
+                                      boxShadow: "0 0 20px var(--color-green-glow)",
                                     } as CSSProperties)
                                   : {
                                       width: `${pct}%`,

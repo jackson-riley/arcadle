@@ -21,7 +21,7 @@ export default function GuessHistory({ guesses, maxGuesses, game }: GuessHistory
             g === null
               ? "bg-zinc-800"
               : guessMatchesGame(game, g)
-              ? "bg-emerald-500"
+              ? "bg-ludle-green"
               : "bg-red-500/70"
           }`}
         />

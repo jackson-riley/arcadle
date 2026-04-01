@@ -564,7 +564,7 @@ export default function Game() {
         {gameState !== "playing" && (
           <div className="text-center py-4 animate-slide-up">
             {gameState === "won" ? (
-              <p className="text-emerald-400 text-sm">
+              <p className="font-dm-sans text-sm text-ludle-green">
                 Solved in {guesses.length} guess{guesses.length !== 1 && "es"}
               </p>
             ) : (

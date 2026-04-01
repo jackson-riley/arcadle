@@ -10,6 +10,13 @@ module.exports = {
         outfit: ["Outfit", "system-ui", "sans-serif"],
         "dm-sans": ["DM Sans", "system-ui", "sans-serif"],
       },
+      colors: {
+        ludle: {
+          green: "var(--color-green)",
+          "green-light": "var(--color-green-light)",
+          "green-dim": "var(--color-green-dim)",
+        },
+      },
     },
   },
   plugins: [],
