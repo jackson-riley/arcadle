@@ -78,6 +78,10 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
         shownSuggestions.find((s) => normalizeForTextMatch(s) === key) ?? null;
       if (!allowed) return;
 
+      inputRef.current?.blur();
+      window.setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
       onGuess(allowed);
       setValue("");
       setSuggestions([]);
