@@ -114,6 +114,7 @@ export default function Game() {
   const [statsTrackedForPuzzle, setStatsTrackedForPuzzle] = useState<
     boolean | undefined
   >(undefined);
+  const mainContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     todayNumberRef.current = todayNumber;
@@ -320,6 +321,13 @@ export default function Game() {
   const revealLevel =
     gameState === "playing" ? Math.min(guesses.length + 1, MAX_GUESSES) : MAX_GUESSES;
 
+  const resetGameScroll = useCallback(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    mainContentRef.current?.scrollTo(0, 0);
+  }, []);
+
   const handleGuess = useCallback(
     (title: string) => {
       if (gameState !== "playing" || !puzzle) return;
@@ -386,8 +394,12 @@ export default function Game() {
           won
         );
       }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(resetGameScroll);
+      });
     },
-    [gameState, guesses, puzzle, todayNumber, submitGlobalStatsIfNeeded]
+    [gameState, guesses, puzzle, todayNumber, submitGlobalStatsIfNeeded, resetGameScroll]
   );
 
   const handleGiveUp = useCallback(() => {
@@ -421,7 +433,7 @@ export default function Game() {
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
     return (
-      <div className="flex h-[100dvh] max-h-[100dvh] min-h-0 w-full max-w-[700px] flex-col items-center justify-center px-5">
+      <div className="mx-auto flex h-[100dvh] max-h-[100dvh] min-h-0 w-full max-w-[700px] flex-col items-center justify-center overflow-hidden px-5">
         <div className="text-sm text-zinc-700">Loading...</div>
       </div>
     );
@@ -517,7 +529,10 @@ export default function Game() {
         </div>
       </header>
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-start gap-2 overflow-y-auto pt-4">
+      <div
+        ref={mainContentRef}
+        className="flex min-h-0 min-w-0 flex-1 flex-col justify-start gap-2 overflow-hidden pt-4"
+      >
         {/* Screenshot — intrinsic height; max 45dvh */}
         <div className="w-full shrink-0">
           <GameCard

@@ -92,18 +92,24 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((i) => Math.max(i - 1, -1));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (selectedSuggestion) submit(selectedSuggestion);
-      else if (exactMatch) submit(exactMatch);
     } else if (e.key === "Escape") {
       setValue("");
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (disabled || !canSubmit) return;
+    if (selectedSuggestion) submit(selectedSuggestion);
+    else if (exactMatch) submit(exactMatch);
+  };
+
   return (
     <div className="relative w-full min-w-0 max-w-full">
-      <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2">
+      <form
+        className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2"
+        onSubmit={handleSubmit}
+      >
         <div className="relative min-w-0">
           <input
             ref={inputRef}
@@ -145,11 +151,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
         </div>
         <div className="flex min-w-0 shrink-0 items-center justify-self-end">
           <button
-            type="button"
-            onClick={() => {
-              if (selectedSuggestion) submit(selectedSuggestion);
-              else if (exactMatch) submit(exactMatch);
-            }}
+            type="submit"
             disabled={disabled || !canSubmit}
             className="px-4 py-2.5 bg-zinc-100 text-zinc-900 text-[15px] font-semibold rounded-lg
                        hover:bg-white disabled:opacity-20 transition-all"
@@ -157,7 +159,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
             Guess
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
