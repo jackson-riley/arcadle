@@ -15,7 +15,8 @@ interface GameCardProps {
 
 /**
  * Screenshot uses pre-generated blur levels from `/public/screenshots/<slug>/blur-{0..5}.jpg`
- * and `solved.jpg` (see `scripts/generate-blurs.ts`).
+ * and `solved.jpg` (see `scripts/generate-blurs.ts`). `next/image` is `unoptimized` so JPEGs
+ * are served straight from `/public` (no `/_next/image` pipeline on every blur swap).
  * Loading area uses 16:9 (aspect-video) capped at max-h-[45dvh]; image uses object-contain inside.
  */
 export default function GameCard({
@@ -58,6 +59,7 @@ export default function GameCard({
                 alt={game.title}
                 fill
                 sizes="(max-width: 700px) 100vw, 700px"
+                unoptimized
                 className={`z-[1] object-contain transition-opacity duration-300 ease-out ${
                   imageLoaded ? "opacity-100" : "opacity-0"
                 }`}

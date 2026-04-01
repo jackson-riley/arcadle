@@ -36,6 +36,7 @@ export default function ScreenshotsPage() {
                 alt=""
                 width={200}
                 height={113}
+                unoptimized
                 className="mx-auto aspect-video w-full max-w-[200px] rounded border border-zinc-800 object-cover"
               />
               <p className="mt-2 text-center text-xs text-zinc-400 group-hover:text-zinc-200">
