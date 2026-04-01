@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { GAME_TITLES } from "@/lib/games";
 import { normalizeForTextMatch } from "@/lib/stringNormalize";
 
 interface GuessInputProps {
@@ -12,9 +13,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   const [value, setValue] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const requestSeqRef = useRef(0);
 
   const shownSuggestions = useMemo(() => suggestions.slice(0, 8), [suggestions]);
   const selectedSuggestion = useMemo(
@@ -37,35 +36,16 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
 
   useEffect(() => {
     const q = value.trim();
-    if (!q || q.length < 2) {
+    if (q.length < 3) {
       setSuggestions([]);
-      setLoading(false);
       return;
     }
-
-    const seq = ++requestSeqRef.current;
-    setLoading(true);
-    const controller = new AbortController();
-    const t = window.setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, {
-          signal: controller.signal,
-        });
-        const data = (await res.json()) as string[];
-        if (requestSeqRef.current === seq) {
-          setSuggestions(Array.isArray(data) ? data : []);
-        }
-      } catch {
-        // ignore (aborts + transient failures)
-      } finally {
-        if (requestSeqRef.current === seq) setLoading(false);
-      }
-    }, 250);
-
-    return () => {
-      window.clearTimeout(t);
-      controller.abort();
-    };
+    const key = normalizeForTextMatch(q);
+    setSuggestions(
+      GAME_TITLES.filter((title) =>
+        normalizeForTextMatch(title).includes(key)
+      )
+    );
   }, [value]);
 
   const submit = useCallback(
@@ -92,7 +72,9 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((i) => Math.min(i + 1, suggestions.length - 1));
+      setSelectedIndex((i) =>
+        Math.min(i + 1, shownSuggestions.length - 1)
+      );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((i) => Math.max(i - 1, -1));
@@ -129,14 +111,8 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
             autoComplete="off"
             spellCheck={false}
           />
-          {value.trim().length >= 2 &&
-            (shownSuggestions.length > 0 || loading) && (
+          {value.trim().length >= 3 && shownSuggestions.length > 0 && (
               <ul className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(10rem,32dvh)] overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
-                {loading && (
-                  <li className="px-4 py-2.5 text-sm text-zinc-500">
-                    Searching…
-                  </li>
-                )}
                 {shownSuggestions.map((s, i) => (
                   <li
                     key={s}
