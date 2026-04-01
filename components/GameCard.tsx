@@ -13,8 +13,7 @@ interface GameCardProps {
 /**
  * Screenshot uses pre-generated blur levels from `/public/screenshots/<slug>/blur-{0..5}.jpg`
  * and `solved.jpg` (see `scripts/generate-blurs.ts`).
- * Playing and solved use the same aspect-video frame so the image height matches (no tall
- * flex-1 strip with empty letterboxing).
+ * Natural aspect ratio (w-full h-auto), capped with max-h-[45dvh] for desktop.
  */
 export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -28,34 +27,33 @@ export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
   return (
     <div className="flex w-full shrink-0 flex-col items-center">
       <div
-        className="relative aspect-video w-full shrink-0 overflow-hidden rounded-lg"
+        className="relative w-full overflow-hidden rounded-lg"
         style={{ background: "#111" }}
       >
         {!imageError && (
-          <div className="absolute inset-0 z-0 flex items-center justify-center">
+          <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageSrc}
               alt={game.title}
-              className="max-h-full max-w-full object-contain transition-all duration-700 ease-out"
+              className="block h-auto w-full max-h-[45dvh] object-contain transition-all duration-700 ease-out"
               onError={() => setImageError(true)}
             />
-          </div>
-        )}
-
-        {!solved && !imageError && (
-          <div
-            className="pointer-events-none absolute inset-0 z-[1]"
-            style={{
-              boxShadow: "inset 0 0 48px rgba(0,0,0,0.45)",
-            }}
-            aria-hidden
-          />
+            {!solved && (
+              <div
+                className="pointer-events-none absolute inset-0 z-[1]"
+                style={{
+                  boxShadow: "inset 0 0 48px rgba(0,0,0,0.45)",
+                }}
+                aria-hidden
+              />
+            )}
+          </>
         )}
 
         {!solved && imageError && (
           <div
-            className="absolute inset-0 z-0"
+            className="min-h-[min(45dvh,12rem)] w-full"
             style={{
               background: `
                 radial-gradient(ellipse at 40% 35%, ${game.color}55 0%, transparent 55%),

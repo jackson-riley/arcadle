@@ -6,10 +6,9 @@ import { normalizeForTextMatch } from "@/lib/stringNormalize";
 interface GuessInputProps {
   onGuess: (title: string) => void;
   disabled?: boolean;
-  onGiveUp?: () => void;
 }
 
-export default function GuessInput({ onGuess, disabled, onGiveUp }: GuessInputProps) {
+export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   const [value, setValue] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -121,18 +120,7 @@ export default function GuessInput({ onGuess, disabled, onGiveUp }: GuessInputPr
             spellCheck={false}
           />
         </div>
-        <div className="flex shrink-0 items-center gap-4">
-          {onGiveUp && (
-            <button
-              type="button"
-              onClick={onGiveUp}
-              disabled={disabled}
-              className="text-[12px] font-medium text-zinc-600 underline-offset-2 hover:text-zinc-400 hover:underline
-                         disabled:pointer-events-none disabled:opacity-30"
-            >
-              Give up
-            </button>
-          )}
+        <div className="flex shrink-0 items-center">
           <button
             type="button"
             onClick={() => {
