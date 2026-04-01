@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "fetch-screenshots": "tsx scripts/fetch-screenshots.ts",
-    "generate-blurs": "tsx scripts/generate-blurs.ts"
+    "generate-blurs": "tsx scripts/generate-blurs.ts",
+    "generate-favicon": "tsx scripts/generate-favicon.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.37.0",
@@ -26,6 +27,7 @@
     "postcss": "^8.4.0",
     "sharp": "^0.33.4",
     "tailwindcss": "^3.4.0",
+    "to-ico": "^1.1.5",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0"
   }
