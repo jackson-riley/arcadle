@@ -36,16 +36,12 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
 
   useEffect(() => {
     const q = value.trim();
-    if (q.length < 3) {
+    if (!q || q.length < 3) {
       setSuggestions([]);
       return;
     }
     const key = normalizeForTextMatch(q);
-    setSuggestions(
-      GAME_TITLES.filter((title) =>
-        normalizeForTextMatch(title).includes(key)
-      )
-    );
+    setSuggestions(GAME_TITLES.filter((t) => normalizeForTextMatch(t).includes(key)));
   }, [value]);
 
   const submit = useCallback(
