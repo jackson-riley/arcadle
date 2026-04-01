@@ -20,6 +20,10 @@ const NESTED_LABEL_COLOR = "#6A6560";
 const BORDER_SUBTLE = "rgba(255,255,255,0.04)";
 const BORDER_CARD = "rgba(255,255,255,0.06)";
 
+/** Guess-distribution bar fill (all rows with data) */
+const BAR_FILL_GRADIENT =
+  "linear-gradient(90deg, var(--color-green), var(--color-green-light))";
+
 /** BASE = 0.35s — animation delays (pure CSS stagger via --d / --bar-d) */
 const T = {
   overlay: "0.35s",
@@ -296,29 +300,34 @@ export default function StatsModal({
                           >
                             <div
                               className={
-                                isWinningRow
-                                  ? "stats-modal-bar-fill absolute left-0 top-0 flex h-full min-w-0 items-center justify-end overflow-hidden rounded-md pr-2 font-dm-sans text-sm font-medium tabular-nums text-[#E8E4DF]"
+                                pct > 0
+                                  ? isWinningRow
+                                    ? "stats-modal-bar-fill absolute left-0 top-0 flex h-full min-w-0 items-center justify-end overflow-hidden rounded-md pr-2 font-dm-sans text-sm font-medium tabular-nums text-[#E8E4DF]"
+                                    : "absolute left-0 top-0 flex h-full min-w-0 items-center justify-end overflow-hidden rounded-md pr-2 font-dm-sans text-sm font-medium tabular-nums text-[#E8E4DF]"
                                   : "absolute left-0 top-0 flex h-full min-w-0 items-center justify-end overflow-hidden rounded-md pr-2 font-dm-sans text-sm font-medium tabular-nums"
                               }
                               style={
-                                isWinningRow
-                                  ? ({
-                                      ...barGrowVars(growD, `${pct}%`),
-                                      background:
-                                        "linear-gradient(90deg, var(--color-green), var(--color-green-light))",
-                                      boxShadow: "0 0 20px var(--color-green-glow)",
-                                    } as CSSProperties)
-                                  : {
-                                      width: `${pct}%`,
-                                      background:
-                                        pct > 0
-                                          ? "rgba(255,255,255,0.07)"
-                                          : "transparent",
+                                pct === 0
+                                  ? {
+                                      width: "0%",
+                                      background: "transparent",
                                       color: TEXT_PRIMARY,
                                     }
+                                  : isWinningRow
+                                    ? ({
+                                        ...barGrowVars(growD, `${pct}%`),
+                                        background: BAR_FILL_GRADIENT,
+                                        boxShadow:
+                                          "0 0 20px var(--color-green-glow)",
+                                      } as CSSProperties)
+                                    : {
+                                        width: `${pct}%`,
+                                        background: BAR_FILL_GRADIENT,
+                                        color: TEXT_PRIMARY,
+                                      }
                               }
                             >
-                              {isWinningRow ? (
+                              {isWinningRow && pct > 0 ? (
                                 <span className="relative z-10">{count}</span>
                               ) : (
                                 <span>{count}</span>
