@@ -119,6 +119,29 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
             autoComplete="off"
             spellCheck={false}
           />
+          {value.trim().length >= 2 &&
+            (shownSuggestions.length > 0 || loading) && (
+              <ul className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(10rem,32dvh)] overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
+                {loading && (
+                  <li className="px-4 py-2.5 text-sm text-zinc-500">
+                    Searching…
+                  </li>
+                )}
+                {shownSuggestions.map((s, i) => (
+                  <li
+                    key={s}
+                    onClick={() => submit(s)}
+                    className={`px-4 py-2.5 cursor-pointer transition-colors text-sm ${
+                      i === selectedIndex
+                        ? "bg-zinc-700 text-white"
+                        : "text-zinc-300 hover:bg-zinc-800"
+                    }`}
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
         </div>
         <div className="flex shrink-0 items-center">
           <button
@@ -135,27 +158,6 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
           </button>
         </div>
       </div>
-
-      {value.trim().length >= 2 && (shownSuggestions.length > 0 || loading) && (
-        <ul className="absolute bottom-full z-50 mb-1 max-h-[min(10rem,32dvh)] w-full overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
-          {loading && (
-            <li className="px-4 py-2.5 text-sm text-zinc-500">Searching…</li>
-          )}
-          {shownSuggestions.map((s, i) => (
-            <li
-              key={s}
-              onClick={() => submit(s)}
-              className={`px-4 py-2.5 cursor-pointer transition-colors text-sm ${
-                i === selectedIndex
-                  ? "bg-zinc-700 text-white"
-                  : "text-zinc-300 hover:bg-zinc-800"
-              }`}
-            >
-              {s}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
