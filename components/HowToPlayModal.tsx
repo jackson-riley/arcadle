@@ -164,6 +164,17 @@ export default function HowToPlayModal({ onPlay, onClose }: HowToPlayModalProps)
           A new puzzle drops every day at midnight.
         </p>
 
+        <p className="mb-4 text-center">
+          <a
+            href="https://forms.gle/M2yf5ozhmUFoX6J87"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[12px] font-medium text-[#6A6560] underline-offset-2 transition-colors hover:text-[#8A8480] hover:underline"
+          >
+            Feedback
+          </a>
+        </p>
+
         <button type="button" onClick={onPlay} className="how-to-play-play">
           Play
         </button>

@@ -93,7 +93,7 @@ function NextPuzzleCountdown() {
   }, []);
 
   return (
-    <p className="text-zinc-500 text-sm mt-3">
+    <p className="text-[12px] text-zinc-500">
       Next puzzle in{" "}
       <span className="tabular-nums text-zinc-400">{countdown}</span>
     </p>
@@ -417,8 +417,8 @@ export default function Game() {
   // Don't render until hydrated to avoid localStorage mismatch
   if (!hydrated || !puzzle) {
     return (
-      <div className="w-full max-w-lg px-5 pt-20 text-center">
-        <div className="text-zinc-700 text-sm">Loading...</div>
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-5">
+        <div className="text-sm text-zinc-700">Loading...</div>
       </div>
     );
   }
@@ -427,161 +427,173 @@ export default function Game() {
   const canGoBack = puzzle.puzzleNumber > 1;
   const canGoForward = puzzle.puzzleNumber < todayNumber;
 
+  const playing = gameState === "playing";
+
   return (
-    <div className="w-full max-w-lg px-5">
-      <header className="flex flex-col gap-1.5 border-b border-[rgba(255,255,255,0.04)] px-0 py-3.5 mb-4">
-        <div className="flex items-center justify-between gap-4">
-          <h1
-            className="m-0 text-[30px] font-extrabold leading-none tracking-[-0.03em] lowercase"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-          >
-            <span style={{ color: "#E8E4DF" }}>lud</span>
-            <span style={{ color: "#A09A94" }}>le</span>
-          </h1>
-          <div className="flex shrink-0 items-center gap-2">
-            <div
-              className={`transition-opacity duration-200 ${
-                gameState === "playing"
-                  ? "opacity-30 pointer-events-none"
-                  : "opacity-100"
-              }`}
-              aria-hidden={gameState === "playing"}
-            >
-              <ShareButton
-                guesses={guesses}
-                maxGuesses={MAX_GUESSES}
-                won={gameState === "won"}
-                puzzleNumber={puzzle.puzzleNumber}
-                isArchive={isArchiveView}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowHowToPlay(true)}
-              className={HEADER_GHOST_BTN_SQUARE + " shrink-0 tabular-nums"}
-              aria-label="How to play"
-            >
-              ?
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowStats(true)}
-              className={HEADER_GHOST_BTN + " inline-flex items-center justify-center"}
-            >
-              Stats
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 font-['DM_Sans',sans-serif] whitespace-nowrap">
-          <button
-            type="button"
-            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
-            disabled={!canGoBack}
-            className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
-            aria-label="Previous day"
-          >
-            ←
-          </button>
-          <span className="min-w-[4.25rem] text-center text-[13px] font-medium tabular-nums text-[#8A8480]">
-            Day {puzzle.puzzleNumber}
-          </span>
-          <button
-            type="button"
-            onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
-            disabled={!canGoForward}
-            className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
-            aria-label="Next day"
-          >
-            →
-          </button>
-          {isArchiveView && (
-            <button
-              type="button"
-              onClick={() => applyPuzzleNumber(todayNumber)}
-              className="ml-1 rounded-md px-2 py-0.5 text-[12px] font-medium text-[#6A6560] transition-colors hover:text-[#C8C4BF] outline-none focus-visible:ring-2 focus-visible:ring-white/10"
-            >
-              Today
-            </button>
-          )}
-        </div>
-      </header>
-
-      <div className="flex flex-col gap-4 pb-8">
-        {/* Visual card */}
-        <GameCard
-          game={puzzle.game}
-          revealLevel={revealLevel}
-          solved={gameState !== "playing"}
-        />
-        {isArchiveView && (
-          <p className="text-center text-xs text-zinc-600 -mt-1">
-            Archive
-          </p>
-        )}
-
-        {/* Guess progress */}
-        <GuessHistory
-          guesses={guesses}
-          maxGuesses={MAX_GUESSES}
-          game={puzzle.game}
-        />
-
-        {/* Clues */}
-        <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-lg p-4">
-          <ClueStack
-            key={puzzle.puzzleNumber}
-            clues={puzzle.clues}
-            revealCount={revealCount}
-          />
-        </div>
-
-        {/* Wrong guesses */}
-        {guesses.length > 0 && gameState === "playing" && (
-          <div className="flex flex-wrap gap-1.5">
-            {guesses
-              .filter((g) => !guessMatchesGame(puzzle.game, g))
-              .map((g, i) => (
-                <span
-                  key={i}
-                  className="text-xs px-2 py-1 bg-red-500/10 text-red-400/70 rounded border border-red-500/20"
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-lg flex-1 flex-col overflow-hidden px-5 pt-[max(1rem,calc(env(safe-area-inset-top)+0.75rem))] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      {/* One vertical unit: header → … → input / “Next puzzle” — centered; playing uses same image height as solved */}
+      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
+        <div className="flex w-full shrink-0 flex-col gap-2">
+          <header className="flex shrink-0 flex-col gap-1 border-b border-[rgba(255,255,255,0.04)] py-2">
+            <div className="flex items-center justify-between gap-3">
+              <h1
+                className="m-0 text-[26px] font-extrabold leading-none tracking-[-0.03em] lowercase sm:text-[28px]"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                <span style={{ color: "#E8E4DF" }}>lud</span>
+                <span style={{ color: "#A09A94" }}>le</span>
+              </h1>
+              <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                <div
+                  className={`transition-opacity duration-200 ${
+                    playing
+                      ? "pointer-events-none opacity-30"
+                      : "opacity-100"
+                  }`}
+                  aria-hidden={playing}
                 >
-                  {g}
-                </span>
-              ))}
+                  <ShareButton
+                    guesses={guesses}
+                    maxGuesses={MAX_GUESSES}
+                    won={gameState === "won"}
+                    puzzleNumber={puzzle.puzzleNumber}
+                    isArchive={isArchiveView}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowHowToPlay(true)}
+                  className={HEADER_GHOST_BTN_SQUARE + " shrink-0 tabular-nums"}
+                  aria-label="How to play"
+                >
+                  ?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowStats(true)}
+                  className={
+                    HEADER_GHOST_BTN + " inline-flex items-center justify-center"
+                  }
+                >
+                  Stats
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-['DM_Sans',sans-serif] whitespace-nowrap">
+              <button
+                type="button"
+                onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}
+                disabled={!canGoBack}
+                className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
+                aria-label="Previous day"
+              >
+                ←
+              </button>
+              <span className="min-w-[4rem] text-center text-[12px] font-medium tabular-nums text-[#8A8480] sm:text-[13px]">
+                Day {puzzle.puzzleNumber}
+                {isArchiveView && (
+                  <span className="text-zinc-600"> · Archive</span>
+                )}
+              </span>
+              <button
+                type="button"
+                onClick={() => applyPuzzleNumber(puzzle.puzzleNumber + 1)}
+                disabled={!canGoForward}
+                className="rounded p-0.5 text-base leading-none text-[#6A6560] transition-colors hover:text-[#C8C4BF] disabled:pointer-events-none disabled:opacity-25 disabled:hover:text-[#6A6560] outline-none focus-visible:text-[#C8C4BF] focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]"
+                aria-label="Next day"
+              >
+                →
+              </button>
+              {isArchiveView && (
+                <button
+                  type="button"
+                  onClick={() => applyPuzzleNumber(todayNumber)}
+                  className="ml-0.5 rounded-md px-2 py-0.5 text-[11px] font-medium text-[#6A6560] transition-colors hover:text-[#C8C4BF] outline-none focus-visible:ring-2 focus-visible:ring-white/10 sm:text-[12px]"
+                >
+                  Today
+                </button>
+              )}
+            </div>
+          </header>
+
+          {/* Screenshot — same aspect-video frame playing vs solved (avoids flex-1 height / gap issue) */}
+          <div className="flex w-full shrink-0 flex-col items-center overflow-hidden">
+            <GameCard
+              game={puzzle.game}
+              revealLevel={revealLevel}
+              solved={!playing}
+            />
           </div>
-        )}
 
-        {/* Input */}
-        {gameState === "playing" && (
-          <>
-            <GuessInput onGuess={handleGuess} />
-            <button
-              onClick={handleGiveUp}
-              className="text-xs text-zinc-700 hover:text-zinc-500 transition-colors self-center"
-            >
-              Give up
-            </button>
-          </>
-        )}
+          {/* Guess progress */}
+          <div className="w-full shrink-0 py-0.5">
+            <GuessHistory
+              guesses={guesses}
+              maxGuesses={MAX_GUESSES}
+              game={puzzle.game}
+            />
+          </div>
 
-        {/* End state */}
-        {gameState !== "playing" && (
-          <div className="text-center py-4 animate-slide-up">
-            {gameState === "won" ? (
-              <p className="font-dm-sans text-sm text-ludle-green">
-                Solved in {guesses.length} guess{guesses.length !== 1 && "es"}
-              </p>
-            ) : (
-              <div>
-                <p className="text-zinc-500 text-sm">The answer was</p>
-                <p className="text-zinc-100 text-lg font-semibold mt-1">
-                  {puzzle.game.title}
-                </p>
+          {/* Clues */}
+          <div className="w-full shrink-0 rounded-lg border border-zinc-800/50 bg-zinc-900/50 px-2.5 py-2">
+            <ClueStack
+              key={puzzle.puzzleNumber}
+              clues={puzzle.clues}
+              revealCount={revealCount}
+            />
+          </div>
+
+          {/* Wrong guesses — clip instead of growing the layout */}
+          {guesses.length > 0 && playing && (
+            <div className="max-h-7 shrink-0 overflow-hidden">
+              <div className="flex flex-wrap gap-1">
+                {guesses
+                  .filter((g) => !guessMatchesGame(puzzle.game, g))
+                  .map((g, i) => (
+                    <span
+                      key={i}
+                      className="max-w-full truncate rounded border border-red-500/20 bg-red-500/10 px-1.5 py-0.5 text-[10px] text-red-400/80 sm:text-[11px]"
+                      title={g}
+                    >
+                      {g}
+                    </span>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Input / end state */}
+          <div className="shrink-0 space-y-1.5 pt-1">
+            {playing && (
+              <GuessInput onGuess={handleGuess} onGiveUp={handleGiveUp} />
+            )}
+
+            {!playing && (
+              <div className="animate-slide-up space-y-1 text-center">
+                {gameState === "won" ? (
+                  <div>
+                    <p className="font-dm-sans text-[13px] text-ludle-green sm:text-sm">
+                      Solved in {guesses.length} guess{guesses.length !== 1 && "es"}
+                    </p>
+                    <p className="mt-1 text-[15px] font-semibold leading-tight text-zinc-100 sm:text-base">
+                      {puzzle.game.title}
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-[12px] text-zinc-500 sm:text-sm">
+                      The answer was
+                    </p>
+                    <p className="mt-0.5 text-[15px] font-semibold leading-tight text-zinc-100 sm:text-base">
+                      {puzzle.game.title}
+                    </p>
+                  </div>
+                )}
+                {!isArchiveView && <NextPuzzleCountdown />}
               </div>
             )}
-            {!isArchiveView && <NextPuzzleCountdown />}
           </div>
-        )}
+        </div>
       </div>
 
       {/* How to play */}

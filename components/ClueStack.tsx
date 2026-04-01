@@ -46,7 +46,7 @@ export default function ClueStack({ clues, revealCount }: ClueStackProps) {
   }, [revealCount]);
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col gap-1">
       {clues.map((clue, i) => {
         const revealed = i < revealCount;
         const isNext = !revealed && i === revealCount;
@@ -55,7 +55,7 @@ export default function ClueStack({ clues, revealCount }: ClueStackProps) {
         return (
           <div
             key={clue.label}
-            className="grid w-full items-center gap-x-3 text-sm [grid-template-columns:minmax(0,7.5rem)_0.875rem_minmax(0,1fr)]"
+            className="grid w-full items-center gap-x-2 text-[13px] leading-tight [grid-template-columns:minmax(0,6.5rem)_0.75rem_minmax(0,1fr)]"
           >
             <span
               className={`text-right font-mono text-xs leading-none tracking-wider ${

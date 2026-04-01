@@ -29,14 +29,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full overflow-hidden">
       <head>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
         />
       </head>
-      <body className="min-h-screen bg-[#111110]">
+      <body className="h-full min-h-0 overflow-hidden overscroll-none bg-[#111110]">
         {children}
         <Analytics />
       </body>

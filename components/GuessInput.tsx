@@ -6,9 +6,10 @@ import { normalizeForTextMatch } from "@/lib/stringNormalize";
 interface GuessInputProps {
   onGuess: (title: string) => void;
   disabled?: boolean;
+  onGiveUp?: () => void;
 }
 
-export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
+export default function GuessInput({ onGuess, disabled, onGiveUp }: GuessInputProps) {
   const [value, setValue] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -102,37 +103,53 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   };
 
   return (
-    <div className="relative w-full">
-      <div className="flex gap-2">
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKey}
-          disabled={disabled}
-          placeholder={disabled ? "Game over" : "Type a game title..."}
-          className="flex-1 bg-zinc-900 border border-zinc-700 text-zinc-100 px-4 py-3 rounded-lg
-                     focus:outline-none focus:border-zinc-500 placeholder-zinc-600
-                     disabled:opacity-40 transition-colors"
-          autoComplete="off"
-          spellCheck={false}
-        />
-        <button
-          onClick={() => {
-            if (selectedSuggestion) submit(selectedSuggestion);
-            else if (exactMatch) submit(exactMatch);
-          }}
-          disabled={disabled || !canSubmit}
-          className="px-5 py-3 bg-zinc-100 text-zinc-900 font-semibold rounded-lg
-                     hover:bg-white disabled:opacity-20 transition-all"
-        >
-          Guess
-        </button>
+    <div className="relative w-full min-w-0">
+      <div className="flex min-w-0 items-stretch gap-2">
+        <div className="relative min-w-0 flex-1">
+          <input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKey}
+            disabled={disabled}
+            placeholder={disabled ? "Game over" : "Type a game title..."}
+            className="w-full bg-zinc-900 border border-zinc-700 text-zinc-100 px-3 py-2.5 rounded-lg text-[15px]
+                       focus:outline-none focus:border-zinc-500 placeholder-zinc-600
+                       disabled:opacity-40 transition-colors"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+        <div className="flex shrink-0 items-center gap-4">
+          {onGiveUp && (
+            <button
+              type="button"
+              onClick={onGiveUp}
+              disabled={disabled}
+              className="text-[12px] font-medium text-zinc-600 underline-offset-2 hover:text-zinc-400 hover:underline
+                         disabled:pointer-events-none disabled:opacity-30"
+            >
+              Give up
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              if (selectedSuggestion) submit(selectedSuggestion);
+              else if (exactMatch) submit(exactMatch);
+            }}
+            disabled={disabled || !canSubmit}
+            className="px-4 py-2.5 bg-zinc-100 text-zinc-900 text-[15px] font-semibold rounded-lg
+                       hover:bg-white disabled:opacity-20 transition-all"
+          >
+            Guess
+          </button>
+        </div>
       </div>
 
       {value.trim().length >= 2 && (shownSuggestions.length > 0 || loading) && (
-        <ul className="absolute z-50 w-full mt-1 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden shadow-xl max-h-60 overflow-y-auto">
+        <ul className="absolute bottom-full z-50 mb-1 max-h-[min(10rem,32dvh)] w-full overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
           {loading && (
             <li className="px-4 py-2.5 text-sm text-zinc-500">Searching…</li>
           )}
