@@ -13,11 +13,11 @@ export interface GameEntry {
   year: number;
   genre: string;
   platforms: string;
-  length: string;
-  /** One-sentence description of the core gameplay loop */
-  coreLoop: string;
-  /** Hex color for abstract card visual */
-  color: string;
+  length?: string;
+  /** Optional: One-sentence description of the core gameplay loop */
+  coreLoop?: string;
+  /** Optional: Hex color for abstract card visual */
+  color?: string;
   /** Optional: path to screenshot for image-based reveal */
   screenshotUrl?: string;
 }

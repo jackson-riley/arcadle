@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "fetch-candidate-screenshots": "tsx scripts/fetch-candidate-screenshots.ts",
+    "fetch-candidates": "tsx scripts/fetch-candidates.ts",
     "fetch-screenshots": "tsx scripts/fetch-screenshots.ts",
     "generate-blurs": "tsx scripts/generate-blurs.ts",
     "generate-favicon": "tsx scripts/generate-favicon.ts"

@@ -1,4 +1,8 @@
-import { getGamesOrderForYear, selectGameForFixedIndex } from "./games";
+import {
+  getAdditionalGamesOrderForYear,
+  getGamesOrderForYear,
+  selectGameForFixedIndex,
+} from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
 // Anchor date for Day #1 (local calendar date: March 20, 2026).
@@ -34,7 +38,11 @@ export function getPuzzleForNumber(num: number): DailyPuzzle {
   const year = date.getFullYear();
   const shuffled = getGamesOrderForYear(year);
   const preferredIndex = (num - 1) + EPOCH_INDEX_OFFSET;
-  const game = selectGameForFixedIndex(shuffled, preferredIndex);
+  const game = selectGameForFixedIndex(
+    shuffled,
+    preferredIndex,
+    getAdditionalGamesOrderForYear(year)
+  );
   return {
     puzzleNumber: num,
     game,

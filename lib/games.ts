@@ -16,6 +16,7 @@ import { GameEntry } from "./types";
 // Base seed for the first launch year (2026). Each later calendar year gets a
 // new derived seed on Jan 1 so the daily order rerandomizes (see getGamesOrderForYear).
 const SHUFFLE_SEED = 1710005;
+const ADDITIONAL_SHUFFLE_SEED = 2840017;
 
 function mulberry32(a: number): () => number {
   return () => {
@@ -38,7 +39,7 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
   return out;
 }
 
-const RAW_GAMES_DB: GameEntry[] = [
+export const RAW_GAMES_DB: GameEntry[] = [
   // ============================================================
   // INDIE / EXPERIMENTAL
   // ============================================================
@@ -4013,6 +4014,10 @@ const RAW_GAMES_DB: GameEntry[] = [
   },
 ];
 
+const ADDITIONAL_GAMES_DB: GameEntry[] = [
+  // New games added post-launch — append here freely
+];
+
 // Exclusion set that existed at launch. Used to build PLAYABLE_GAMES_BASE (shuffle input).
 // Never modify — the shuffle order is frozen from this set.
 const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
@@ -4091,6 +4096,10 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "Biomutant",
 ]);
 
+const ADDITIONAL_GAMES_EXCLUDED_TITLES = new Set<string>([
+  // titles to skip from ADDITIONAL_GAMES_DB
+]);
+
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
   (g) => !ORIGINAL_EXCLUDED_TITLES.has(g.title)
 );
@@ -4113,25 +4122,55 @@ export function getGamesOrderForYear(year: number): GameEntry[] {
   return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
 }
 
+export function getAdditionalGamesOrderForYear(year: number): GameEntry[] {
+  const base = ADDITIONAL_GAMES_DB.filter(
+    (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
+  );
+  let seed = ADDITIONAL_SHUFFLE_SEED;
+  if (year !== LAUNCH_SHUFFLE_YEAR) {
+    let h = (ADDITIONAL_SHUFFLE_SEED ^ year) >>> 0;
+    h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+    h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+    seed = (h ^ (h >>> 16)) >>> 0;
+  }
+  return seededShuffle(base, seed);
+}
+
 /** Returns the game for a day using a fixed index mapping. Day N maps to shuffled index
  * (N-1 + epochOffset). If that game is excluded, substitutes the next non-excluded game
  * after that index (wrapping). Day N+1's mapping is independent — exclusions only affect
- * that one day. */
+ * that one day. Once the original pool is exhausted, draws from the additional pool. */
 export function selectGameForFixedIndex(
   shuffled: GameEntry[],
-  preferredIndex: number
+  preferredIndex: number,
+  additionalShuffled: GameEntry[] = []
 ): GameEntry {
-  const len = shuffled.length;
-  const idx = ((preferredIndex % len) + len) % len;
-  const primary = shuffled[idx];
-  if (!ADDITIONAL_EXCLUDED_TITLES.has(primary.title)) return primary;
-  // Find next non-excluded after idx (wrap around)
-  for (let i = 1; i < len; i++) {
-    const j = (idx + i) % len;
-    const game = shuffled[j];
-    if (!ADDITIONAL_EXCLUDED_TITLES.has(game.title)) return game;
+  const originalLen = shuffled.length;
+
+  if (preferredIndex < originalLen) {
+    const idx = preferredIndex % originalLen;
+    const primary = shuffled[idx];
+    if (!ADDITIONAL_EXCLUDED_TITLES.has(primary.title)) return primary;
+    for (let i = 1; i < originalLen; i++) {
+      const j = (idx + i) % originalLen;
+      const game = shuffled[j];
+      if (!ADDITIONAL_EXCLUDED_TITLES.has(game.title)) return game;
+    }
+    throw new Error("No playable games in original pool");
   }
-  throw new Error("No playable games in database");
+
+  const addIdx = preferredIndex - originalLen;
+  const addLen = additionalShuffled.length;
+  if (!addLen) throw new Error("Additional pool is empty");
+  const idx = addIdx % addLen;
+  const primary = additionalShuffled[idx];
+  if (!ADDITIONAL_GAMES_EXCLUDED_TITLES.has(primary.title)) return primary;
+  for (let i = 1; i < addLen; i++) {
+    const j = (idx + i) % addLen;
+    const game = additionalShuffled[j];
+    if (!ADDITIONAL_GAMES_EXCLUDED_TITLES.has(game.title)) return game;
+  }
+  throw new Error("No playable games in additional pool");
 }
 
 /** Full list of playable games in 2026 order (screenshots, tooling). Excludes additional exclusions. */
@@ -4140,8 +4179,10 @@ export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR).f
 );
 
 /** Sorted title list for autocomplete — deduplicated, excludes additional exclusions */
-export const GAME_TITLES = PLAYABLE_GAMES_BASE.filter(
-  (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
-).map((g) => g.title)
-  .filter((title, index, arr) => arr.indexOf(title) === index)
+export const GAME_TITLES = [
+  ...PLAYABLE_GAMES_BASE.filter((g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)),
+  ...ADDITIONAL_GAMES_DB.filter((g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)),
+]
+  .map((g) => g.title)
+  .filter((t, i, a) => a.indexOf(t) === i)
   .sort();
