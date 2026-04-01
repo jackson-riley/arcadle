@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { GAMES_DB } from "@/lib/games";
 import { slugify } from "@/lib/slug";
@@ -30,9 +31,11 @@ export default function ScreenshotsPage() {
               rel="noopener noreferrer"
               className="group block"
             >
-              <img
+              <Image
                 src={`/screenshots/${slug}/blur-5.jpg`}
                 alt=""
+                width={200}
+                height={113}
                 className="mx-auto aspect-video w-full max-w-[200px] rounded border border-zinc-800 object-cover"
               />
               <p className="mt-2 text-center text-xs text-zinc-400 group-hover:text-zinc-200">

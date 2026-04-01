@@ -127,7 +127,7 @@ body {
 .how-to-play-play {
   background: var(--color-green);
   color: var(--color-on-green);
-  font-family: Outfit, system-ui, sans-serif;
+  font-family: var(--font-outfit), system-ui, sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.25;

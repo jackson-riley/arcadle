@@ -99,7 +99,10 @@ export default function StatsModal({
   const hasGlobalStats =
     globalData != null && globalData.totalPlayers > 0;
 
-  const dist = globalData?.guessDistribution ?? {};
+  const dist = useMemo(
+    () => globalData?.guessDistribution ?? {},
+    [globalData?.guessDistribution]
+  );
   const maxGlobal = Math.max(
     1,
     ...[1, 2, 3, 4, 5, 6].map((n) => dist[n] ?? 0)

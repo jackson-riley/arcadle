@@ -6,8 +6,8 @@ const SUBMITTED_KEY = (puzzleNumber: number, playerId: string) =>
   `submitted:${puzzleNumber}:${playerId}`;
 
 /**
- * Same variables as the Upstash dashboard quickstart (`Redis.fromEnv()`):
- * `UPSTASH_REDIS_REST_*` or Vercel-style `KV_REST_*`.
+ * `UPSTASH_REDIS_REST_*` or Vercel-style `KV_REST_*` (same fallbacks as
+ * `Redis.fromEnv()` in @upstash/redis).
  */
 function getRedis(): Redis | null {
   const url =
@@ -15,7 +15,7 @@ function getRedis(): Redis | null {
   const token =
     process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   if (!url || !token) return null;
-  return Redis.fromEnv();
+  return new Redis({ url, token });
 }
 
 const PLAYER_ID_RE = /^[a-zA-Z0-9_-]{8,128}$/;
@@ -36,18 +36,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Invalid puzzleNumber" }, { status: 400 });
   }
 
-  if (process.env.NODE_ENV === "development") {
-    console.debug("[stats API] GET Redis key", STATS_KEY(puzzleNumber));
-  }
-
   const empty = {
     totalPlayers: 0,
     solveRate: 0,
     guessDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
   };
 
+  // 200 + zeros when KV is not configured so the client and local dev behave
+  // like “no data yet” instead of a failed fetch.
   if (!redis) {
-    return NextResponse.json(empty, { status: 503 });
+    return NextResponse.json(empty);
   }
 
   try {
@@ -70,7 +68,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     console.error("GET /api/stats", e);
-    return NextResponse.json(empty, { status: 503 });
+    return NextResponse.json(empty);
   }
 }
 
@@ -104,10 +102,6 @@ export async function POST(req: NextRequest) {
         : NaN;
   if (!Number.isFinite(pn) || pn < 1 || pn !== Math.floor(pn)) {
     return NextResponse.json({ error: "Invalid puzzleNumber" }, { status: 400 });
-  }
-
-  if (process.env.NODE_ENV === "development") {
-    console.debug("[stats API] POST Redis key", STATS_KEY(pn));
   }
 
   if (typeof solved !== "boolean") {

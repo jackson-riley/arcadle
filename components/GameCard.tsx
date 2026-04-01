@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import type { GameEntry } from "@/lib/types";
 import { slugify } from "@/lib/slug";
 
@@ -52,11 +53,12 @@ export default function GameCard({
                   aria-hidden
                 />
               )}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={imageSrc}
                 alt={game.title}
-                className={`absolute inset-0 z-[1] h-full w-full object-contain transition-opacity duration-300 ease-out ${
+                fill
+                sizes="(max-width: 700px) 100vw, 700px"
+                className={`z-[1] object-contain transition-opacity duration-300 ease-out ${
                   imageLoaded ? "opacity-100" : "opacity-0"
                 }`}
                 onLoad={() => setImageLoaded(true)}

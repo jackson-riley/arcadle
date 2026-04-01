@@ -112,22 +112,22 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
             spellCheck={false}
           />
           {value.trim().length >= 3 && shownSuggestions.length > 0 && (
-              <ul className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(10rem,32dvh)] overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
-                {shownSuggestions.map((s, i) => (
-                  <li
-                    key={s}
-                    onClick={() => submit(s)}
-                    className={`px-4 py-2.5 cursor-pointer transition-colors text-sm ${
-                      i === selectedIndex
-                        ? "bg-zinc-700 text-white"
-                        : "text-zinc-300 hover:bg-zinc-800"
-                    }`}
-                  >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ul className="absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(10rem,32dvh)] overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 shadow-xl">
+              {shownSuggestions.map((s, i) => (
+                <li
+                  key={s}
+                  onClick={() => submit(s)}
+                  className={`px-4 py-2.5 cursor-pointer transition-colors text-sm ${
+                    i === selectedIndex
+                      ? "bg-zinc-700 text-white"
+                      : "text-zinc-300 hover:bg-zinc-800"
+                  }`}
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="flex min-w-0 shrink-0 items-center justify-self-end">
           <button

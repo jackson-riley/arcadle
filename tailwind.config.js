@@ -7,8 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        outfit: ["Outfit", "system-ui", "sans-serif"],
-        "dm-sans": ["DM Sans", "system-ui", "sans-serif"],
+        outfit: ["var(--font-outfit)", "system-ui", "sans-serif"],
+        "dm-sans": ["var(--font-dm-sans)", "system-ui", "sans-serif"],
       },
       colors: {
         ludle: {

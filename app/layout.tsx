@@ -1,6 +1,21 @@
 import type { Metadata, Viewport } from "next";
+import { DM_Sans, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -35,13 +50,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full overflow-hidden">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`h-full overflow-hidden ${outfit.variable} ${dmSans.variable}`}
+    >
       <body className="h-full min-h-0 overflow-hidden overscroll-none bg-[#111110]">
         {children}
         <Analytics />

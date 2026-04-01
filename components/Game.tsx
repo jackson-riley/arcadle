@@ -35,7 +35,7 @@ const MAX_TEXT_CLUES = 4;
 
 const HEADER_GHOST_BTN =
   "rounded-lg border py-2 px-[14px] text-[13px] font-semibold tracking-[0.04em] " +
-  "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out " +
+  "font-dm-sans transition-all duration-200 ease-in-out " +
   "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480] " +
   "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)] " +
   "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]";
@@ -43,7 +43,7 @@ const HEADER_GHOST_BTN =
 /** Same as HEADER_GHOST_BTN but equal horizontal padding for the single-char control. */
 const HEADER_GHOST_BTN_SQUARE =
   "rounded-lg border py-2 px-2 text-[13px] font-semibold tracking-[0.04em] " +
-  "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out " +
+  "font-dm-sans transition-all duration-200 ease-in-out " +
   "inline-flex min-w-[2.25rem] items-center justify-center " +
   "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480] " +
   "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)] " +
@@ -127,10 +127,6 @@ export default function Game() {
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
   const todayNumberRef = useRef(todayNumber);
-  const [statsTrackedForPuzzle, setStatsTrackedForPuzzle] = useState<
-    boolean | undefined
-  >(undefined);
-
   useEffect(() => {
     todayNumberRef.current = todayNumber;
   }, [todayNumber]);
@@ -175,7 +171,6 @@ export default function Game() {
     const saved = loadGameState(num);
     setPuzzle(p);
     setGuesses(saved?.guesses ?? []);
-    setStatsTrackedForPuzzle(saved?.statsTracked);
     if (saved?.completed) {
       const last = saved.guesses[saved.guesses.length - 1];
       const won = guessMatchesGame(p.game, last);
@@ -206,7 +201,6 @@ export default function Game() {
       const restored = getPuzzleForNumber(todaysNumber);
       setPuzzle(restored);
       setGuesses(savedGame.guesses);
-      setStatsTrackedForPuzzle(savedGame.statsTracked);
 
       if (savedGame.completed) {
         const last = savedGame.guesses[savedGame.guesses.length - 1];
@@ -216,7 +210,6 @@ export default function Game() {
     } else {
       const next = getDailyPuzzle();
       setPuzzle(next);
-      setStatsTrackedForPuzzle(false);
       saveGameStateMerged({
         puzzleNumber: next.puzzleNumber,
         guesses: [],
@@ -251,7 +244,6 @@ export default function Game() {
           const next = getPuzzleForNumber(newToday);
           setPuzzle(next);
           setGuesses(saved?.guesses ?? []);
-          setStatsTrackedForPuzzle(saved?.statsTracked);
           setGameState(() => {
             if (!saved || !saved.completed) return "playing";
             const last = saved.guesses[saved.guesses.length - 1];
@@ -467,10 +459,7 @@ export default function Game() {
     <div className="mx-auto flex h-[100dvh] max-h-[100dvh] min-h-0 w-full max-w-[700px] flex-col overflow-hidden px-5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
       <header className="flex w-full shrink-0 flex-col gap-1 border-b border-[rgba(255,255,255,0.04)] bg-[#111110] py-2 pt-[max(1rem,calc(env(safe-area-inset-top)+0.75rem))]">
         <div className="flex items-center justify-between gap-3">
-          <h1
-            className="m-0 text-[26px] font-extrabold leading-none tracking-[-0.03em] lowercase sm:text-[28px]"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-          >
+          <h1 className="m-0 font-outfit text-[26px] font-extrabold leading-none tracking-[-0.03em] lowercase sm:text-[28px]">
             <span style={{ color: "#E8E4DF" }}>lud</span>
             <span style={{ color: "#A09A94" }}>le</span>
           </h1>
@@ -508,7 +497,7 @@ export default function Game() {
             </button>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-['DM_Sans',sans-serif] whitespace-nowrap">
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-dm-sans whitespace-nowrap">
           <button
             type="button"
             onClick={() => applyPuzzleNumber(puzzle.puzzleNumber - 1)}

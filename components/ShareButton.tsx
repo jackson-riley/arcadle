@@ -45,7 +45,7 @@ export default function ShareButton({
       onClick={handleShare}
       className={[
         "inline-flex items-center justify-center rounded-lg border px-[14px] py-2 text-[13px] font-semibold tracking-[0.04em]",
-        "font-['DM_Sans',sans-serif] transition-all duration-200 ease-in-out",
+        "font-dm-sans transition-all duration-200 ease-in-out",
         "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480]",
         "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)]",
         "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]",
