@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import type { Clue } from "@/lib/types";
 
 interface ClueStackProps {
@@ -7,30 +8,88 @@ interface ClueStackProps {
   revealCount: number;
 }
 
-export default function ClueStack({ clues, revealCount }: ClueStackProps) {
+function LockIcon({ className }: { className?: string }) {
   return (
-    <div className="space-y-2 w-full">
-      {clues.slice(0, revealCount).map((clue, i) => (
-        <div
-          key={clue.label}
-          className="flex items-start gap-3 text-sm animate-fade-in"
-          style={{ animationDelay: `${i * 50}ms` }}
-        >
-          <span className="text-zinc-600 font-mono text-xs mt-0.5 w-24 shrink-0 text-right tracking-wider">
-            {clue.label}
-          </span>
-          <span className="text-zinc-300">{clue.value}</span>
-        </div>
-      ))}
+    <svg
+      className={className}
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
 
-      {revealCount < clues.length && (
-        <div className="flex items-start gap-3 text-sm">
-          <span className="text-zinc-700 font-mono text-xs mt-0.5 w-24 shrink-0 text-right tracking-wider">
-            {clues[revealCount]?.label}
-          </span>
-          <span className="text-zinc-700 italic">revealed after next guess</span>
-        </div>
-      )}
+export default function ClueStack({ clues, revealCount }: ClueStackProps) {
+  const prevRevealRef = useRef(revealCount);
+  const [fadeIndices, setFadeIndices] = useState(() => new Set<number>());
+
+  useLayoutEffect(() => {
+    const prev = prevRevealRef.current;
+    if (revealCount > prev) {
+      const next = new Set<number>();
+      for (let j = prev; j < revealCount; j++) next.add(j);
+      setFadeIndices(next);
+      const t = window.setTimeout(() => setFadeIndices(new Set()), 380);
+      prevRevealRef.current = revealCount;
+      return () => window.clearTimeout(t);
+    }
+    prevRevealRef.current = revealCount;
+  }, [revealCount]);
+
+  return (
+    <div className="flex w-full flex-col gap-2">
+      {clues.map((clue, i) => {
+        const revealed = i < revealCount;
+        const isNext = !revealed && i === revealCount;
+        const isLocked = !revealed && i > revealCount;
+
+        return (
+          <div
+            key={clue.label}
+            className="grid w-full items-center gap-x-3 text-sm [grid-template-columns:minmax(0,7.5rem)_0.875rem_minmax(0,1fr)]"
+          >
+            <span
+              className={`text-right font-mono text-xs leading-none tracking-wider ${
+                isLocked ? "text-zinc-700" : "text-zinc-600"
+              }`}
+            >
+              {clue.label}
+            </span>
+            <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center self-center">
+              {isLocked ? (
+                <LockIcon className="text-zinc-700 opacity-90" />
+              ) : null}
+            </span>
+            <div className="min-w-0 leading-snug">
+              {revealed && (
+                <span
+                  className={
+                    fadeIndices.has(i)
+                      ? "text-white animate-fade-in"
+                      : "text-white"
+                  }
+                >
+                  {clue.value}
+                </span>
+              )}
+              {isNext && (
+                <span className="text-zinc-600 italic">
+                  revealed after next guess
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

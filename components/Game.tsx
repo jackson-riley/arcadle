@@ -528,7 +528,11 @@ export default function Game() {
 
         {/* Clues */}
         <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-lg p-4">
-          <ClueStack clues={puzzle.clues} revealCount={revealCount} />
+          <ClueStack
+            key={puzzle.puzzleNumber}
+            clues={puzzle.clues}
+            revealCount={revealCount}
+          />
         </div>
 
         {/* Wrong guesses */}

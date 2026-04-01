@@ -50,9 +50,8 @@ export function getDailyPuzzle(): DailyPuzzle {
 
 /**
  * Clue reveal order.
- * - Players see clue[0] before any guesses.
- * - Each new guess reveals the next clue while the game is still in progress.
- * - When the game ends (win or give up), all clues are revealed at once.
+ * - All four labels are always visible; values unlock after each guess (in order).
+ * - When the game ends (win or loss), all clue values are revealed.
  *
  * Ordering rationale:
  *   1. Genre — great starting point; gives the player a chance to guess correctly early
