@@ -39,8 +39,7 @@ export interface PlayerStats {
   played: number;
   wins: number;
   streak: number;
-  maxStreak: number;
-  /** Key = number of guesses (1-6), value = count */
+  /** Key = number of guesses (1-6), value = count (stats-tracked wins only) */
   distribution: Record<number, number>;
   /** ISO date string of last completed puzzle */
   lastPlayed?: string;

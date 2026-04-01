@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { PlayerStats } from "@/lib/types";
+import { formatAvgGuessesOnWins } from "@/lib/storage";
 import {
   fetchGlobalStats,
   type GlobalStatsResponse,
@@ -112,16 +113,11 @@ export default function StatsModal({
     }, 1);
   }, [dist]);
 
-  const personalStats = [
+  const personalStats: { label: string; val: number | string }[] = [
     { label: "Played", val: stats.played },
-    {
-      label: "Win %",
-      val: stats.played
-        ? Math.round((stats.wins / stats.played) * 100)
-        : 0,
-    },
+    { label: "Won", val: stats.wins },
     { label: "Streak", val: stats.streak },
-    { label: "Best", val: stats.maxStreak },
+    { label: "Avg", val: formatAvgGuessesOnWins(stats) },
   ];
 
   const statDelays = [T.stat0, T.stat1, T.stat2, T.stat3] as const;

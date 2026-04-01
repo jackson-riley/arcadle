@@ -51,7 +51,6 @@ const DEFAULT_STATS: PlayerStats = {
   played: 0,
   wins: 0,
   streak: 0,
-  maxStreak: 0,
   distribution: {},
 };
 
@@ -60,7 +59,6 @@ let streakRecomputeCache: {
   today: number;
   streak: number;
   lastWinDate?: string;
-  maxStreak: number;
 } | null = null;
 
 function invalidateStreakRecomputeCache(): void {
@@ -127,40 +125,24 @@ export function loadGameState(puzzleNumber: number): SavedGameState | null {
   }
 }
 
-function isWinningSavedState(puzzleNum: number): boolean {
+/** Win that counted toward local stats (not an archive completion). */
+function isStatsCountedWin(puzzleNum: number): boolean {
   const state = loadGameState(puzzleNum);
-  if (!state?.completed || state.guesses.length === 0) return false;
+  if (!state?.completed || state.statsTracked !== true) return false;
+  if (state.guesses.length === 0) return false;
   const puzzle = getPuzzleForNumber(puzzleNum);
   const last = state.guesses[state.guesses.length - 1];
   return guessMatchesGame(puzzle.game, last);
 }
 
-/** Most recent calendar day (any puzzle ≤ today) where the player has a saved win. */
+/** Most recent calendar day (any puzzle ≤ today) where the player has a stats-counted win. */
 function findMostRecentWinDate(): string | undefined {
   const today = getPuzzleNumber();
   for (let p = today; p >= 1; p--) {
-    const state = loadGameState(p);
-    if (!state?.completed) continue;
-    if (isWinningSavedState(p)) return formatLocalDate(getDateForPuzzleNumber(p));
+    if (!isStatsCountedWin(p)) continue;
+    return formatLocalDate(getDateForPuzzleNumber(p));
   }
   return undefined;
-}
-
-/** Longest run of consecutive calendar days (puzzle numbers) with a win. */
-function recomputeMaxStreakFromSavedGames(): number {
-  const today = getPuzzleNumber();
-  let best = 0;
-  let run = 0;
-  for (let p = 1; p <= today; p++) {
-    if (!isWinningSavedState(p)) {
-      run = 0;
-      continue;
-    }
-    const prevWon = p > 1 && isWinningSavedState(p - 1);
-    run = prevWon ? run + 1 : 1;
-    if (run > best) best = run;
-  }
-  return best;
 }
 
 /**
@@ -170,16 +152,14 @@ function recomputeMaxStreakFromSavedGames(): number {
 function recomputeStreakFromSavedGames(): {
   streak: number;
   lastWinDate?: string;
-  maxStreak: number;
 } {
   const today = getPuzzleNumber();
   const todayState = loadGameState(today);
 
-  if (todayState?.completed && !isWinningSavedState(today)) {
+  if (todayState?.completed && !isStatsCountedWin(today)) {
     return {
       streak: 0,
       lastWinDate: findMostRecentWinDate(),
-      maxStreak: recomputeMaxStreakFromSavedGames(),
     };
   }
 
@@ -192,7 +172,6 @@ function recomputeStreakFromSavedGames(): {
     return {
       streak: 0,
       lastWinDate: findMostRecentWinDate(),
-      maxStreak: recomputeMaxStreakFromSavedGames(),
     };
   }
 
@@ -201,7 +180,7 @@ function recomputeStreakFromSavedGames(): {
   for (let p = end; p >= 1; p--) {
     const state = loadGameState(p);
     if (!state?.completed) break;
-    if (!isWinningSavedState(p)) break;
+    if (!isStatsCountedWin(p)) break;
     streak += 1;
     if (lastWinDate === undefined) {
       lastWinDate = formatLocalDate(getDateForPuzzleNumber(p));
@@ -211,21 +190,18 @@ function recomputeStreakFromSavedGames(): {
   return {
     streak,
     lastWinDate,
-    maxStreak: recomputeMaxStreakFromSavedGames(),
   };
 }
 
 function getCachedStreakFields(): {
   streak: number;
   lastWinDate?: string;
-  maxStreak: number;
 } {
   const today = getPuzzleNumber();
   if (streakRecomputeCache && streakRecomputeCache.today === today) {
     return {
       streak: streakRecomputeCache.streak,
       lastWinDate: streakRecomputeCache.lastWinDate,
-      maxStreak: streakRecomputeCache.maxStreak,
     };
   }
   const rec = recomputeStreakFromSavedGames();
@@ -239,13 +215,11 @@ function applyRecomputedStreak(merged: PlayerStats): PlayerStats {
     ...merged,
     streak: rec.streak,
     lastWinDate: rec.lastWinDate,
-    maxStreak: Math.max(merged.maxStreak ?? 0, rec.maxStreak),
   };
   const normalized = normalizeStreakStats(mergedWithStreak);
   if (
     normalized.streak !== merged.streak ||
-    normalized.lastWinDate !== merged.lastWinDate ||
-    normalized.maxStreak !== merged.maxStreak
+    normalized.lastWinDate !== merged.lastWinDate
   ) {
     try {
       localStorage.setItem(STATS_KEY, JSON.stringify(normalized));
@@ -254,6 +228,20 @@ function applyRecomputedStreak(merged: PlayerStats): PlayerStats {
     }
   }
   return normalized;
+}
+
+/** Mean guesses on stats-tracked wins, one decimal; en dash if no wins. */
+export function formatAvgGuessesOnWins(stats: PlayerStats): string {
+  if (stats.wins <= 0) return "–";
+  let sum = 0;
+  let n = 0;
+  for (let g = 1; g <= 6; g++) {
+    const c = stats.distribution[g] ?? 0;
+    n += c;
+    sum += g * c;
+  }
+  if (n <= 0) return "–";
+  return (sum / n).toFixed(1);
 }
 
 export function loadStats(): PlayerStats {

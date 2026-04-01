@@ -344,7 +344,6 @@ export default function Game() {
               played: s.played + 1,
               wins: s.wins + 1,
               streak: newStreak,
-              maxStreak: Math.max(s.maxStreak, newStreak),
               distribution: {
                 ...s.distribution,
                 [newGuesses.length]: (s.distribution[newGuesses.length] || 0) + 1,
