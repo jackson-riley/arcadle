@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { GameEntry } from "@/lib/types";
 import { slugify } from "@/lib/slug";
 
@@ -15,7 +15,7 @@ interface GameCardProps {
 /**
  * Screenshot uses pre-generated blur levels from `/public/screenshots/<slug>/blur-{0..5}.jpg`
  * and `solved.jpg` (see `scripts/generate-blurs.ts`).
- * Natural aspect ratio (w-full h-auto), capped with max-h-[45dvh] for desktop.
+ * Loading area uses 16:9 (aspect-video) capped at max-h-[45dvh]; image uses object-contain inside.
  */
 export default function GameCard({
   game,
@@ -24,12 +24,18 @@ export default function GameCard({
   wrongGuesses = [],
 }: GameCardProps) {
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const slug = slugify(game.title);
   const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
   const imageSrc = solved
     ? `/screenshots/${slug}/solved.jpg`
     : `/screenshots/${slug}/blur-${levelIndex}.jpg`;
+
+  useEffect(() => {
+    setImageError(false);
+    setImageLoaded(false);
+  }, [imageSrc]);
 
   return (
     <div className="flex w-full shrink-0 flex-col items-center">
@@ -39,16 +45,27 @@ export default function GameCard({
       >
         {!imageError && (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageSrc}
-              alt={game.title}
-              className="block h-auto w-full max-h-[45dvh] object-contain transition-all duration-700 ease-out"
-              onError={() => setImageError(true)}
-            />
+            <div className="relative mx-auto aspect-video w-full max-h-[45dvh]">
+              {!imageLoaded && (
+                <div
+                  className="absolute inset-0 z-0 animate-pulse rounded-lg bg-zinc-800"
+                  aria-hidden
+                />
+              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageSrc}
+                alt={game.title}
+                className={`absolute inset-0 z-[1] h-full w-full object-contain transition-opacity duration-300 ease-out ${
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                }`}
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+              />
+            </div>
             {!solved && (
               <div
-                className="pointer-events-none absolute inset-0 z-[1]"
+                className="pointer-events-none absolute inset-0 z-[2]"
                 style={{
                   boxShadow: "inset 0 0 48px rgba(0,0,0,0.45)",
                 }}
@@ -75,7 +92,7 @@ export default function GameCard({
           <div
             role="region"
             aria-label="Wrong guesses"
-            className="pointer-events-none absolute bottom-0 left-0 right-0 z-[2] flex flex-wrap gap-1 px-2 pb-2 pt-8"
+            className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] flex flex-wrap gap-1 px-2 pb-2 pt-8"
             style={{
               background:
                 "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.12) 85%, transparent 100%)",

@@ -21,6 +21,7 @@ import {
   streakAfterWin,
 } from "@/lib/streak";
 import { guessMatchesGame } from "@/lib/guessMatch";
+import { slugify } from "@/lib/slug";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
 import ClueStack from "./ClueStack";
@@ -47,6 +48,21 @@ const HEADER_GHOST_BTN_SQUARE =
   "bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.06)] text-[#8A8480] " +
   "hover:bg-[rgba(255,255,255,0.06)] hover:text-[#C8C4BF] hover:border-[rgba(255,255,255,0.1)] " +
   "outline-none focus-visible:ring-2 focus-visible:ring-white/10 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111110]";
+
+/** Same screenshot URL rules as `GameCard`, for prefetching adjacent archive days. */
+function getPrefetchScreenshotUrl(puzzleNumber: number): string {
+  const p = getPuzzleForNumber(puzzleNumber);
+  const saved = loadGameState(puzzleNumber);
+  const slug = slugify(p.game.title);
+  if (!saved || !saved.completed) {
+    const revealLevel = saved
+      ? Math.min(saved.guesses.length + 1, MAX_GUESSES)
+      : 1;
+    const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
+    return `/screenshots/${slug}/blur-${levelIndex}.jpg`;
+  }
+  return `/screenshots/${slug}/solved.jpg`;
+}
 
 function saveGameStateMerged(state: SavedGameState): void {
   const prev = loadGameState(state.puzzleNumber);
@@ -298,6 +314,20 @@ export default function Game() {
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [puzzle]);
+
+  // Archive: warm cache for prev/next day screenshots so day-to-day navigation feels instant.
+  useEffect(() => {
+    if (!puzzle || puzzle.puzzleNumber === todayNumber) return;
+    const n = puzzle.puzzleNumber;
+    if (n > 1) {
+      const prev = new Image();
+      prev.src = getPrefetchScreenshotUrl(n - 1);
+    }
+    if (n < todayNumber) {
+      const next = new Image();
+      next.src = getPrefetchScreenshotUrl(n + 1);
+    }
+  }, [puzzle, todayNumber]);
 
   // Retry global stats if a previous submit failed (e.g. offline).
   useEffect(() => {
