@@ -13,13 +13,6 @@ export const metadata: Metadata = {
       "Guess today's video game from progressive clues and blurred screenshots. A new puzzle every day.",
     url: "https://ludle.gg",
     siteName: "Ludle",
-    images: [
-      {
-        url: "https://ludle.gg/og.png",
-        width: 1200,
-        height: 630,
-      },
-    ],
     type: "website",
   },
   twitter: {
@@ -27,7 +20,6 @@ export const metadata: Metadata = {
     title: "Ludle — Daily Video Game Guessing Game",
     description:
       "Guess today's video game from progressive clues and blurred screenshots.",
-    images: ["https://ludle.gg/og.png"],
   },
 };
 
