@@ -8,6 +8,8 @@ interface GameCardProps {
   game: GameEntry;
   revealLevel: number; // 0-6
   solved: boolean;
+  /** Wrong titles guessed so far; overlaid on the image bottom (does not affect layout height). */
+  wrongGuesses?: string[];
 }
 
 /**
@@ -15,7 +17,12 @@ interface GameCardProps {
  * and `solved.jpg` (see `scripts/generate-blurs.ts`).
  * Natural aspect ratio (w-full h-auto), capped with max-h-[45dvh] for desktop.
  */
-export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
+export default function GameCard({
+  game,
+  revealLevel,
+  solved,
+  wrongGuesses = [],
+}: GameCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const slug = slugify(game.title);
@@ -62,6 +69,28 @@ export default function GameCard({ game, revealLevel, solved }: GameCardProps) {
               `,
             }}
           />
+        )}
+
+        {!solved && wrongGuesses.length > 0 && (
+          <div
+            role="region"
+            aria-label="Wrong guesses"
+            className="pointer-events-none absolute bottom-0 left-0 right-0 z-[2] flex flex-wrap gap-1 px-2 pb-2 pt-8"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.12) 85%, transparent 100%)",
+            }}
+          >
+            {wrongGuesses.map((g, i) => (
+              <span
+                key={i}
+                className="max-w-full truncate rounded-md border border-red-400/25 bg-black/35 px-1.5 py-0.5 text-[10px] text-red-200/95 shadow-sm backdrop-blur-[2px] sm:text-[11px]"
+                title={g}
+              >
+                {g}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 

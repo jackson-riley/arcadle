@@ -524,6 +524,11 @@ export default function Game() {
             game={puzzle.game}
             revealLevel={revealLevel}
             solved={!playing}
+            wrongGuesses={
+              playing
+                ? guesses.filter((g) => !guessMatchesGame(puzzle.game, g))
+                : undefined
+            }
           />
         </div>
 
@@ -544,25 +549,6 @@ export default function Game() {
             revealCount={revealCount}
           />
         </div>
-
-        {/* Wrong guesses — clip instead of growing the layout */}
-        {guesses.length > 0 && playing && (
-          <div className="max-h-7 shrink-0 overflow-hidden">
-            <div className="flex flex-wrap gap-1">
-              {guesses
-                .filter((g) => !guessMatchesGame(puzzle.game, g))
-                .map((g, i) => (
-                  <span
-                    key={i}
-                    className="max-w-full truncate rounded border border-red-500/20 bg-red-500/10 px-1.5 py-0.5 text-[10px] text-red-400/80 sm:text-[11px]"
-                    title={g}
-                  >
-                    {g}
-                  </span>
-                ))}
-            </div>
-          </div>
-        )}
 
         {/* Input / end state */}
         <div className="shrink-0 space-y-1.5 pt-1">

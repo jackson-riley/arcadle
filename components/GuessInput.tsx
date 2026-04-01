@@ -102,9 +102,9 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
   };
 
   return (
-    <div className="relative w-full min-w-0">
-      <div className="flex min-w-0 items-stretch gap-2">
-        <div className="relative min-w-0 flex-1">
+    <div className="relative w-full min-w-0 max-w-full">
+      <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2">
+        <div className="relative min-w-0">
           <input
             ref={inputRef}
             type="text"
@@ -113,7 +113,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
             onKeyDown={handleKey}
             disabled={disabled}
             placeholder={disabled ? "Game over" : "Type a game title..."}
-            className="w-full bg-zinc-900 border border-zinc-700 text-zinc-100 px-3 py-2.5 rounded-lg text-[15px]
+            className="box-border w-full min-w-0 bg-zinc-900 border border-zinc-700 text-zinc-100 px-3 py-2.5 rounded-lg text-[15px]
                        focus:outline-none focus:border-zinc-500 placeholder-zinc-600
                        disabled:opacity-40 transition-colors"
             autoComplete="off"
@@ -143,7 +143,7 @@ export default function GuessInput({ onGuess, disabled }: GuessInputProps) {
               </ul>
             )}
         </div>
-        <div className="flex shrink-0 items-center">
+        <div className="flex min-w-0 shrink-0 items-center justify-self-end">
           <button
             type="button"
             onClick={() => {
