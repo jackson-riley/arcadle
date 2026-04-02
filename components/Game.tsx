@@ -22,6 +22,7 @@ import {
 } from "@/lib/streak";
 import { guessMatchesGame } from "@/lib/guessMatch";
 import { slugify } from "@/lib/slug";
+import { fireWinConfetti } from "@/lib/winConfetti";
 import GameCard from "./GameCard";
 import GuessInput from "./GuessInput";
 import ClueStack from "./ClueStack";
@@ -379,6 +380,7 @@ export default function Game() {
       if (won) {
         setGameState("won");
         if (trackStats) {
+          fireWinConfetti();
           setStats((prev) => {
             const s = normalizeStreakStats(prev || loadStats());
             const todayLocal = localTodayString();
