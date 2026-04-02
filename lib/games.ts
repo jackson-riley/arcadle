@@ -4657,6 +4657,11 @@ const ADDITIONAL_GAMES_EXCLUDED_TITLES = new Set<string>([
   "The Last of Us Remastered",
 ]);
 
+/** Filtered additional pool (no yearly shuffle); `selectGameForFixedIndex` reshuffles per cycle. */
+export const ADDITIONAL_GAMES_POOL_BASE: GameEntry[] = ADDITIONAL_GAMES_DB.filter(
+  (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
+);
+
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
   (g) => !ORIGINAL_EXCLUDED_TITLES.has(g.title)
 );
@@ -4679,33 +4684,25 @@ export function getGamesOrderForYear(year: number): GameEntry[] {
   return seededShuffle(PLAYABLE_GAMES_BASE, shuffleSeedForCalendarYear(year));
 }
 
-export function getAdditionalGamesOrderForYear(year: number): GameEntry[] {
-  const base = ADDITIONAL_GAMES_DB.filter(
-    (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
+/** Playable main-pool order for a year: yearly shuffle with post-launch exclusions removed. */
+export function getPlayableMainOrderForYear(year: number): GameEntry[] {
+  return getGamesOrderForYear(year).filter(
+    (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
   );
-  let seed = ADDITIONAL_SHUFFLE_SEED;
-  if (year !== LAUNCH_SHUFFLE_YEAR) {
-    let h = (ADDITIONAL_SHUFFLE_SEED ^ year) >>> 0;
-    h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
-    h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
-    seed = (h ^ (h >>> 16)) >>> 0;
-  }
-  return seededShuffle(base, seed);
 }
 
-/** Returns the game for a day using a fixed index mapping. Day N maps to shuffled index
- * (N-1 + epochOffset). If that game is excluded, substitutes the next non-excluded game
- * after that index (wrapping). Day N+1's mapping is independent — exclusions only affect
- * that one day. Once the original pool is exhausted, draws from the additional pool. */
+/** Returns the game for a day using a fixed index mapping. Main pool: yearly shuffle with
+ * ADDITIONAL_EXCLUDED_TITLES skips. When `preferredIndex` passes the main shuffle length,
+ * draws from `additionalPool` (unshuffled base); each full pass uses a new cycle seed. */
 export function selectGameForFixedIndex(
   shuffled: GameEntry[],
   preferredIndex: number,
-  additionalShuffled: GameEntry[] = []
+  additionalPool: GameEntry[] = []
 ): GameEntry {
   const originalLen = shuffled.length;
 
   if (preferredIndex < originalLen) {
-    const idx = preferredIndex % originalLen;
+    const idx = ((preferredIndex % originalLen) + originalLen) % originalLen;
     const primary = shuffled[idx];
     if (!ADDITIONAL_EXCLUDED_TITLES.has(primary.title)) return primary;
     for (let i = 1; i < originalLen; i++) {
@@ -4717,23 +4714,31 @@ export function selectGameForFixedIndex(
   }
 
   const addIdx = preferredIndex - originalLen;
-  const addLen = additionalShuffled.length;
+  const addLen = additionalPool.length;
   if (!addLen) throw new Error("Additional pool is empty");
-  const idx = addIdx % addLen;
-  const primary = additionalShuffled[idx];
+
+  const cycleNumber = Math.floor(addIdx / addLen);
+  const positionInCycle = addIdx % addLen;
+
+  let cycleSeed = (ADDITIONAL_SHUFFLE_SEED ^ cycleNumber) >>> 0;
+  cycleSeed = Math.imul(cycleSeed ^ (cycleSeed >>> 16), 0x7feb352d);
+  cycleSeed = Math.imul(cycleSeed ^ (cycleSeed >>> 15), 0x846ca68b);
+  cycleSeed = (cycleSeed ^ (cycleSeed >>> 16)) >>> 0;
+
+  const cycleShuffled = seededShuffle(additionalPool, cycleSeed);
+
+  const primary = cycleShuffled[positionInCycle];
   if (!ADDITIONAL_GAMES_EXCLUDED_TITLES.has(primary.title)) return primary;
   for (let i = 1; i < addLen; i++) {
-    const j = (idx + i) % addLen;
-    const game = additionalShuffled[j];
+    const j = (positionInCycle + i) % addLen;
+    const game = cycleShuffled[j];
     if (!ADDITIONAL_GAMES_EXCLUDED_TITLES.has(game.title)) return game;
   }
   throw new Error("No playable games in additional pool");
 }
 
 /** Full list of playable games in 2026 order (screenshots, tooling). Excludes additional exclusions. */
-export const GAMES_DB: GameEntry[] = getGamesOrderForYear(LAUNCH_SHUFFLE_YEAR).filter(
-  (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
-);
+export const GAMES_DB: GameEntry[] = getPlayableMainOrderForYear(LAUNCH_SHUFFLE_YEAR);
 
 /** Sorted title list for autocomplete — deduplicated, excludes additional exclusions */
 export const GAME_TITLES = [

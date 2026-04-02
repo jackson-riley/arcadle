@@ -1,5 +1,5 @@
 import {
-  getAdditionalGamesOrderForYear,
+  ADDITIONAL_GAMES_POOL_BASE,
   getGamesOrderForYear,
   selectGameForFixedIndex,
 } from "./games";
@@ -31,17 +31,16 @@ export function getDateForPuzzleNumber(num: number): Date {
 }
 
 /** Deterministic puzzle selection for a given puzzle number.
- * Day N maps to fixed index (N-1 + EPOCH_INDEX_OFFSET). If that game is excluded,
- * substitutes the next non-excluded after it. Other days' mappings are unchanged. */
+ * Day N maps to fixed index (N-1 + EPOCH_INDEX_OFFSET). Main yearly shuffle with exclusions,
+ * then additional pool with per-cycle reshuffles (see selectGameForFixedIndex). */
 export function getPuzzleForNumber(num: number): DailyPuzzle {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
-  const shuffled = getGamesOrderForYear(year);
   const preferredIndex = (num - 1) + EPOCH_INDEX_OFFSET;
   const game = selectGameForFixedIndex(
-    shuffled,
+    getGamesOrderForYear(year),
     preferredIndex,
-    getAdditionalGamesOrderForYear(year)
+    ADDITIONAL_GAMES_POOL_BASE
   );
   return {
     puzzleNumber: num,
