@@ -35,10 +35,13 @@ const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
 /** Must match `gamecardLossShake` duration in `app/globals.css`. */
 const LOSS_SCREEN_SHAKE_MS = 500;
-// After a lineup correction, we reset day 14 community stats server-side.
-// This client logic allows resubmitting day 14 once per player even if the
-// browser previously marked it as already submitted.
-const GLOBAL_STATS_RESET_PUZZLE_NUMBER = 14;
+// Puzzle numbers where community stats were cleared in Redis; clients may
+// resubmit even if `globalStatsSubmitted` was already set (dedupe keys deleted server-side).
+const GLOBAL_STATS_RESET_PUZZLE_NUMBERS = new Set([14, 15]);
+
+function isGlobalStatsResetPuzzle(puzzleNumber: number): boolean {
+  return GLOBAL_STATS_RESET_PUZZLE_NUMBERS.has(puzzleNumber);
+}
 
 const HEADER_GHOST_BTN =
   "rounded-lg border py-2 px-[14px] text-[13px] font-semibold tracking-[0.04em] " +
@@ -161,7 +164,7 @@ export default function Game() {
       const calendarToday = getPuzzleNumber();
       if (
         puzzleNumber !== calendarToday &&
-        puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+        !isGlobalStatsResetPuzzle(puzzleNumber)
       )
         return;
       const playerId = getOrCreatePlayerId();
@@ -169,7 +172,7 @@ export default function Game() {
       const saved = loadGameState(puzzleNumber);
       if (
         saved?.globalStatsSubmitted &&
-        puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+        !isGlobalStatsResetPuzzle(puzzleNumber)
       )
         return;
       try {
@@ -353,14 +356,14 @@ export default function Game() {
     if (!hydrated || !puzzle) return;
     if (
       puzzle.puzzleNumber !== getPuzzleNumber() &&
-      puzzle.puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+      !isGlobalStatsResetPuzzle(puzzle.puzzleNumber)
     )
       return;
     const saved = loadGameState(puzzle.puzzleNumber);
     if (
       !saved?.completed ||
       (saved.globalStatsSubmitted &&
-        puzzle.puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER)
+        !isGlobalStatsResetPuzzle(puzzle.puzzleNumber))
     )
       return;
     const last = saved.guesses[saved.guesses.length - 1];

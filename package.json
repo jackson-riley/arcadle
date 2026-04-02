@@ -11,6 +11,7 @@
     "fetch-candidates": "tsx scripts/fetch-candidates.ts",
     "fetch-screenshots": "tsx scripts/fetch-screenshots.ts",
     "generate-blurs": "tsx scripts/generate-blurs.ts",
+    "reset-global-stats": "tsx scripts/reset-global-stats.ts",
     "generate-favicon": "tsx scripts/generate-favicon.ts"
   },
   "dependencies": {
