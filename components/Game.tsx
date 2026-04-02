@@ -392,9 +392,9 @@ export default function Game() {
       const statsTracked = completed && trackStats;
 
       if (won) {
+        fireWinConfetti();
         setGameState("won");
         if (trackStats) {
-          fireWinConfetti();
           setStats((prev) => {
             const s = normalizeStreakStats(prev || loadStats());
             const todayLocal = localTodayString();
@@ -415,6 +415,7 @@ export default function Game() {
           });
         }
       } else if (lost) {
+        // Deferred solved screenshot + shake: daily and archive (not only stats-eligible days).
         setPendingLossReveal(true);
         setGameState("lost");
         if (trackStats) {
@@ -452,6 +453,7 @@ export default function Game() {
 
   const handleGiveUp = useCallback(() => {
     const statsTracked = !!(puzzle && puzzle.puzzleNumber === todayNumber);
+    // Same loss shake + reveal delay as a 6th wrong guess (daily and archive).
     setPendingLossReveal(true);
     setGameState("lost");
     if (puzzle && puzzle.puzzleNumber === todayNumber) {

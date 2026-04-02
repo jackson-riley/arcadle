@@ -1,6 +1,6 @@
 /**
- * One centered burst for a same-day win; dynamic import keeps it off the main bundle until needed.
- * Timed with double rAF so it runs after React commits the solved screenshot.
+ * Centered burst on any correct solve (daily or archive). Dynamic import keeps it off the main bundle
+ * until needed. Call before `setGameState("won")` so it lines up with the solved screenshot appearing.
  */
 export function fireWinConfetti(): void {
   if (typeof window === "undefined") return;

@@ -22,7 +22,8 @@ interface GameCardProps {
  * Screenshot uses pre-generated blur levels from `/public/screenshots/<slug>/blur-{0..5}.jpg`
  * and `solved.jpg` (see `scripts/generate-blurs.ts`). `next/image` is `unoptimized` so JPEGs
  * are served straight from `/public` (no `/_next/image` pipeline on every blur swap).
- * A fresh loss (6th wrong guess or give up) shakes the frame on the last blur, then reveals solved.
+ * A fresh loss (6th wrong guess or give up), daily or archive, shakes the frame on the last blur,
+ * then reveals solved.
  * Loading area uses 16:9 (aspect-video) capped at max-h-[45dvh]; image uses object-contain inside.
  */
 export default function GameCard({
