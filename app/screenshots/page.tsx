@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ADDITIONAL_GAMES_DB, GAMES_DB } from "@/lib/games";
+import { ADDITIONAL_GAMES_POOL_BASE, GAMES_DB } from "@/lib/games";
 import { slugify } from "@/lib/slug";
 
 /**
  * Internal QA: browse blur-5 thumbnails and open solved.jpg.
+ * Additional-pool entries omit ADDITIONAL_GAMES_EXCLUDED_TITLES (see /qa/excluded).
  * Not available in production builds.
  */
 export default function ScreenshotsPage() {
@@ -30,7 +31,7 @@ export default function ScreenshotsPage() {
         </Link>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {[...GAMES_DB, ...ADDITIONAL_GAMES_DB]
+        {[...GAMES_DB, ...ADDITIONAL_GAMES_POOL_BASE]
           .sort((a, b) => a.title.localeCompare(b.title, "en"))
           .map((game) => {
           const slug = slugify(game.title);
