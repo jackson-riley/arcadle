@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import type { GameEntry } from "@/lib/types";
 import { slugify } from "@/lib/slug";
@@ -25,6 +25,19 @@ export default function GameCard({
   solved,
   wrongGuesses = [],
 }: GameCardProps) {
+  /** Indices that skip entrance anim: preloaded on mount / after puzzle change, or after anim ends. */
+  const skipEntranceAnimRef = useRef<Set<number> | null>(null);
+  const lastGameTitleRef = useRef(game.title);
+  if (lastGameTitleRef.current !== game.title) {
+    lastGameTitleRef.current = game.title;
+    skipEntranceAnimRef.current = null;
+  }
+  if (skipEntranceAnimRef.current === null) {
+    skipEntranceAnimRef.current = new Set(
+      wrongGuesses.map((_, i) => i)
+    );
+  }
+
   const slug = slugify(game.title);
   const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
   const imageSrc = solved
@@ -123,15 +136,28 @@ export default function GameCard({
                 "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.12) 85%, transparent 100%)",
             }}
           >
-            {wrongGuesses.map((g, i) => (
-              <span
-                key={i}
-                className="max-w-full truncate rounded-md border border-red-400/25 bg-black/35 px-1.5 py-0.5 text-[10px] text-red-200/95 shadow-sm backdrop-blur-[2px] sm:text-[11px]"
-                title={g}
-              >
-                {g}
-              </span>
-            ))}
+            {wrongGuesses.map((g, i) => {
+              const playEntrance = !skipEntranceAnimRef.current!.has(i);
+              return (
+                <span
+                  key={`${i}-${g}`}
+                  className={`max-w-full truncate rounded-md border border-red-400/25 bg-black/35 px-1.5 py-0.5 text-[10px] text-red-200/95 shadow-sm backdrop-blur-[2px] sm:text-[11px]${
+                    playEntrance ? " wrong-guess-chip-enter" : ""
+                  }`}
+                  title={g}
+                  onAnimationEnd={(e) => {
+                    if (
+                      e.animationName !== "wrongGuessChipIn" ||
+                      e.target !== e.currentTarget
+                    )
+                      return;
+                    skipEntranceAnimRef.current?.add(i);
+                  }}
+                >
+                  {g}
+                </span>
+              );
+            })}
           </div>
         )}
       </div>
