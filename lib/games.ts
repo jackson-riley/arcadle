@@ -4596,7 +4596,7 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "Hades",
   "Dying Light 2",
   "Star Wars Jedi: Fallen Order",
-  "Batman: Arkham City",
+  "Batman: Arkham Knight",
   "Monster Hunter Rise",
   "Ori and the Blind Forest",
   "Ghost Trick: Phantom Detective",
@@ -4661,6 +4661,26 @@ const ADDITIONAL_GAMES_EXCLUDED_TITLES = new Set<string>([
 export const ADDITIONAL_GAMES_POOL_BASE: GameEntry[] = ADDITIONAL_GAMES_DB.filter(
   (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
 );
+
+/** Entries skipped for dailies / tooling but kept for screenshot QA (`ADDITIONAL_EXCLUDED` + additional-pool skips). */
+export function getExcludedScreenshotGameEntries(): GameEntry[] {
+  const seen = new Set<string>();
+  const out: GameEntry[] = [];
+  for (const g of RAW_GAMES_DB) {
+    if (ADDITIONAL_EXCLUDED_TITLES.has(g.title) && !seen.has(g.title)) {
+      seen.add(g.title);
+      out.push(g);
+    }
+  }
+  for (const g of ADDITIONAL_GAMES_DB) {
+    if (ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title) && !seen.has(g.title)) {
+      seen.add(g.title);
+      out.push(g);
+    }
+  }
+  out.sort((a, b) => a.title.localeCompare(b.title, "en"));
+  return out;
+}
 
 const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
   (g) => !ORIGINAL_EXCLUDED_TITLES.has(g.title)

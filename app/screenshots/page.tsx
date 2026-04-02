@@ -1,6 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GAMES_DB, ADDITIONAL_GAMES_DB } from "@/lib/games";
+import { ADDITIONAL_GAMES_DB, GAMES_DB } from "@/lib/games";
 import { slugify } from "@/lib/slug";
 
 /**
@@ -14,10 +15,20 @@ export default function ScreenshotsPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 p-6">
-      <h1 className="mb-2 text-xl font-semibold text-zinc-100">Screenshot QA</h1>
-      <p className="mb-6 text-sm text-zinc-500">
-        Thumbnails are blur-5; click to open solved.jpg in a new tab.
-      </p>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="mb-2 text-xl font-semibold text-zinc-100">Screenshot QA</h1>
+          <p className="text-sm text-zinc-500">
+            Thumbnails are blur-5; click to open solved.jpg in a new tab.
+          </p>
+        </div>
+        <Link
+          href="/qa/excluded"
+          className="text-sm text-zinc-400 underline-offset-2 hover:text-zinc-200 hover:underline"
+        >
+          Excluded games →
+        </Link>
+      </div>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {[...GAMES_DB, ...ADDITIONAL_GAMES_DB]
           .sort((a, b) => a.title.localeCompare(b.title, "en"))

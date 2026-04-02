@@ -3,12 +3,17 @@ node_modules
 .turbo
 .DS_Store
 .env
-.env.local
-.env.*.local
+.env*.local
 dist
 out
 
 public/screenshots/*/options
+
+# QA & candidate pipeline (generated / downloaded artifacts — not app source)
+scripts/candidates.json
+scripts/approved-candidates.json
+scripts/game-entries.txt
+public/screenshots-staging/
 
 # Cursor / editor
 .cursor
@@ -16,4 +21,3 @@ public/screenshots/*/options
 .idea
 
 .vercel
-.env*.local
