@@ -33,6 +33,8 @@ import ShareButton from "./ShareButton";
 
 const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
+/** Must match `gamecardLossShake` duration in `app/globals.css`. */
+const LOSS_SCREEN_SHAKE_MS = 500;
 // After a lineup correction, we reset day 14 community stats server-side.
 // This client logic allows resubmitting day 14 once per player even if the
 // browser previously marked it as already submitted.
@@ -129,6 +131,8 @@ export default function Game() {
   const [showStats, setShowStats] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [giveUpConfirming, setGiveUpConfirming] = useState(false);
+  /** True only for a fresh loss (6th wrong guess or give up); delays solved screenshot until shake ends. */
+  const [pendingLossReveal, setPendingLossReveal] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [todayNumber, setTodayNumber] = useState(() => getPuzzleNumber());
   const todayNumberRef = useRef(todayNumber);
@@ -138,7 +142,17 @@ export default function Game() {
 
   useEffect(() => {
     setGiveUpConfirming(false);
+    setPendingLossReveal(false);
   }, [puzzle?.puzzleNumber]);
+
+  useEffect(() => {
+    if (gameState !== "lost" || !pendingLossReveal) return;
+    const id = window.setTimeout(
+      () => setPendingLossReveal(false),
+      LOSS_SCREEN_SHAKE_MS
+    );
+    return () => window.clearTimeout(id);
+  }, [gameState, pendingLossReveal]);
 
   /** Leaderboard / global stats only — archive completions never call the API. */
   const submitGlobalStatsIfNeeded = useCallback(
@@ -401,6 +415,7 @@ export default function Game() {
           });
         }
       } else if (lost) {
+        setPendingLossReveal(true);
         setGameState("lost");
         if (trackStats) {
           setStats((prev) => {
@@ -437,6 +452,7 @@ export default function Game() {
 
   const handleGiveUp = useCallback(() => {
     const statsTracked = !!(puzzle && puzzle.puzzleNumber === todayNumber);
+    setPendingLossReveal(true);
     setGameState("lost");
     if (puzzle && puzzle.puzzleNumber === todayNumber) {
       setStats((prev) => {
@@ -563,9 +579,11 @@ export default function Game() {
         {/* Screenshot — intrinsic height; max 45dvh */}
         <div className="w-full shrink-0">
           <GameCard
+            key={puzzle.puzzleNumber}
             game={puzzle.game}
+            gameState={gameState}
             revealLevel={revealLevel}
-            solved={!playing}
+            pendingLossReveal={pendingLossReveal}
             wrongGuesses={
               playing
                 ? guesses.filter((g) => !guessMatchesGame(puzzle.game, g))

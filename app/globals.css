@@ -52,6 +52,38 @@ body {
   transform-origin: center;
 }
 
+/* GameCard — loss / give-up; duration matches `LOSS_SCREEN_SHAKE_MS` in Game.tsx */
+@keyframes gamecardLossShake {
+  0% {
+    transform: translateX(0);
+  }
+  12.5% {
+    transform: translateX(-8px);
+  }
+  25% {
+    transform: translateX(8px);
+  }
+  37.5% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  62.5% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.gamecard-screenshot-shake {
+  animation: gamecardLossShake 500ms ease-in-out forwards;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }

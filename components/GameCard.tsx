@@ -2,13 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import type { GameEntry } from "@/lib/types";
+import type { GameEntry, GameState } from "@/lib/types";
 import { slugify } from "@/lib/slug";
 
 interface GameCardProps {
   game: GameEntry;
+  gameState: GameState;
   revealLevel: number; // 0-6
-  solved: boolean;
+  /**
+   * When true with `gameState === "lost"`, keeps the last blur visible and runs the loss shake
+   * until the parent clears this after the shake duration (fresh loss only; not archive/hydrate).
+   */
+  pendingLossReveal: boolean;
   /** Wrong titles guessed so far; overlaid on the image bottom (does not affect layout height). */
   wrongGuesses?: string[];
 }
@@ -17,12 +22,14 @@ interface GameCardProps {
  * Screenshot uses pre-generated blur levels from `/public/screenshots/<slug>/blur-{0..5}.jpg`
  * and `solved.jpg` (see `scripts/generate-blurs.ts`). `next/image` is `unoptimized` so JPEGs
  * are served straight from `/public` (no `/_next/image` pipeline on every blur swap).
+ * A fresh loss (6th wrong guess or give up) shakes the frame on the last blur, then reveals solved.
  * Loading area uses 16:9 (aspect-video) capped at max-h-[45dvh]; image uses object-contain inside.
  */
 export default function GameCard({
   game,
+  gameState,
   revealLevel,
-  solved,
+  pendingLossReveal,
   wrongGuesses = [],
 }: GameCardProps) {
   /** Indices that skip entrance anim: preloaded on mount / after puzzle change, or after anim ends. */
@@ -38,9 +45,16 @@ export default function GameCard({
     );
   }
 
+  const showSolvedScreenshot =
+    gameState === "won" ||
+    (gameState === "lost" && !pendingLossReveal);
+
+  const lossScreenShake =
+    gameState === "lost" && pendingLossReveal;
+
   const slug = slugify(game.title);
   const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
-  const imageSrc = solved
+  const imageSrc = showSolvedScreenshot
     ? `/screenshots/${slug}/solved.jpg`
     : `/screenshots/${slug}/blur-${levelIndex}.jpg`;
 
@@ -73,6 +87,13 @@ export default function GameCard({
     };
   }, [imageSrc, displaySrc]);
 
+  useEffect(() => {
+    if (!lossScreenShake) return;
+    const solvedUrl = `/screenshots/${slug}/solved.jpg`;
+    const img = new window.Image();
+    img.src = solvedUrl;
+  }, [lossScreenShake, slug]);
+
   return (
     <div className="flex w-full shrink-0 flex-col items-center">
       <div
@@ -81,7 +102,11 @@ export default function GameCard({
       >
         {!imageError && (
           <>
-            <div className="relative mx-auto aspect-video w-full max-h-[45dvh]">
+            <div
+              className={`relative mx-auto aspect-video w-full max-h-[45dvh]${
+                lossScreenShake ? " gamecard-screenshot-shake" : ""
+              }`}
+            >
               {!imageLoaded && (
                 <div
                   className="absolute inset-0 z-0 animate-pulse rounded-lg bg-zinc-800"
@@ -101,7 +126,7 @@ export default function GameCard({
                 onError={() => setImageError(true)}
               />
             </div>
-            {!solved && (
+            {!showSolvedScreenshot && (
               <div
                 className="pointer-events-none absolute inset-0 z-[2]"
                 style={{
@@ -113,7 +138,7 @@ export default function GameCard({
           </>
         )}
 
-        {!solved && imageError && (
+        {!showSolvedScreenshot && imageError && (
           <div
             className="min-h-[min(45dvh,12rem)] w-full"
             style={{
@@ -126,7 +151,7 @@ export default function GameCard({
           />
         )}
 
-        {!solved && wrongGuesses.length > 0 && (
+        {!showSolvedScreenshot && wrongGuesses.length > 0 && (
           <div
             role="region"
             aria-label="Wrong guesses"
@@ -162,7 +187,7 @@ export default function GameCard({
         )}
       </div>
 
-      {solved && (
+      {showSolvedScreenshot && (
         <div className="mt-1.5 shrink-0 text-center text-[9px] uppercase tracking-[0.2em] text-zinc-600">
           SCREENSHOTS &copy; IGDB / TWITCH
         </div>
