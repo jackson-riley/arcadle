@@ -1,5 +1,7 @@
 import {
   EPOCH_INDEX_OFFSET,
+  LAUNCH_FIXED_DAYS,
+  LAUNCH_SHUFFLE_YEAR,
   getGameForDeckPreferredIndex,
   getLaunchFixedGameForPuzzleNumber,
 } from "./games";
@@ -33,9 +35,19 @@ export function getDateForPuzzleNumber(num: number): Date {
 function getGameEntryForPuzzleNumber(num: number): GameEntry {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
-  const fixed = getLaunchFixedGameForPuzzleNumber(num, year);
+
+  // One-time lineup correction: replace Day 14's game with whatever Day 15 would
+  // have been, then shift every subsequent puzzle up by 1.
+  // Equivalently: for launch year puzzles >= Day `LAUNCH_FIXED_DAYS`, we advance
+  // the deck preferred index by +1 and bypass the fixed launch entry at Day 14.
+  const lineupShift = year === LAUNCH_SHUFFLE_YEAR && num >= LAUNCH_FIXED_DAYS ? 1 : 0;
+
+  const fixed = lineupShift === 0
+    ? getLaunchFixedGameForPuzzleNumber(num, year)
+    : null;
   if (fixed) return fixed;
-  const preferredIndex = (num - 1) + EPOCH_INDEX_OFFSET;
+
+  const preferredIndex = (num - 1) + EPOCH_INDEX_OFFSET + lineupShift;
   return getGameForDeckPreferredIndex(year, preferredIndex);
 }
 

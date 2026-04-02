@@ -4647,6 +4647,7 @@ const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "Rise of the Tomb Raider",
   "Shadow of the Tomb Raider",
   "The Last of Us Remastered",
+  "Warframe",
 ]);
 
 const ADDITIONAL_GAMES_EXCLUDED_TITLES = new Set<string>([

@@ -32,6 +32,10 @@ import ShareButton from "./ShareButton";
 
 const MAX_GUESSES = 6;
 const MAX_TEXT_CLUES = 4;
+// After a lineup correction, we reset day 14 community stats server-side.
+// This client logic allows resubmitting day 14 once per player even if the
+// browser previously marked it as already submitted.
+const GLOBAL_STATS_RESET_PUZZLE_NUMBER = 14;
 
 const HEADER_GHOST_BTN =
   "rounded-lg border py-2 px-[14px] text-[13px] font-semibold tracking-[0.04em] " +
@@ -140,11 +144,19 @@ export default function Game() {
     async (puzzleNumber: number, guessList: string[], solved: boolean) => {
       // Calendar day index — same source as Redis keys (not React state, which can lag after midnight).
       const calendarToday = getPuzzleNumber();
-      if (puzzleNumber !== calendarToday) return;
+      if (
+        puzzleNumber !== calendarToday &&
+        puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+      )
+        return;
       const playerId = getOrCreatePlayerId();
       if (!playerId) return;
       const saved = loadGameState(puzzleNumber);
-      if (saved?.globalStatsSubmitted) return;
+      if (
+        saved?.globalStatsSubmitted &&
+        puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+      )
+        return;
       try {
         await postPuzzleResult({
           puzzleNumber,
@@ -324,9 +336,18 @@ export default function Game() {
   // Retry global stats if a previous submit failed (e.g. offline).
   useEffect(() => {
     if (!hydrated || !puzzle) return;
-    if (puzzle.puzzleNumber !== getPuzzleNumber()) return;
+    if (
+      puzzle.puzzleNumber !== getPuzzleNumber() &&
+      puzzle.puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER
+    )
+      return;
     const saved = loadGameState(puzzle.puzzleNumber);
-    if (!saved?.completed || saved.globalStatsSubmitted) return;
+    if (
+      !saved?.completed ||
+      (saved.globalStatsSubmitted &&
+        puzzle.puzzleNumber !== GLOBAL_STATS_RESET_PUZZLE_NUMBER)
+    )
+      return;
     const last = saved.guesses[saved.guesses.length - 1];
     const won = guessMatchesGame(puzzle.game, last);
     void submitGlobalStatsIfNeeded(puzzle.puzzleNumber, saved.guesses, won);
