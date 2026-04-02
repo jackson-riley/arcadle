@@ -25,19 +25,40 @@ export default function GameCard({
   solved,
   wrongGuesses = [],
 }: GameCardProps) {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
   const slug = slugify(game.title);
   const levelIndex = Math.min(5, Math.max(0, revealLevel - 1));
   const imageSrc = solved
     ? `/screenshots/${slug}/solved.jpg`
     : `/screenshots/${slug}/blur-${levelIndex}.jpg`;
 
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  /** URL actually shown; stays on the previous image until the next one is preloaded (avoids flash). */
+  const [displaySrc, setDisplaySrc] = useState(imageSrc);
+
   useEffect(() => {
-    setImageError(false);
-    setImageLoaded(false);
-  }, [imageSrc]);
+    if (imageSrc === displaySrc) return;
+    let cancelled = false;
+    const img = new window.Image();
+    img.onload = () => {
+      if (!cancelled) {
+        setDisplaySrc(imageSrc);
+        setImageLoaded(true);
+        setImageError(false);
+      }
+    };
+    img.onerror = () => {
+      if (!cancelled) {
+        setDisplaySrc(imageSrc);
+        setImageLoaded(true);
+        setImageError(true);
+      }
+    };
+    img.src = imageSrc;
+    return () => {
+      cancelled = true;
+    };
+  }, [imageSrc, displaySrc]);
 
   return (
     <div className="flex w-full shrink-0 flex-col items-center">
@@ -55,7 +76,7 @@ export default function GameCard({
                 />
               )}
               <Image
-                src={imageSrc}
+                src={displaySrc}
                 alt={game.title}
                 fill
                 sizes="(max-width: 700px) 100vw, 700px"
