@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { GAMES_DB } from "@/lib/games";
+import { GAMES_DB, ADDITIONAL_GAMES_DB } from "@/lib/games";
 import { slugify } from "@/lib/slug";
 
 /**
@@ -19,7 +19,7 @@ export default function ScreenshotsPage() {
         Thumbnails are blur-5; click to open solved.jpg in a new tab.
       </p>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {[...GAMES_DB]
+        {[...GAMES_DB, ...ADDITIONAL_GAMES_DB]
           .sort((a, b) => a.title.localeCompare(b.title, "en"))
           .map((game) => {
           const slug = slugify(game.title);
