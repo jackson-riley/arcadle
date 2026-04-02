@@ -6,7 +6,7 @@ const root = path.join(__dirname, "..");
 const screenshotsRoot = path.join(root, "public", "screenshots");
 
 // Blur radii for reveal levels 1–6 (last one is almost sharp; solved uses clean image)
-const BLUR_SIGMAS = [40, 30, 20, 10, 2, 0];
+const BLUR_SIGMAS = [40, 30, 20, 10, 5, 0];
 const WIDTH = 889;
 const HEIGHT = 500;
 
