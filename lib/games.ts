@@ -4583,7 +4583,6 @@ const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
   "Wordle",
   "Flappy Bird",
   "2048",
-  "The Secret of Monkey Island",
   "Call of Duty 4: Modern Warfare",
   "Rust",
 ]);
@@ -4593,22 +4592,18 @@ const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
 const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "The Talos Principle",
   "Shadow of Mordor",
-  "Hades",
   "Dying Light 2",
-  "Star Wars Jedi: Fallen Order",
   "Batman: Arkham Knight",
   "Monster Hunter Rise",
   "Ori and the Blind Forest",
   "Ghost Trick: Phantom Detective",
   "The Elder Scrolls III: Morrowind",
   "NBA 2K24",
-  "Dark Souls II",
   "Dark Souls II: Scholar of the First Sin",
   "Mortal Kombat 1",
   "The Stanley Parable: Ultra Deluxe",
   "Overwatch 2",
   "Dead Space (2023)",
-  "Spelunky",
   "Total War: Warhammer III",
   "Divinity: Original Sin 2",
   "Phasmophobia",
@@ -4662,12 +4657,16 @@ export const ADDITIONAL_GAMES_POOL_BASE: GameEntry[] = ADDITIONAL_GAMES_DB.filte
   (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
 );
 
-/** Entries skipped for dailies / tooling but kept for screenshot QA (`ADDITIONAL_EXCLUDED` + additional-pool skips). */
+/** Entries not in daily shuffle / GAMES_DB but useful for screenshot QA (all exclusion sets). */
 export function getExcludedScreenshotGameEntries(): GameEntry[] {
   const seen = new Set<string>();
   const out: GameEntry[] = [];
   for (const g of RAW_GAMES_DB) {
-    if (ADDITIONAL_EXCLUDED_TITLES.has(g.title) && !seen.has(g.title)) {
+    if (
+      (ORIGINAL_EXCLUDED_TITLES.has(g.title) ||
+        ADDITIONAL_EXCLUDED_TITLES.has(g.title)) &&
+      !seen.has(g.title)
+    ) {
       seen.add(g.title);
       out.push(g);
     }

@@ -7,8 +7,8 @@ import { getExcludedScreenshotGameEntries } from "@/lib/games";
 import { slugify } from "@/lib/slug";
 
 /**
- * QA: blur-5 thumbnails for games in ADDITIONAL_EXCLUDED_TITLES / ADDITIONAL_GAMES_EXCLUDED_TITLES
- * (omitted from /screenshots because they are not in GAMES_DB / normal additional tooling list).
+ * QA: blur-5 for games in ORIGINAL_EXCLUDED_TITLES, ADDITIONAL_EXCLUDED_TITLES, or
+ * ADDITIONAL_GAMES_EXCLUDED_TITLES (omitted from /screenshots / GAMES_DB).
  */
 export default function QAExcludedScreenshotsPage() {
   if (process.env.NODE_ENV === "production") {
@@ -33,9 +33,9 @@ export default function QAExcludedScreenshotsPage() {
         <div>
           <h1 className="text-xl font-semibold text-white">Excluded games — screenshots</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            Same layout as /screenshots: blur-5 preview; click opens solved.jpg. These titles are
-            skipped in dailies but may still have assets under{" "}
-            <code className="text-zinc-400">public/screenshots/&lt;slug&gt;/</code>.
+            Same layout as /screenshots: blur-5 preview; click opens solved.jpg. Includes launch
+            exclusions (<code className="text-zinc-500">ORIGINAL_EXCLUDED_TITLES</code>), post-launch
+            skips, and additional-pool skips — any title not on the main screenshot grid.
           </p>
         </div>
         <div className="ml-auto flex flex-wrap gap-3 text-sm">
