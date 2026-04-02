@@ -247,7 +247,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Katamari Damacy",
     developer: "Namco",
     year: 2004,
-    genre: "Puzzle / Action",
+    genre: "Action / Puzzle",
     platforms: "PS2, Switch, PC",
     length: "4–6 hours",
     coreLoop: "Roll an adhesive ball across environments, picking up increasingly larger objects to grow from thumbtacks to buildings within a time limit.",
@@ -597,7 +597,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Subnautica",
     developer: "Unknown Worlds",
     year: 2018,
-    genre: "Survival",
+    genre: "Survival / Adventure",
     platforms: "PC, PS4, PS5, Xbox, Switch",
     length: "30–50 hours",
     coreLoop: "Dive deeper into an alien ocean, gathering resources to build bases and craft vehicles while cataloging creatures and uncovering signals from your crashed ship.",
@@ -750,7 +750,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Sekiro: Shadows Die Twice",
     developer: "FromSoftware",
     year: 2019,
-    genre: "Action / Souls-like",
+    genre: "Action",
     platforms: "PC, PS4, Xbox",
     length: "30–40 hours",
     coreLoop: "Deflect enemy attacks with precise sword parries to break their posture, then deliver a killing deathblow, using a prosthetic arm for tactical tools.",
@@ -760,7 +760,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Dark Souls",
     developer: "FromSoftware",
     year: 2011,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One, Switch",
     length: "40–60 hours",
     coreLoop: "Fight through punishing enemies and bosses using stamina-based melee combat, recover souls from your corpse on death, and unlock shortcuts between bonfires.",
@@ -800,7 +800,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Bloodborne",
     developer: "FromSoftware",
     year: 2015,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PS4",
     length: "30–40 hours",
     coreLoop: "Hunt beasts through gothic streets using fast, aggressive trick-weapon combat with a rally system that rewards attacking immediately after taking damage.",
@@ -920,7 +920,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Mass Effect 2",
     developer: "BioWare",
     year: 2010,
-    genre: "RPG / Third-Person Shooter",
+    genre: "Action RPG",
     platforms: "PC, PS3, Xbox 360",
     length: "25–35 hours",
     coreLoop: "Recruit a team of specialists across the galaxy, earn their loyalty through personal missions, and command squad-based cover shooting with pause-and-play power combos.",
@@ -1060,7 +1060,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Dark Souls III",
     developer: "FromSoftware",
     year: 2016,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PC, PS4, Xbox One",
     length: "30–45 hours",
     coreLoop: "Fight through decaying kingdoms using stamina-based combat with faster, more aggressive enemy patterns than its predecessors, linking bonfires and recovering souls from your corpse.",
@@ -1070,7 +1070,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Demon's Souls (2020)",
     developer: "Bluepoint Games",
     year: 2020,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PS5",
     length: "20–30 hours",
     coreLoop: "Fight through five distinct archstone worlds in methodical souls combat, returning to a central hub between deaths where world tendency shifts based on your actions.",
@@ -1240,7 +1240,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Dying Light 2",
     developer: "Techland",
     year: 2022,
-    genre: "Action",
+    genre: "Action / Survival",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "25–40 hours",
     coreLoop: "Parkour across rooftops in a zombie-infested city, making faction choices that reshape the open world, crafting weapons, and surviving UV-dependent nighttime where the infected pour out of buildings.",
@@ -1370,7 +1370,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Super Smash Bros. Ultimate",
     developer: "Bandai Namco / Nintendo",
     year: 2018,
-    genre: "Fighting / Platformer Fighter",
+    genre: "Fighting",
     platforms: "Switch",
     length: "Open-ended, 20+ hours for World of Light",
     coreLoop: "Launch opponents off-stage using a unique moveset per character in a platform fighter where damage accumulates as knockback percentage rather than depleting a health bar.",
@@ -1390,7 +1390,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Dark Souls II",
     developer: "FromSoftware",
     year: 2014,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One",
     length: "35–50 hours",
     coreLoop: "Explore a sprawling kingdom of fog-gated bosses using stamina-based combat with an adaptability stat governing dodge effectiveness, collecting souls and human effigies to maintain max HP.",
@@ -1420,7 +1420,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Bayonetta",
     developer: "PlatinumGames",
     year: 2009,
-    genre: "Action / Character Action",
+    genre: "Action",
     platforms: "PS3, Xbox 360, Wii U, Switch, PC",
     length: "8–10 hours",
     coreLoop: "Chain combos of punches, kicks, and gunfire to trigger Witch Time on perfect dodges, building magic to summon massive demonic finishers against angelic enemies.",
@@ -1430,7 +1430,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Devil May Cry 5",
     developer: "Capcom",
     year: 2019,
-    genre: "Action / Character Action",
+    genre: "Action",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "10–12 hours",
     coreLoop: "Style-switch between three playable characters with wildly different combat systems — sword combos, mechanical arms, and shape-shifting weapons — chasing SSS style rankings.",
@@ -1560,7 +1560,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Wii Sports",
     developer: "Nintendo",
     year: 2006,
-    genre: "Sports / Party",
+    genre: "Sports",
     platforms: "Wii",
     length: "Open-ended",
     coreLoop: "Swing, throw, and bowl using motion controls in simplified sports simulations — tennis, bowling, boxing, baseball, golf — competing for skill ratings.",
@@ -1670,7 +1670,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Valheim",
     developer: "Iron Gate Studio",
     year: 2021,
-    genre: "Survival / Crafting",
+    genre: "Survival / Sandbox",
     platforms: "PC, Xbox One, Xbox Series",
     length: "50–100+ hours",
     coreLoop: "Survive a procedural Norse purgatory by gathering resources, building Viking longhouses, sailing between biomes, and summoning mythological bosses to prove your worth.",
@@ -1680,7 +1680,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Civilization VI",
     developer: "Firaxis Games",
     year: 2016,
-    genre: "4X Strategy",
+    genre: "Strategy",
     platforms: "PC, PS4, Xbox One, Switch, Mobile",
     length: "10–20 hours per game",
     coreLoop: "Found cities, research technologies, and build wonders turn by turn across millennia, pursuing cultural, scientific, military, or religious victory against rival civilizations.",
@@ -1744,7 +1744,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Fortnite",
     developer: "Epic Games",
     year: 2017,
-    genre: "Battle Royale / Shooter",
+    genre: "Battle Royale",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch, Mobile",
     length: "Open-ended, 20–25 minutes per match",
     coreLoop: "Drop onto an island with 99 others, loot weapons and materials, build walls and ramps for cover and positioning, and fight to be the last player standing as the storm closes in.",
@@ -1794,7 +1794,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Overwatch 2",
     developer: "Blizzard Entertainment",
     year: 2022,
-    genre: "Hero Shooter",
+    genre: "FPS",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended, 10–20 minutes per match",
     coreLoop: "Pick a hero with a unique kit of abilities in a 5v5 team shooter, switching heroes mid-match to counter the enemy composition across objective-based modes.",
@@ -1804,7 +1804,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Apex Legends",
     developer: "Respawn Entertainment",
     year: 2019,
-    genre: "Battle Royale / Hero Shooter",
+    genre: "Battle Royale",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended, 15–20 minutes per match",
     coreLoop: "Drop as a three-person squad, loot tiered gear, use legend-specific abilities for movement and combat advantage, and fight other squads as the ring closes.",
@@ -1814,7 +1814,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Rocket League",
     developer: "Psyonix",
     year: 2015,
-    genre: "Sports / Racing",
+    genre: "Sports",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended, 5–7 minutes per match",
     coreLoop: "Drive rocket-powered cars to hit a giant ball into the opponent's goal, boosting, jumping, and flying off walls in fast-paced aerial soccer.",
@@ -1834,7 +1834,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Fall Guys",
     developer: "Mediatonic",
     year: 2020,
-    genre: "Battle Royale / Party",
+    genre: "Party",
     platforms: "PC, PS4, PS5, Xbox, Switch",
     length: "Open-ended, 10–15 minutes per show",
     coreLoop: "Compete as a jellybean through rounds of obstacle courses, team games, and survival challenges, with players eliminated each round until one wins the crown.",
@@ -1895,7 +1895,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Lies of P",
     developer: "Neowiz / Round8 Studio",
     year: 2023,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "25–35 hours",
     coreLoop: "Fight through a dark Belle Époque city as a puppet Pinocchio, assembling weapons from interchangeable blades and handles, perfect-guarding attacks, and lying in dialogue to become more human.",
@@ -1915,7 +1915,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "FIFA 23",
     developer: "EA Sports",
     year: 2022,
-    genre: "Sports / Soccer",
+    genre: "Sports",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended",
     coreLoop: "Control a full soccer team in simulated matches, passing, dribbling, and shooting with real-world players, building an Ultimate Team through packs and trading.",
@@ -1925,7 +1925,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "NBA 2K24",
     developer: "Visual Concepts",
     year: 2023,
-    genre: "Sports / Basketball",
+    genre: "Sports",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended",
     coreLoop: "Play full basketball games with real NBA rosters, timing shot releases and running plays, while building a MyPlayer career or managing a franchise.",
@@ -1935,7 +1935,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Madden NFL 24",
     developer: "EA Tiburon",
     year: 2023,
-    genre: "Sports / Football",
+    genre: "Sports",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "Open-ended",
     coreLoop: "Call offensive and defensive plays in simulated NFL games, managing rosters across franchise mode or building a competitive squad in Ultimate Team.",
@@ -1945,7 +1945,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Minecraft Dungeons",
     developer: "Mojang / Double Eleven",
     year: 2020,
-    genre: "Action RPG / Dungeon Crawler",
+    genre: "Action RPG",
     platforms: "PC, PS4, Xbox One, Switch",
     length: "8–12 hours",
     coreLoop: "Hack through procedural dungeons in an isometric Minecraft-themed crawler, equipping randomized gear and enchantments in co-op with up to four players.",
@@ -1995,7 +1995,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Palworld",
     developer: "Pocketpair",
     year: 2024,
-    genre: "Survival",
+    genre: "Survival / RPG",
     platforms: "PC, Xbox One, Xbox Series",
     length: "50+ hours",
     coreLoop: "Capture creatures and put them to work in your base — farming, mining, crafting, and fighting — in an open-world survival game that blends monster-catching with factory building.",
@@ -2045,7 +2045,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "No Man's Sky",
     developer: "Hello Games",
     year: 2016,
-    genre: "Survival",
+    genre: "Survival / Adventure",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Switch",
     length: "Open-ended, dozens to hundreds of hours",
     coreLoop: "Explore a procedurally generated universe of 18 quintillion planets, mining resources, upgrading your ship and suit, building bases, and warping between star systems toward the center of the galaxy.",
@@ -2135,7 +2135,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Rust",
     developer: "Facepunch Studios",
     year: 2018,
-    genre: "Survival / Multiplayer",
+    genre: "Survival / Sandbox",
     platforms: "PC, PS4, Xbox One",
     length: "Open-ended",
     coreLoop: "Spawn naked on a beach, gather resources, build a base, craft weapons, and survive against both the environment and other players who will raid your home while you sleep.",
@@ -2145,7 +2145,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Ark: Survival Evolved",
     developer: "Studio Wildcard",
     year: 2017,
-    genre: "Survival / MMO",
+    genre: "Survival / Sandbox",
     platforms: "PC, PS4, Xbox One, Switch, Mobile",
     length: "Open-ended, hundreds of hours",
     coreLoop: "Survive on an island of dinosaurs, taming and riding them by knocking them out and feeding them, while building bases, crafting gear, and fighting other tribes on multiplayer servers.",
@@ -2178,7 +2178,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Need for Speed: Most Wanted",
     developer: "EA Black Box",
     year: 2005,
-    genre: "Racing / Arcade",
+    genre: "Racing",
     platforms: "PC, PS2, Xbox 360, GameCube",
     length: "15–20 hours",
     coreLoop: "Race and evade cops in an open city, climbing a blacklist of rival racers by winning street events and building heat with increasingly aggressive police pursuits.",
@@ -2188,7 +2188,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Burnout Paradise",
     developer: "Criterion Games",
     year: 2008,
-    genre: "Racing / Arcade",
+    genre: "Racing",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One, Switch",
     length: "15–20 hours",
     coreLoop: "Drive freely through an open city, triggering races, takedown events, and stunt challenges at every intersection, wrecking rivals in spectacular slow-motion crashes.",
@@ -2307,7 +2307,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "The Sims 4",
     developer: "Maxis",
     year: 2014,
-    genre: "Life Simulation",
+    genre: "Life Sim",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "Open-ended",
     coreLoop: "Create virtual people, build and furnish their homes, manage their needs, careers, and relationships, and watch stories emerge from their autonomous behavior and your interventions.",
@@ -2350,7 +2350,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "StarCraft II: Wings of Liberty",
     developer: "Blizzard Entertainment",
     year: 2010,
-    genre: "RTS",
+    genre: "Strategy",
     platforms: "PC",
     length: "15–20 hours campaign, open-ended multiplayer",
     coreLoop: "Macro your economy and micro your army in fast-paced real-time strategy, scouting, expanding bases, and executing build orders against one of the most competitive multiplayer fields ever.",
@@ -2360,7 +2360,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Age of Empires II",
     developer: "Ensemble Studios",
     year: 1999,
-    genre: "RTS",
+    genre: "Strategy",
     platforms: "PC",
     length: "20+ hours campaigns, open-ended multiplayer",
     coreLoop: "Advance through four ages of history, gathering resources with villagers, building castles and military, and countering enemy unit compositions in medieval real-time warfare.",
@@ -2839,7 +2839,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Assassin's Creed IV: Black Flag",
     developer: "Ubisoft Montreal",
     year: 2013,
-    genre: "Action",
+    genre: "Action / Adventure",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One, Switch",
     length: "20–30 hours",
     coreLoop: "Captain a pirate ship across the Caribbean, boarding enemy vessels in naval combat, diving for underwater treasure, and assassinating targets in open-ended stealth missions on land.",
@@ -2879,7 +2879,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Sleeping Dogs",
     developer: "United Front Games",
     year: 2012,
-    genre: "Action",
+    genre: "Action / Adventure",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One",
     length: "15–20 hours",
     coreLoop: "Go undercover as a cop in Hong Kong's Triad, fighting with martial arts counters and environmental takedowns, driving through dense streets, and balancing cop and triad reputation meters.",
@@ -3168,7 +3168,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Marvel Rivals",
     developer: "NetEase Games",
     year: 2024,
-    genre: "Hero Shooter",
+    genre: "Third-Person Shooter",
     platforms: "PC, PS5, Xbox Series",
     length: "Open-ended, 10–15 minutes per match",
     coreLoop: "Pick a Marvel hero or villain with unique abilities in a 6v6 team shooter, combining team-up skills between specific character pairs and fighting across destructible maps inspired by Marvel locations.",
@@ -3181,7 +3181,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Wii Fit",
     developer: "Nintendo",
     year: 2007,
-    genre: "Sports / Party",
+    genre: "Sports / Simulation",
     platforms: "Wii",
     length: "Open-ended",
     coreLoop: "Stand on a balance board to do yoga, strength training, aerobics, and balance games, tracking your BMI and fitness age over daily sessions.",
@@ -3204,7 +3204,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Kerbal Space Program",
     developer: "Squad",
     year: 2015,
-    genre: "Simulation / Sandbox",
+    genre: "Simulation",
     platforms: "PC, PS4, Xbox One",
     length: "Open-ended, dozens to hundreds of hours",
     coreLoop: "Design and launch rockets using realistic orbital mechanics, managing staging, thrust-to-weight ratios, and delta-v budgets to get little green astronauts to the Mun and back alive.",
@@ -3303,7 +3303,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "The Sims",
     developer: "Maxis",
     year: 2000,
-    genre: "Life Simulation",
+    genre: "Life Sim",
     platforms: "PC",
     length: "Open-ended",
     coreLoop: "Create virtual people and manage their daily lives — eating, sleeping, socializing, working — while building and furnishing their homes and watching emergent stories unfold from their AI behavior.",
@@ -3363,7 +3363,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Super Smash Bros. Melee",
     developer: "HAL Laboratory",
     year: 2001,
-    genre: "Fighting / Platformer Fighter",
+    genre: "Fighting",
     platforms: "GameCube",
     length: "Open-ended",
     coreLoop: "Launch opponents off-stage using wavedashing, L-canceling, and combo strings in a platform fighter with a competitive depth discovered by its community decades after release.",
@@ -3393,7 +3393,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Wii Sports Resort",
     developer: "Nintendo",
     year: 2009,
-    genre: "Sports / Party",
+    genre: "Sports",
     platforms: "Wii",
     length: "Open-ended",
     coreLoop: "Play 12 sports — swordplay, archery, basketball, skydiving, and more — using Wii MotionPlus for precise 1:1 motion control across a tropical island resort.",
@@ -3443,7 +3443,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Geometry Dash",
     developer: "RobTop Games",
     year: 2013,
-    genre: "Platformer",
+    genre: "Platformer / Rhythm",
     platforms: "PC, Mobile",
     length: "Open-ended",
     coreLoop: "Tap to jump an icon through auto-scrolling obstacle courses synced to electronic music, dying instantly on contact and restarting from the beginning until the level is memorized.",
@@ -3463,7 +3463,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Fruit Ninja",
     developer: "Halfbrick Studios",
     year: 2010,
-    genre: "Arcade / Action",
+    genre: "Arcade",
     platforms: "Mobile",
     length: "Open-ended, minutes per round",
     coreLoop: "Swipe across the screen to slice fruit launched into the air while avoiding bombs, chaining combos for higher scores in timed and survival modes.",
@@ -3473,7 +3473,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Temple Run",
     developer: "Imangi Studios",
     year: 2011,
-    genre: "Endless Runner",
+    genre: "Arcade",
     platforms: "Mobile",
     length: "Open-ended, minutes per run",
     coreLoop: "Swipe to turn, jump, and slide as you sprint endlessly through temple ruins, collecting coins and power-ups while the path gets faster and obstacles more frequent.",
@@ -3626,7 +3626,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "PUBG: Battlegrounds",
     developer: "Krafton",
     year: 2017,
-    genre: "Battle Royale / Shooter",
+    genre: "Battle Royale",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series, Mobile",
     length: "Open-ended, 25–35 minutes per match",
     coreLoop: "Parachute onto a large map, loot weapons and armor from buildings, and fight 99 other players as an electric zone forces everyone closer together until one survives.",
@@ -3636,7 +3636,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Call of Duty: Warzone",
     developer: "Infinity Ward / Raven Software",
     year: 2020,
-    genre: "Battle Royale / FPS",
+    genre: "Battle Royale",
     platforms: "PC, PS4, PS5, Xbox One, Xbox Series",
     length: "Open-ended, 20–30 minutes per match",
     coreLoop: "Drop into a massive map as a squad, loot loadout drops and buy stations, fight other teams with Call of Duty gunplay, and use a gulag respawn system for a second chance after death.",
@@ -3686,7 +3686,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Assassin's Creed II",
     developer: "Ubisoft Montreal",
     year: 2009,
-    genre: "Action",
+    genre: "Action / Adventure",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One",
     length: "20–25 hours",
     coreLoop: "Freerun across Renaissance Italian rooftops, blend into crowds, and assassinate Templar targets using hidden blades and social stealth, upgrading a villa hub between missions.",
@@ -3786,7 +3786,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Subway Surfers",
     developer: "SYBO Games",
     year: 2012,
-    genre: "Endless Runner",
+    genre: "Arcade",
     platforms: "Mobile",
     length: "Open-ended, minutes per run",
     coreLoop: "Swipe to dodge trains, jump barriers, and collect coins while running endlessly along subway tracks, using power-ups and hoverboards to survive longer and set high scores.",
@@ -3886,7 +3886,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Star Wars Battlefront II (2017)",
     developer: "DICE",
     year: 2017,
-    genre: "FPS / Third-Person Shooter",
+    genre: "Third-Person Shooter",
     platforms: "PC, PS4, Xbox One",
     length: "5–7 hours campaign, open-ended multiplayer",
     coreLoop: "Fight in massive 20v20 Star Wars battles across all three trilogies, earning points to spawn as hero characters like Luke Skywalker or Darth Vader mid-match.",
@@ -3896,7 +3896,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Overwatch",
     developer: "Blizzard Entertainment",
     year: 2016,
-    genre: "Hero Shooter",
+    genre: "FPS",
     platforms: "PC, PS4, Xbox One",
     length: "Open-ended, 10–15 minutes per match",
     coreLoop: "Pick a hero from a roster of tanks, DPS, and healers in 6v6 objective-based team fights, swapping mid-match to counter enemy compositions and coordinate ultimate abilities.",
@@ -3916,7 +3916,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Dark Souls II: Scholar of the First Sin",
     developer: "FromSoftware",
     year: 2015,
-    genre: "Action RPG / Souls-like",
+    genre: "Action RPG",
     platforms: "PC, PS3, PS4, Xbox 360, Xbox One",
     length: "35–50 hours",
     coreLoop: "Explore a sprawling kingdom with remixed enemy placements, fighting through fog-gated bosses using stamina-based combat and managing soul memory for multiplayer matchmaking.",
@@ -3976,7 +3976,7 @@ export const RAW_GAMES_DB: GameEntry[] = [
     title: "Days Gone",
     developer: "Bend Studio",
     year: 2019,
-    genre: "Action",
+    genre: "Action / Survival",
     platforms: "PS4, PC",
     length: "30–40 hours",
     coreLoop: "Ride a motorcycle through a post-apocalyptic Oregon, managing fuel and bike upgrades while fighting zombie hordes that swarm in dynamic groups of hundreds.",
@@ -4020,77 +4020,77 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "God of War",
     developer: "SIE Santa Monica Studio",
     year: 2018,
-    genre: "RPG / Action",
+    genre: "Action / Adventure",
     platforms: "PS4, PC",
   },
   {
     title: "Grand Theft Auto: Vice City",
     developer: "Rockstar North",
     year: 2002,
-    genre: "Shooter / Racing",
+    genre: "Action",
     platforms: "Xbox, PC, Mac, PS2",
   },
   {
     title: "Batman: Arkham Asylum",
     developer: "Rocksteady Studios",
     year: 2009,
-    genre: "Action / Adventure",
+    genre: "Action",
     platforms: "PS3, Ouya, PC, Mac, Xbox 360",
   },
   {
     title: "Mass Effect",
     developer: "BioWare",
     year: 2007,
-    genre: "Shooter / RPG",
+    genre: "Action RPG",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Red Dead Redemption",
     developer: "Rockstar North",
     year: 2010,
-    genre: "Shooter / RPG",
+    genre: "Action / Adventure",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Horizon Zero Dawn",
     developer: "Guerrilla Games",
     year: 2017,
-    genre: "Shooter / RPG",
+    genre: "Action RPG",
     platforms: "PS4, PC",
   },
   {
     title: "Tomb Raider",
     developer: "Crystal Dynamics",
     year: 2013,
-    genre: "Shooter / Platformer",
+    genre: "Action / Adventure",
     platforms: "PS3, PC, Mobile, Mac, Xbox 360",
   },
   {
     title: "Assassin's Creed",
     developer: "Ubisoft Montreal",
     year: 2007,
-    genre: "Platformer / Adventure",
+    genre: "Action / Adventure",
     platforms: "PS3, Xbox 360",
   },
   {
     title: "Fallout 3",
     developer: "Bethesda Game Studios",
     year: 2008,
-    genre: "Shooter / RPG",
+    genre: "Action RPG",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Max Payne",
     developer: "Remedy Entertainment",
     year: 2001,
-    genre: "Shooter",
+    genre: "Action",
     platforms: "Xbox, PS3, PS4, Mobile, PC",
   },
   {
     title: "Stardew Valley",
     developer: "ConcernedApe",
     year: 2016,
-    genre: "RPG / Simulation",
+    genre: "Life Sim",
     platforms: "PS4, PC, Nintendo Switch 2, Mobile, Mac",
   },
   {
@@ -4104,7 +4104,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "The Last of Us Remastered",
     developer: "Naughty Dog",
     year: 2014,
-    genre: "Shooter / Adventure",
+    genre: "Action / Adventure",
     platforms: "PS4",
   },
   {
@@ -4125,49 +4125,49 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "The Elder Scrolls IV: Oblivion",
     developer: "Bethesda Game Studios",
     year: 2006,
-    genre: "RPG / Adventure",
+    genre: "Action RPG",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Call of Duty: Modern Warfare 2",
     developer: "Infinity Ward",
     year: 2009,
-    genre: "Shooter",
+    genre: "FPS",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Mafia",
     developer: "Illusion Softworks",
     year: 2002,
-    genre: "Fighting / Shooter",
+    genre: "Action",
     platforms: "Xbox, PC, PS2",
   },
   {
     title: "Assassin's Creed III",
     developer: "Ubisoft Montreal",
     year: 2012,
-    genre: "Adventure",
+    genre: "Action / Adventure",
     platforms: "PS3, PC, Wii U, Xbox 360",
   },
   {
     title: "Half-Life 2: Episode Two",
     developer: "Valve",
     year: 2007,
-    genre: "Shooter / Puzzle",
+    genre: "FPS",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Uncharted 3: Drake's Deception",
     developer: "Naughty Dog",
     year: 2011,
-    genre: "Shooter / Platformer",
+    genre: "Action / Adventure",
     platforms: "PS3",
   },
   {
     title: "Middle-earth: Shadow of Mordor",
     developer: "Monolith Productions",
     year: 2014,
-    genre: "RPG / Action",
+    genre: "Action",
     platforms: "PS3, PS4, PC, Mac, Xbox 360",
   },
   {
@@ -4181,14 +4181,14 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Rise of the Tomb Raider",
     developer: "Crystal Dynamics",
     year: 2015,
-    genre: "Shooter / Adventure",
+    genre: "Action / Adventure",
     platforms: "Google Stadia, PS4, PC, PlayStation VR, Mac",
   },
   {
     title: "Super Mario Bros.",
     developer: "Nintendo R&D4",
     year: 1985,
-    genre: "Platformer / Adventure",
+    genre: "Platformer",
     platforms: "Family Computer Disk System, Arcade, 3DS, Wii, Family Computer",
   },
   {
@@ -4202,14 +4202,14 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Mafia II",
     developer: "2K Czech",
     year: 2010,
-    genre: "Shooter / Racing",
+    genre: "Action",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Uncharted: Drake's Fortune",
     developer: "Naughty Dog",
     year: 2007,
-    genre: "Shooter / Platformer",
+    genre: "Action / Adventure",
     platforms: "PS3",
   },
   {
@@ -4230,35 +4230,35 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Sid Meier's Civilization V",
     developer: "Firaxis Games",
     year: 2010,
-    genre: "Simulation / Strategy",
+    genre: "Strategy",
     platforms: "PC, Mac",
   },
   {
     title: "Call of Duty: Modern Warfare 3",
     developer: "Sledgehammer Games",
     year: 2011,
-    genre: "Shooter / Tactical",
+    genre: "FPS",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Max Payne 3",
     developer: "Rockstar New England",
     year: 2012,
-    genre: "Shooter",
+    genre: "Action",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Far Cry 4",
     developer: "Ubisoft Montreal",
     year: 2014,
-    genre: "Shooter / Tactical",
+    genre: "FPS",
     platforms: "Google Stadia, PS3, PS4, PC, Xbox 360",
   },
   {
     title: "Watch Dogs",
     developer: "Ubisoft Montreal",
     year: 2014,
-    genre: "Shooter / Adventure",
+    genre: "Action",
     platforms: "Google Stadia, PS3, PS4, PC, Wii U",
   },
   {
@@ -4272,42 +4272,42 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "BioShock 2",
     developer: "2K Marin",
     year: 2010,
-    genre: "Shooter / Puzzle",
+    genre: "FPS",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Assassin's Creed Origins",
     developer: "Ubisoft Montreal",
     year: 2017,
-    genre: "RPG / Adventure",
+    genre: "Action RPG",
     platforms: "Google Stadia, Xbox Series, PS4, PC, PS5",
   },
   {
     title: "Dragon Age: Inquisition",
     developer: "BioWare Edmonton",
     year: 2014,
-    genre: "RPG / Strategy",
+    genre: "Action RPG",
     platforms: "PS3, PS4, PC, Xbox 360, Xbox One",
   },
   {
     title: "Hellblade: Senua's Sacrifice",
     developer: "Ninja Theory",
     year: 2017,
-    genre: "Simulation / Action",
+    genre: "Action / Adventure",
     platforms: "Xbox Series, PS4, PC, PS5, Xbox One",
   },
   {
     title: "Battlefield 3",
     developer: "EA Digital Illusions CE",
     year: 2011,
-    genre: "Shooter",
+    genre: "FPS",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "God of War II",
     developer: "SCE Santa Monica Studio",
     year: 2007,
-    genre: "Platformer / Action",
+    genre: "Action",
     platforms: "PS2",
   },
   {
@@ -4321,7 +4321,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Deus Ex: Human Revolution",
     developer: "Eidos Montréal",
     year: 2011,
-    genre: "Shooter / Puzzle",
+    genre: "Action RPG",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
@@ -4370,7 +4370,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Call of Duty: World at War",
     developer: "Treyarch",
     year: 2008,
-    genre: "Shooter / Adventure",
+    genre: "FPS",
     platforms: "PS3, PC, Xbox 360",
   },
   {
@@ -4384,42 +4384,42 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Assassin's Creed Unity",
     developer: "Ubisoft Montreal",
     year: 2014,
-    genre: "RPG / Adventure",
+    genre: "Action / Adventure",
     platforms: "Google Stadia, PS4, PC, Xbox One",
   },
   {
     title: "Super Mario Galaxy 2",
     developer: "Nintendo Entertainment Analysis & Development",
     year: 2010,
-    genre: "Platformer / Adventure",
+    genre: "Platformer",
     platforms: "Wii, Wii U",
   },
   {
     title: "Spec Ops: The Line",
     developer: "Yager Development",
     year: 2012,
-    genre: "Shooter / Adventure",
+    genre: "Third-Person Shooter",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Call of Duty: Black Ops II",
     developer: "Treyarch",
     year: 2012,
-    genre: "Shooter",
+    genre: "FPS",
     platforms: "PS3, PC, Xbox 360",
   },
   {
     title: "Team Fortress 2",
     developer: "Valve",
     year: 2007,
-    genre: "Shooter",
+    genre: "FPS",
     platforms: "PS3, PC, Mac, Xbox 360",
   },
   {
     title: "Battlefield 4",
     developer: "EA Digital Illusions CE",
     year: 2013,
-    genre: "Shooter / Simulation",
+    genre: "FPS",
     platforms: "PS3, PS4, PC, Xbox 360, Xbox One",
   },
   {
@@ -4447,21 +4447,21 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Kingdom Hearts II",
     developer: "Square Enix Product Development Division 1",
     year: 2005,
-    genre: "RPG / Adventure",
+    genre: "Action RPG",
     platforms: "PS3, PS4, PS2",
   },
   {
     title: "Halo 3",
     developer: "Bungie",
     year: 2007,
-    genre: "Shooter",
+    genre: "FPS",
     platforms: "PC, Xbox 360, Xbox One",
   },
   {
     title: "Crysis",
     developer: "Crytek Frankfurt",
     year: 2007,
-    genre: "Shooter / Adventure",
+    genre: "FPS",
     platforms: "PS3, PC, Xbox 360",
   },
   {
@@ -4475,21 +4475,21 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "A Plague Tale: Innocence",
     developer: "Asobo Studio",
     year: 2019,
-    genre: "Adventure",
+    genre: "Action / Adventure",
     platforms: "Xbox Series, PS4, PC, PS5, Xbox One",
   },
   {
     title: "The Last of Us Part I",
     developer: "Naughty Dog",
     year: 2022,
-    genre: "Shooter / Adventure",
+    genre: "Action / Adventure",
     platforms: "PC, PS5",
   },
   {
     title: "Prince of Persia: The Sands of Time",
     developer: "Ubisoft Montreal",
     year: 2003,
-    genre: "Platformer / Puzzle",
+    genre: "Action / Adventure",
     platforms: "Xbox, PS3, Nintendo GameCube, PC, PS2",
   },
   {
@@ -4503,7 +4503,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "The Legend of Zelda",
     developer: "Nintendo R&D4",
     year: 1986,
-    genre: "Adventure",
+    genre: "Action / Adventure",
     platforms: "Family Computer Disk System, 3DS, Wii, Family Computer, Wii U",
   },
   {
@@ -4517,7 +4517,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Star Wars: Battlefront II",
     developer: "Pandemic Studios",
     year: 2005,
-    genre: "Shooter",
+    genre: "Third-Person Shooter",
     platforms: "Xbox, PC, PlayStation Portable, PS2",
   },
   {
@@ -4538,7 +4538,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "The Legend of Zelda: Twilight Princess",
     developer: "Nintendo EAD Software Development Group No.3",
     year: 2006,
-    genre: "Puzzle / Adventure",
+    genre: "Action / Adventure",
     platforms: "Nintendo GameCube",
   },
   {
@@ -4552,7 +4552,7 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     title: "Super Mario Sunshine",
     developer: "Nintendo Entertainment Analysis & Development",
     year: 2002,
-    genre: "Platformer / Adventure",
+    genre: "Platformer",
     platforms: "Nintendo GameCube",
   },
 ];
@@ -4695,7 +4695,53 @@ const PLAYABLE_GAMES_BASE: GameEntry[] = RAW_GAMES_DB.filter(
 );
 
 /** Puzzle epoch year — must keep using SHUFFLE_SEED so existing 2026 dailies stay stable. */
-const LAUNCH_SHUFFLE_YEAR = 2026;
+export const LAUNCH_SHUFFLE_YEAR = 2026;
+
+/** Added to `(puzzleNum - 1)` for the global preferred index (legacy Jan-1 continuity). */
+export const EPOCH_INDEX_OFFSET = 78;
+
+/** Puzzle numbers 1–14 on this calendar year use the fixed launch sequence (see below). */
+export const LAUNCH_FIXED_DAYS = 14;
+
+function findGameEntryByCanonicalTitle(title: string): GameEntry {
+  const fromRaw = RAW_GAMES_DB.find((g) => g.title === title);
+  if (fromRaw) return fromRaw;
+  const fromAdd = ADDITIONAL_GAMES_DB.find((g) => g.title === title);
+  if (fromAdd) return fromAdd;
+  throw new Error(`Missing game entry for "${title}"`);
+}
+
+const LAUNCH_FIRST_14_TITLES = [
+  "Wii Sports",
+  "Minecraft",
+  "The Stanley Parable",
+  "Balatro",
+  "Final Fantasy VI",
+  "Superhot VR",
+  "Tom Clancy's Splinter Cell: Chaos Theory",
+  "Dota 2",
+  "Kerbal Space Program",
+  "Baldur's Gate 3",
+  "Minecraft Dungeons",
+  "Metaphor: ReFantazio",
+  "Uncharted 2: Among Thieves",
+  "Warframe",
+] as const;
+
+const LAUNCH_FIRST_14: GameEntry[] = LAUNCH_FIRST_14_TITLES.map((t) =>
+  findGameEntryByCanonicalTitle(t)
+);
+
+/** Returns `null` when this puzzle is not a fixed launch day (see `LAUNCH_FIXED_DAYS`). */
+export function getLaunchFixedGameForPuzzleNumber(
+  puzzleNum: number,
+  year: number
+): GameEntry | null {
+  if (year !== LAUNCH_SHUFFLE_YEAR || puzzleNum < 1 || puzzleNum > LAUNCH_FIXED_DAYS) {
+    return null;
+  }
+  return LAUNCH_FIRST_14[puzzleNum - 1];
+}
 
 function shuffleSeedForCalendarYear(year: number): number {
   if (year === LAUNCH_SHUFFLE_YEAR) return SHUFFLE_SEED;
@@ -4719,10 +4765,95 @@ export function getPlayableMainOrderForYear(year: number): GameEntry[] {
   );
 }
 
-/** Returns the game for a day using a fixed index mapping. Main pool: yearly shuffle with
- * ADDITIONAL_EXCLUDED_TITLES skips. When `preferredIndex` passes the main shuffle length,
- * draws from `additionalPool` (unshuffled base); each full pass uses a new cycle seed. */
-export function selectGameForFixedIndex(
+/** Every game that can appear as a daily answer for a calendar year (main pool + additional),
+ * deduped by title. Order: yearly main order, then additional entries not already in main. */
+export function getFullDailyPoolForYear(year: number): GameEntry[] {
+  const main = getPlayableMainOrderForYear(year);
+  const seen = new Set(main.map((g) => g.title));
+  const extra = ADDITIONAL_GAMES_POOL_BASE.filter((g) => !seen.has(g.title));
+  return [...main, ...extra];
+}
+
+/** Same base entropy as `getGamesOrderForYear` for cycle 0; later cycles XOR the cycle index
+ * and mix (no extra constants — avoids drifting from SHUFFLE_SEED / yearly shuffle). */
+function deckCycleSeed(year: number, cycleNumber: number): number {
+  const base = shuffleSeedForCalendarYear(year);
+  if (cycleNumber === 0) return base;
+  let h = (base ^ cycleNumber) >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+  h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
+/**
+ * Deterministic daily game: partition the global index stream into full-deck cycles. Each cycle
+ * is a random permutation of `getFullDailyPoolForYear` (no repeats within a cycle). When a new
+ * cycle starts, rotate if needed so the first day does not repeat the previous cycle's last game
+ * (unless the pool has only one title). Puzzles 1–`LAUNCH_FIXED_DAYS` on launch year use
+ * `getLaunchFixedGameForPuzzleNumber` instead (see `lib/puzzle.ts`).
+ */
+export function getGameForDeckPreferredIndex(
+  year: number,
+  preferredIndex: number
+): GameEntry {
+  const pool = getFullDailyPoolForYear(year);
+  const n = pool.length;
+  if (n === 0) throw new Error("Daily pool is empty");
+  const cycleNumber = Math.floor(preferredIndex / n) >>> 0;
+  const positionInCycle = ((preferredIndex % n) + n) % n;
+
+  const decks: GameEntry[][] = [];
+  for (let c = 0; c <= cycleNumber; c++) {
+    let deck = seededShuffle(pool, deckCycleSeed(year, c));
+    if (c > 0 && n > 1) {
+      const lastPrev = decks[c - 1][n - 1];
+      if (deck[0].title === lastPrev.title) {
+        const i = deck.findIndex((g) => g.title !== lastPrev.title);
+        if (i > 0) deck = [...deck.slice(i), ...deck.slice(0, i)];
+      }
+    }
+    decks.push(deck);
+  }
+
+  return decks[cycleNumber][positionInCycle];
+}
+
+/** Playable ring for a given index (main pool: filtered shuffle; additional: filtered cycle shuffle).
+ * Used to pick a substitute when the raw scan would repeat the previous day. */
+export function getPlayableRingForSelect(
+  shuffled: GameEntry[],
+  preferredIndex: number,
+  additionalPool: GameEntry[]
+): GameEntry[] {
+  const originalLen = shuffled.length;
+
+  if (preferredIndex < originalLen) {
+    return shuffled.filter(
+      (g) => !ADDITIONAL_EXCLUDED_TITLES.has(g.title)
+    );
+  }
+
+  const addIdx = preferredIndex - originalLen;
+  const addLen = additionalPool.length;
+  if (!addLen) throw new Error("Additional pool is empty");
+
+  const cycleNumber = Math.floor(addIdx / addLen);
+
+  let cycleSeed = (ADDITIONAL_SHUFFLE_SEED ^ cycleNumber) >>> 0;
+  cycleSeed = Math.imul(cycleSeed ^ (cycleSeed >>> 16), 0x7feb352d);
+  cycleSeed = Math.imul(cycleSeed ^ (cycleSeed >>> 15), 0x846ca68b);
+  cycleSeed = (cycleSeed ^ (cycleSeed >>> 16)) >>> 0;
+
+  const cycleShuffled = seededShuffle(additionalPool, cycleSeed);
+  return cycleShuffled.filter(
+    (g) => !ADDITIONAL_GAMES_EXCLUDED_TITLES.has(g.title)
+  );
+}
+
+/** Legacy scan-forward selection: slot = preferredIndex % len, then walk the ring skipping excluded
+ * titles. Consecutive days can resolve to the same title when several slots in a row are excluded.
+ * Puzzle layer applies a one-step advance in `getPlayableRingForSelect` order when that happens. */
+export function rawSelectGameForFixedIndex(
   shuffled: GameEntry[],
   preferredIndex: number,
   additionalPool: GameEntry[] = []

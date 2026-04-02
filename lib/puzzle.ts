@@ -1,7 +1,7 @@
 import {
-  ADDITIONAL_GAMES_POOL_BASE,
-  getGamesOrderForYear,
-  selectGameForFixedIndex,
+  EPOCH_INDEX_OFFSET,
+  getGameForDeckPreferredIndex,
+  getLaunchFixedGameForPuzzleNumber,
 } from "./games";
 import { Clue, DailyPuzzle, GameEntry } from "./types";
 
@@ -13,7 +13,7 @@ const EPOCH_M = 2; // March (0-indexed)
 const EPOCH_D = 20;
 
 // Offset so Day 1 (March 20) maps to the same game as old Day 79 (Jan 1 + 78 days = March 20).
-const EPOCH_INDEX_OFFSET = 78;
+// Exported from `games.ts` as the single source of truth; launch Apr 1 is anchored in deck logic.
 
 /** Puzzle number (1-indexed) based on days since epoch */
 export function getPuzzleNumber(): number {
@@ -30,18 +30,21 @@ export function getDateForPuzzleNumber(num: number): Date {
   return d;
 }
 
-/** Deterministic puzzle selection for a given puzzle number.
- * Day N maps to fixed index (N-1 + EPOCH_INDEX_OFFSET). Main yearly shuffle with exclusions,
- * then additional pool with per-cycle reshuffles (see selectGameForFixedIndex). */
-export function getPuzzleForNumber(num: number): DailyPuzzle {
+function getGameEntryForPuzzleNumber(num: number): GameEntry {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
+  const fixed = getLaunchFixedGameForPuzzleNumber(num, year);
+  if (fixed) return fixed;
   const preferredIndex = (num - 1) + EPOCH_INDEX_OFFSET;
-  const game = selectGameForFixedIndex(
-    getGamesOrderForYear(year),
-    preferredIndex,
-    ADDITIONAL_GAMES_POOL_BASE
-  );
+  return getGameForDeckPreferredIndex(year, preferredIndex);
+}
+
+/** Deterministic puzzle selection for a given puzzle number.
+ * Launch year: puzzles 1–14 use the fixed `LAUNCH_FIRST_14` order in `games.ts`. After that,
+ * `(N-1) + EPOCH_INDEX_OFFSET` indexes the full-deck cycles (no repeats within a deck pass). */
+export function getPuzzleForNumber(num: number): DailyPuzzle {
+  const date = getDateForPuzzleNumber(num);
+  const game = getGameEntryForPuzzleNumber(num);
   return {
     puzzleNumber: num,
     game,
