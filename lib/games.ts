@@ -3533,6 +3533,28 @@ export const RAW_GAMES_DB: GameEntry[] = [
     color: "#3498db",
   },
   {
+    title: "Rayman Legends",
+    developer: "Ubisoft Montpellier",
+    year: 2013,
+    genre: "Platformer",
+    platforms: "PC, PS3, PS4, Xbox 360, Xbox, Wii U, Switch",
+    length: "8–12 hours",
+    coreLoop:
+      "Sprint, glide, and punch through hand-painted 2D levels collecting Teensies and Lums, with rhythm-synced musical stages as the highlight.",
+    color: "#e87c1e",
+  },
+  {
+    title: "Risk of Rain 2",
+    developer: "Hopoo Games",
+    year: 2019,
+    genre: "Action / Roguelike",
+    platforms: "PC, PS4, Xbox, Switch",
+    length: "1–2 hours per run",
+    coreLoop:
+      "Fight through alien planets collecting items that stack into absurd synergies, racing against an ever-rising difficulty timer until you either escape or get overwhelmed.",
+    color: "#1a3a2e",
+  },
+  {
     title: "Kingdom Hearts",
     developer: "Square Enix",
     year: 2002,
@@ -4583,7 +4605,6 @@ const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
   "Wordle",
   "Flappy Bird",
   "2048",
-  "The Secret of Monkey Island",
   "Call of Duty 4: Modern Warfare",
   "Rust",
 ]);
@@ -4593,22 +4614,18 @@ const ORIGINAL_EXCLUDED_TITLES = new Set<string>([
 const ADDITIONAL_EXCLUDED_TITLES = new Set<string>([
   "The Talos Principle",
   "Shadow of Mordor",
-  "Hades",
   "Dying Light 2",
-  "Star Wars Jedi: Fallen Order",
-  "Batman: Arkham City",
+  "Batman: Arkham Knight",
   "Monster Hunter Rise",
   "Ori and the Blind Forest",
   "Ghost Trick: Phantom Detective",
   "The Elder Scrolls III: Morrowind",
   "NBA 2K24",
-  "Dark Souls II",
   "Dark Souls II: Scholar of the First Sin",
   "Mortal Kombat 1",
   "The Stanley Parable: Ultra Deluxe",
   "Overwatch 2",
   "Dead Space (2023)",
-  "Spelunky",
   "Total War: Warhammer III",
   "Divinity: Original Sin 2",
   "Phasmophobia",
@@ -4688,6 +4705,32 @@ export function getExcludedScreenshotGameEntries(): GameEntry[] {
   return out;
 }
 
+/**
+ * Every catalog entry (`RAW_GAMES_DB` + `ADDITIONAL_GAMES_DB`) whose title is not in
+ * `ORIGINAL_EXCLUDED_TITLES`, `ADDITIONAL_EXCLUDED_TITLES`, or `ADDITIONAL_GAMES_EXCLUDED_TITLES`.
+ * Deduped by title (RAW wins if both lists contain the same title).
+ */
+export function getNonExcludedCatalogEntries(): GameEntry[] {
+  const excluded = new Set<string>();
+  ORIGINAL_EXCLUDED_TITLES.forEach((t) => excluded.add(t));
+  ADDITIONAL_EXCLUDED_TITLES.forEach((t) => excluded.add(t));
+  ADDITIONAL_GAMES_EXCLUDED_TITLES.forEach((t) => excluded.add(t));
+  const seen = new Set<string>();
+  const out: GameEntry[] = [];
+  for (const g of RAW_GAMES_DB) {
+    if (excluded.has(g.title) || seen.has(g.title)) continue;
+    seen.add(g.title);
+    out.push(g);
+  }
+  for (const g of ADDITIONAL_GAMES_DB) {
+    if (excluded.has(g.title) || seen.has(g.title)) continue;
+    seen.add(g.title);
+    out.push(g);
+  }
+  out.sort((a, b) => a.title.localeCompare(b.title, "en"));
+  return out;
+}
+
 /** Input order is the declaration order in RAW_GAMES_DB; shuffle uses titles + SHUFFLE_SEED only.
  * Editing metadata like `genre` does not change the calendar. Reordering or adding/removing
  * RAW entries (or changing SHUFFLE_SEED / ORIGINAL_EXCLUDED_TITLES) does. */
@@ -4704,7 +4747,7 @@ export const EPOCH_INDEX_OFFSET = 78;
 /** Puzzle numbers 1–14 on this calendar year use the fixed launch sequence (see below). */
 export const LAUNCH_FIXED_DAYS = 14;
 
-function findGameEntryByCanonicalTitle(title: string): GameEntry {
+export function findGameEntryByCanonicalTitle(title: string): GameEntry {
   const fromRaw = RAW_GAMES_DB.find((g) => g.title === title);
   if (fromRaw) return fromRaw;
   const fromAdd = ADDITIONAL_GAMES_DB.find((g) => g.title === title);
@@ -4732,6 +4775,9 @@ const LAUNCH_FIRST_14_TITLES = [
 const LAUNCH_FIRST_14: GameEntry[] = LAUNCH_FIRST_14_TITLES.map((t) =>
   findGameEntryByCanonicalTitle(t)
 );
+
+/** Hardcoded answer for launch-year puzzle 14; also excluded from the post-launch deck pool. */
+export const LAUNCH_YEAR_DAY_14_OVERRIDE_TITLE = "Burnout Paradise";
 
 /** Returns `null` when this puzzle is not a fixed launch day (see `LAUNCH_FIXED_DAYS`). */
 export function getLaunchFixedGameForPuzzleNumber(
@@ -4775,6 +4821,30 @@ export function getFullDailyPoolForYear(year: number): GameEntry[] {
   return [...main, ...extra];
 }
 
+/**
+ * Titles already used as launch-year puzzles 1–14 before deck-based days: fixed days 1–13
+ * (`LAUNCH_FIRST_14_TITLES` indices 0–12) plus the day-14 override (not index 13 / Warframe).
+ */
+function launchYearTitlesConsumedBeforeDeck(): Set<string> {
+  const s = new Set<string>();
+  for (let i = 0; i < 13; i++) {
+    s.add(LAUNCH_FIRST_14_TITLES[i]);
+  }
+  s.add(LAUNCH_YEAR_DAY_14_OVERRIDE_TITLE);
+  return s;
+}
+
+/**
+ * Pool used by `getGameForDeckPreferredIndex`. On the launch shuffle year, excludes titles
+ * already shown on puzzles 1–14 so deck days do not repeat those answers until a new cycle/year.
+ */
+export function getDeckDailyPoolForYear(year: number): GameEntry[] {
+  const full = getFullDailyPoolForYear(year);
+  if (year !== LAUNCH_SHUFFLE_YEAR) return full;
+  const consumed = launchYearTitlesConsumedBeforeDeck();
+  return full.filter((g) => !consumed.has(g.title));
+}
+
 /** Same base entropy as `getGamesOrderForYear` for cycle 0; later cycles XOR the cycle index
  * and mix (no extra constants — avoids drifting from SHUFFLE_SEED / yearly shuffle). */
 function deckCycleSeed(year: number, cycleNumber: number): number {
@@ -4788,7 +4858,7 @@ function deckCycleSeed(year: number, cycleNumber: number): number {
 
 /**
  * Deterministic daily game: partition the global index stream into full-deck cycles. Each cycle
- * is a random permutation of `getFullDailyPoolForYear` (no repeats within a cycle). When a new
+ * is a random permutation of `getDeckDailyPoolForYear` (no repeats within a cycle). When a new
  * cycle starts, rotate if needed so the first day does not repeat the previous cycle's last game
  * (unless the pool has only one title). Puzzles 1–`LAUNCH_FIXED_DAYS` on launch year use
  * `getLaunchFixedGameForPuzzleNumber` instead (see `lib/puzzle.ts`).
@@ -4797,7 +4867,7 @@ export function getGameForDeckPreferredIndex(
   year: number,
   preferredIndex: number
 ): GameEntry {
-  const pool = getFullDailyPoolForYear(year);
+  const pool = getDeckDailyPoolForYear(year);
   const n = pool.length;
   if (n === 0) throw new Error("Daily pool is empty");
   const cycleNumber = Math.floor(preferredIndex / n) >>> 0;

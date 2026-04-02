@@ -2,6 +2,8 @@ import {
   EPOCH_INDEX_OFFSET,
   LAUNCH_FIXED_DAYS,
   LAUNCH_SHUFFLE_YEAR,
+  LAUNCH_YEAR_DAY_14_OVERRIDE_TITLE,
+  findGameEntryByCanonicalTitle,
   getGameForDeckPreferredIndex,
   getLaunchFixedGameForPuzzleNumber,
 } from "./games";
@@ -36,6 +38,10 @@ function getGameEntryForPuzzleNumber(num: number): GameEntry {
   const date = getDateForPuzzleNumber(num);
   const year = date.getFullYear();
 
+  if (year === LAUNCH_SHUFFLE_YEAR && num === 14) {
+    return findGameEntryByCanonicalTitle(LAUNCH_YEAR_DAY_14_OVERRIDE_TITLE);
+  }
+
   // One-time lineup correction: replace Day 14's game with whatever Day 15 would
   // have been, then shift every subsequent puzzle up by 1.
   // Equivalently: for launch year puzzles >= Day `LAUNCH_FIXED_DAYS`, we advance
@@ -52,8 +58,9 @@ function getGameEntryForPuzzleNumber(num: number): GameEntry {
 }
 
 /** Deterministic puzzle selection for a given puzzle number.
- * Launch year: puzzles 1–14 use the fixed `LAUNCH_FIRST_14` order in `games.ts`. After that,
- * `(N-1) + EPOCH_INDEX_OFFSET` indexes the full-deck cycles (no repeats within a deck pass). */
+ * Launch year: puzzles 1–13 use the fixed `LAUNCH_FIRST_14` order in `games.ts`; puzzle 14 is
+ * temporarily pinned in `getGameEntryForPuzzleNumber`. After that,
+ * `(N-1) + EPOCH_INDEX_OFFSET` (+ lineup shift) indexes the full-deck cycles. */
 export function getPuzzleForNumber(num: number): DailyPuzzle {
   const date = getDateForPuzzleNumber(num);
   const game = getGameEntryForPuzzleNumber(num);
