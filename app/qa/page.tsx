@@ -16,7 +16,7 @@ export type QACandidate = {
   rating: number;
   rating_count: number;
   series: string | null;
-  igdb_id: number;
+  igdb_id: number | null;
   slug: string;
   hasScreenshot: boolean;
 };

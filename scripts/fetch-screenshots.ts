@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import dotenv from "dotenv";
-import { GAMES_DB } from "../lib/games";
+import { getNonExcludedCatalogEntries } from "../lib/games";
 import { slugify } from "../lib/slug";
 
 // Load env from .env.local (Next.js-style) or fallback to .env
@@ -141,7 +141,8 @@ async function main() {
 
   console.log(`Using screenshots directory: ${screenshotsRoot}`);
 
-  for (const game of GAMES_DB) {
+  const catalog = getNonExcludedCatalogEntries();
+  for (const game of catalog) {
     const slug = slugify(game.title);
     if (ONLY_SLUG && slug !== ONLY_SLUG) continue;
     const gameDir = path.join(screenshotsRoot, slug);

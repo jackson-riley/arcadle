@@ -4577,6 +4577,41 @@ export const ADDITIONAL_GAMES_DB: GameEntry[] = [
     genre: "Platformer",
     platforms: "Nintendo GameCube",
   },
+  {
+    title: "Unravel",
+    developer: "Coldwood Interactive",
+    year: 2016,
+    genre: "Platformer / Puzzle",
+    platforms: "PC, PS4, Xbox One",
+  },
+  {
+    title: "Pokémon Emerald",
+    developer: "Game Freak",
+    year: 2004,
+    genre: "RPG",
+    platforms: "GBA",
+  },
+  {
+    title: "Split Fiction",
+    developer: "Hazelight Studios",
+    year: 2025,
+    genre: "Action / Co-op",
+    platforms: "PC, PS5, Xbox Series",
+  },
+  {
+    title: "Kirby Air Ride",
+    developer: "HAL Laboratory",
+    year: 2003,
+    genre: "Racing",
+    platforms: "Nintendo GameCube",
+  },
+  {
+    title: "Pokémon Red",
+    developer: "Game Freak",
+    year: 1996,
+    genre: "RPG",
+    platforms: "3DS, Game Boy",
+  },
 ];
 
 // Exclusion set that existed at launch. Used to build PLAYABLE_GAMES_BASE (shuffle input).
@@ -4672,6 +4707,7 @@ const ADDITIONAL_GAMES_EXCLUDED_TITLES = new Set<string>([
   "Dead Space 2",
   "Mafia II",
   "Metal Gear Solid 2: Sons of Liberty",
+  "Pokémon Red",
   "Rise of the Tomb Raider",
   "The Last of Us Remastered",
 ]);

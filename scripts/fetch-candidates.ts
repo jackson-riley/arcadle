@@ -2,8 +2,8 @@
  * scripts/fetch-candidates.ts
  *
  * Queries IGDB for popular, well-received games not already in RAW_GAMES_DB,
- * applies quality filters, caps series representation, and writes a reviewable
- * candidate list to candidates.json.
+ * prepends entries from manual-candidates.ts, applies quality filters, caps
+ * series representation, and writes a reviewable candidate list to candidates.json.
  *
  * Usage:
  *   npx tsx scripts/fetch-candidates.ts
@@ -18,6 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import dotenv from "dotenv";
 import { RAW_GAMES_DB } from "../lib/games";
+import { MANUAL_CANDIDATES, type ManualCandidateSeed } from "./manual-candidates";
 
 const rootDir = path.join(__dirname, "..");
 dotenv.config({ path: path.join(rootDir, ".env.local") });
@@ -66,8 +67,23 @@ export type Candidate = {
   rating: number;
   rating_count: number;
   series: string | null;
-  igdb_id: number;
+  /** null = resolve via IGDB search when fetching staging screenshots */
+  igdb_id: number | null;
 };
+
+function toManualCandidate(seed: ManualCandidateSeed): Candidate {
+  return {
+    title: seed.title,
+    developer: seed.developer,
+    year: seed.year,
+    genre: seed.genre,
+    platforms: seed.platforms,
+    rating: 0,
+    rating_count: 0,
+    series: null,
+    igdb_id: null,
+  };
+}
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function getTwitchToken(): Promise<string> {
@@ -178,6 +194,14 @@ async function main() {
   const seriesCounts = new Map<number, number>();
   const candidates: Candidate[] = [];
   const seenTitles = new Set<string>();
+
+  for (const seed of MANUAL_CANDIDATES) {
+    const norm = normalizeTitle(seed.title);
+    if (existingTitles.has(norm)) continue;
+    if (seenTitles.has(norm)) continue;
+    seenTitles.add(norm);
+    candidates.push(toManualCandidate(seed));
+  }
 
   for (const game of allGames) {
   //  if (!game.screenshots?.length) continue;

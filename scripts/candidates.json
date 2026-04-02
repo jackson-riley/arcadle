@@ -1,5 +1,82 @@
 [
   {
+    "title": "Unravel",
+    "developer": "Coldwood Interactive",
+    "year": 2016,
+    "genre": "Platformer / Puzzle",
+    "platforms": "PC, PS4, Xbox One",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Unravel Two",
+    "developer": "Coldwood Interactive",
+    "year": 2018,
+    "genre": "Platformer / Co-op",
+    "platforms": "PC, PS4, Xbox One, Switch",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Pokémon Diamond and Pearl",
+    "developer": "Game Freak",
+    "year": 2006,
+    "genre": "RPG",
+    "platforms": "DS",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Pokémon Emerald",
+    "developer": "Game Freak",
+    "year": 2004,
+    "genre": "RPG",
+    "platforms": "GBA",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Split Fiction",
+    "developer": "Hazelight Studios",
+    "year": 2025,
+    "genre": "Action / Co-op",
+    "platforms": "PC, PS5, Xbox Series",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Kirby Air Ride",
+    "developer": "HAL Laboratory",
+    "year": 2003,
+    "genre": "Racing",
+    "platforms": "GameCube",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
+    "title": "Kirby and the Forgotten Land",
+    "developer": "HAL Laboratory",
+    "year": 2022,
+    "genre": "Platformer / Action",
+    "platforms": "Switch",
+    "rating": 0,
+    "rating_count": 0,
+    "series": null,
+    "igdb_id": null
+  },
+  {
     "title": "God of War",
     "developer": "SIE Santa Monica Studio",
     "year": 2018,
@@ -17,7 +94,7 @@
     "genre": "Shooter / Racing",
     "platforms": "Xbox, PC, Mac, PS2",
     "rating": 87,
-    "rating_count": 3008,
+    "rating_count": 3009,
     "series": null,
     "igdb_id": 733
   },
@@ -83,7 +160,7 @@
     "genre": "Simulator / Adventure",
     "platforms": "PC, Mac",
     "rating": 85,
-    "rating_count": 1987,
+    "rating_count": 1988,
     "series": null,
     "igdb_id": 121
   },
@@ -116,7 +193,7 @@
     "genre": "Shooter / Role-playing (RPG)",
     "platforms": "PS3, PC, Xbox 360",
     "rating": 83,
-    "rating_count": 1720,
+    "rating_count": 1721,
     "series": null,
     "igdb_id": 15
   },
@@ -138,7 +215,7 @@
     "genre": "Role-playing (RPG) / Simulator",
     "platforms": "PS4, PC, Nintendo Switch 2, Mobile, Mac",
     "rating": 86,
-    "rating_count": 1699,
+    "rating_count": 1700,
     "series": null,
     "igdb_id": 17000
   },
@@ -215,7 +292,7 @@
     "genre": "Shooter / Racing",
     "platforms": "Xbox, PS4, Mobile, PC, Mac",
     "rating": 85,
-    "rating_count": 1560,
+    "rating_count": 1561,
     "series": null,
     "igdb_id": 730
   },
@@ -303,7 +380,7 @@
     "genre": "Role-playing (RPG) / Strategy",
     "platforms": "Google Stadia, Xbox Series, PC, PS5, Mac",
     "rating": 96,
-    "rating_count": 1380,
+    "rating_count": 1381,
     "series": null,
     "igdb_id": 119171
   },
@@ -622,7 +699,7 @@
     "genre": "Strategy / Adventure",
     "platforms": "PS3, PC, SteamVR, Xbox 360",
     "rating": 82,
-    "rating_count": 1012,
+    "rating_count": 1013,
     "series": null,
     "igdb_id": 109
   },
@@ -710,7 +787,7 @@
     "genre": "Puzzle / Arcade",
     "platforms": "Nintendo Entertainment System",
     "rating": 86,
-    "rating_count": 939,
+    "rating_count": 940,
     "series": null,
     "igdb_id": 8197
   },
@@ -754,7 +831,7 @@
     "genre": "Platform / Adventure",
     "platforms": "Wii, Wii U",
     "rating": 89,
-    "rating_count": 900,
+    "rating_count": 901,
     "series": null,
     "igdb_id": 1078
   },
@@ -853,7 +930,7 @@
     "genre": "Racing",
     "platforms": "Xbox, Nintendo GameCube, PC, PS2",
     "rating": 83,
-    "rating_count": 837,
+    "rating_count": 838,
     "series": null,
     "igdb_id": 97
   },
@@ -897,7 +974,7 @@
     "genre": "Shooter",
     "platforms": "PC, Mac",
     "rating": 81,
-    "rating_count": 815,
+    "rating_count": 816,
     "series": null,
     "igdb_id": 621
   },
@@ -1040,7 +1117,7 @@
     "genre": "Shooter / Adventure",
     "platforms": "PC, PS5",
     "rating": 93,
-    "rating_count": 742,
+    "rating_count": 743,
     "series": null,
     "igdb_id": 204350
   },
@@ -1084,7 +1161,7 @@
     "genre": "Adventure",
     "platforms": "PS3, PS4, PC",
     "rating": 73,
-    "rating_count": 727,
+    "rating_count": 728,
     "series": null,
     "igdb_id": 1342
   },
@@ -1166,6 +1243,17 @@
     "igdb_id": 2033
   },
   {
+    "title": "The Legend of Zelda: A Link Between Worlds",
+    "developer": "Nintendo EAD Software Development Group No.3",
+    "year": 2013,
+    "genre": "Puzzle / Adventure",
+    "platforms": "3DS",
+    "rating": 87,
+    "rating_count": 694,
+    "series": null,
+    "igdb_id": 2909
+  },
+  {
     "title": "Super Mario World 2: Yoshi's Island",
     "developer": "Nintendo Entertainment Analysis & Development",
     "year": 1995,
@@ -1175,28 +1263,6 @@
     "rating_count": 694,
     "series": null,
     "igdb_id": 1073
-  },
-  {
-    "title": "The Legend of Zelda: A Link Between Worlds",
-    "developer": "Nintendo EAD Software Development Group No.3",
-    "year": 2013,
-    "genre": "Puzzle / Adventure",
-    "platforms": "3DS",
-    "rating": 87,
-    "rating_count": 693,
-    "series": null,
-    "igdb_id": 2909
-  },
-  {
-    "title": "Crash Bandicoot",
-    "developer": "Naughty Dog",
-    "year": 1996,
-    "genre": "Platform",
-    "platforms": "PS3, Mobile, PlayStation Vita, PlayStation, PlayStation Portable",
-    "rating": 81,
-    "rating_count": 692,
-    "series": null,
-    "igdb_id": 1185
   },
   {
     "title": "Little Nightmares",
@@ -1271,7 +1337,7 @@
     "genre": "Platform / Adventure",
     "platforms": "Xbox Series, PS4, PC, PS5, Mac",
     "rating": 82,
-    "rating_count": 664,
+    "rating_count": 665,
     "series": null,
     "igdb_id": 110248
   },
@@ -1304,7 +1370,7 @@
     "genre": "Shooter / Role-playing (RPG)",
     "platforms": "PS3, PC, Xbox 360",
     "rating": 93,
-    "rating_count": 656,
+    "rating_count": 657,
     "series": null,
     "igdb_id": 45181
   },
@@ -1315,20 +1381,9 @@
     "genre": "Shooter / Tactical",
     "platforms": "PS3, Mobile, PC, Mac, Xbox 360",
     "rating": 75,
-    "rating_count": 655,
+    "rating_count": 654,
     "series": null,
     "igdb_id": 530
-  },
-  {
-    "title": "Rayman Legends",
-    "developer": "Ubisoft Montpellier",
-    "year": 2013,
-    "genre": "Platform / Adventure",
-    "platforms": "Google Stadia, PS3, PS4, PC, Xbox 360",
-    "rating": 85,
-    "rating_count": 639,
-    "series": null,
-    "igdb_id": 1968
   },
   {
     "title": "Fallout: A Post Nuclear Role Playing Game",
@@ -1392,7 +1447,7 @@
     "genre": "Role-playing (RPG) / Simulator",
     "platforms": "PC, Mac",
     "rating": 80,
-    "rating_count": 621,
+    "rating_count": 622,
     "series": null,
     "igdb_id": 260
   },
@@ -1507,6 +1562,17 @@
     "igdb_id": 28204
   },
   {
+    "title": "Super Smash Bros. Brawl",
+    "developer": "Sora",
+    "year": 2008,
+    "genre": "Fighting / Platform",
+    "platforms": "Wii",
+    "rating": 82,
+    "rating_count": 580,
+    "series": null,
+    "igdb_id": 1628
+  },
+  {
     "title": "Diablo",
     "developer": "Blizzard North",
     "year": 1996,
@@ -1518,24 +1584,13 @@
     "igdb_id": 125
   },
   {
-    "title": "Super Smash Bros. Brawl",
-    "developer": "Sora",
-    "year": 2008,
-    "genre": "Fighting / Platform",
-    "platforms": "Wii",
-    "rating": 82,
-    "rating_count": 579,
-    "series": null,
-    "igdb_id": 1628
-  },
-  {
     "title": "Mario Kart Wii",
     "developer": "Nintendo Entertainment Analysis & Development",
     "year": 2008,
     "genre": "Racing",
     "platforms": "Wii",
     "rating": 80,
-    "rating_count": 578,
+    "rating_count": 579,
     "series": null,
     "igdb_id": 2183
   },
@@ -1804,6 +1859,17 @@
     "igdb_id": 819
   },
   {
+    "title": "Resident Evil 6",
+    "developer": "Capcom",
+    "year": 2012,
+    "genre": "Shooter / Adventure",
+    "platforms": "PS3, PC, Xbox 360",
+    "rating": 65,
+    "rating_count": 530,
+    "series": null,
+    "igdb_id": 1082
+  },
+  {
     "title": "Marvel's Spider-Man: Miles Morales",
     "developer": "Insomniac Games",
     "year": 2020,
@@ -1813,17 +1879,6 @@
     "rating_count": 529,
     "series": null,
     "igdb_id": 134581
-  },
-  {
-    "title": "Resident Evil 6",
-    "developer": "Capcom",
-    "year": 2012,
-    "genre": "Shooter / Adventure",
-    "platforms": "PS3, PC, Xbox 360",
-    "rating": 65,
-    "rating_count": 529,
-    "series": null,
-    "igdb_id": 1082
   },
   {
     "title": "Far Cry",
@@ -1837,6 +1892,17 @@
     "igdb_id": 306
   },
   {
+    "title": "Gris",
+    "developer": "Nomada Studio",
+    "year": 2018,
+    "genre": "Platform / Puzzle",
+    "platforms": "Xbox Series, PS4, Mobile, PC, PS5",
+    "rating": 80,
+    "rating_count": 528,
+    "series": null,
+    "igdb_id": 22917
+  },
+  {
     "title": "Black Mesa",
     "developer": "Crowbar Collective",
     "year": 2020,
@@ -1846,17 +1912,6 @@
     "rating_count": 528,
     "series": null,
     "igdb_id": 6739
-  },
-  {
-    "title": "Gris",
-    "developer": "Nomada Studio",
-    "year": 2018,
-    "genre": "Platform / Puzzle",
-    "platforms": "Xbox Series, PS4, Mobile, PC, PS5",
-    "rating": 80,
-    "rating_count": 527,
-    "series": null,
-    "igdb_id": 22917
   },
   {
     "title": "Halo 4",
@@ -1876,7 +1931,7 @@
     "genre": "Role-playing (RPG) / Simulator",
     "platforms": "PC, Mac",
     "rating": 79,
-    "rating_count": 526,
+    "rating_count": 527,
     "series": null,
     "igdb_id": 224
   },
@@ -1914,6 +1969,17 @@
     "igdb_id": 307
   },
   {
+    "title": "Metal Gear Rising: Revengeance",
+    "developer": "PlatinumGames",
+    "year": 2013,
+    "genre": "Shooter / Strategy",
+    "platforms": "PS3, PC, Mac, Xbox 360",
+    "rating": 80,
+    "rating_count": 523,
+    "series": null,
+    "igdb_id": 378
+  },
+  {
     "title": "Crash Bandicoot 2: Cortex Strikes Back",
     "developer": "Naughty Dog",
     "year": 1997,
@@ -1923,17 +1989,6 @@
     "rating_count": 522,
     "series": null,
     "igdb_id": 1186
-  },
-  {
-    "title": "Metal Gear Rising: Revengeance",
-    "developer": "PlatinumGames",
-    "year": 2013,
-    "genre": "Shooter / Strategy",
-    "platforms": "PS3, PC, Mac, Xbox 360",
-    "rating": 80,
-    "rating_count": 522,
-    "series": null,
-    "igdb_id": 378
   },
   {
     "title": "Pokémon Yellow Version: Special Pikachu Edition",
@@ -1980,6 +2035,17 @@
     "igdb_id": 312
   },
   {
+    "title": "The Legend of Zelda: Ocarina of Time 3D",
+    "developer": "Grezzo",
+    "year": 2011,
+    "genre": "Puzzle / Adventure",
+    "platforms": "3DS",
+    "rating": 90,
+    "rating_count": 516,
+    "series": null,
+    "igdb_id": 1039
+  },
+  {
     "title": "Uncharted: The Lost Legacy",
     "developer": "Naughty Dog",
     "year": 2017,
@@ -1989,17 +2055,6 @@
     "rating_count": 515,
     "series": null,
     "igdb_id": 26193
-  },
-  {
-    "title": "The Legend of Zelda: Ocarina of Time 3D",
-    "developer": "Grezzo",
-    "year": 2011,
-    "genre": "Puzzle / Adventure",
-    "platforms": "3DS",
-    "rating": 90,
-    "rating_count": 515,
-    "series": null,
-    "igdb_id": 1039
   },
   {
     "title": "Super Mario Sunshine",
@@ -2277,6 +2332,17 @@
     "igdb_id": 5025
   },
   {
+    "title": "Darksiders",
+    "developer": "Vigil Games",
+    "year": 2010,
+    "genre": "Role-playing (RPG) / Hack and slash/Beat 'em up",
+    "platforms": "PS3, PC, Xbox 360",
+    "rating": 79,
+    "rating_count": 450,
+    "series": null,
+    "igdb_id": 1270
+  },
+  {
     "title": "Return to Castle Wolfenstein",
     "developer": "Gray Matter Interactive",
     "year": 2001,
@@ -2286,17 +2352,6 @@
     "rating_count": 450,
     "series": null,
     "igdb_id": 281
-  },
-  {
-    "title": "Darksiders",
-    "developer": "Vigil Games",
-    "year": 2010,
-    "genre": "Role-playing (RPG) / Hack and slash/Beat 'em up",
-    "platforms": "PS3, PC, Xbox 360",
-    "rating": 79,
-    "rating_count": 449,
-    "series": null,
-    "igdb_id": 1270
   },
   {
     "title": "Super Mario Kart",
@@ -2767,7 +2822,7 @@
     "genre": "Racing / Arcade",
     "platforms": "Wii U, Nintendo DS",
     "rating": 82,
-    "rating_count": 401,
+    "rating_count": 402,
     "series": null,
     "igdb_id": 2345
   },
@@ -2805,17 +2860,6 @@
     "igdb_id": 83728
   },
   {
-    "title": "LEGO Star Wars: The Complete Saga",
-    "developer": "Robosoft Technologies",
-    "year": 2007,
-    "genre": "Platform / Adventure",
-    "platforms": "PS3, Wii, Mobile, PC, Mac",
-    "rating": 82,
-    "rating_count": 397,
-    "series": null,
-    "igdb_id": 2682
-  },
-  {
     "title": "Call of Duty: Infinite Warfare",
     "developer": "Infinity Ward",
     "year": 2016,
@@ -2838,6 +2882,17 @@
     "igdb_id": 1268
   },
   {
+    "title": "New Super Mario Bros.",
+    "developer": "Nintendo Entertainment Analysis & Development",
+    "year": 2006,
+    "genre": "Platform / Adventure",
+    "platforms": "Wii U, Nintendo DS",
+    "rating": 81,
+    "rating_count": 396,
+    "series": null,
+    "igdb_id": 1076
+  },
+  {
     "title": "Borderlands: The Pre-Sequel",
     "developer": "2K Australia",
     "year": 2014,
@@ -2849,15 +2904,15 @@
     "igdb_id": 6032
   },
   {
-    "title": "New Super Mario Bros.",
-    "developer": "Nintendo Entertainment Analysis & Development",
-    "year": 2006,
-    "genre": "Platform / Adventure",
-    "platforms": "Wii U, Nintendo DS",
-    "rating": 81,
-    "rating_count": 395,
+    "title": "Spore",
+    "developer": "Maxis",
+    "year": 2008,
+    "genre": "Real Time Strategy (RTS) / Role-playing (RPG)",
+    "platforms": "PC, Mac",
+    "rating": 73,
+    "rating_count": 394,
     "series": null,
-    "igdb_id": 1076
+    "igdb_id": 1876
   },
   {
     "title": "Euro Truck Simulator 2",
@@ -2893,17 +2948,6 @@
     "igdb_id": 1928
   },
   {
-    "title": "Spore",
-    "developer": "Maxis",
-    "year": 2008,
-    "genre": "Real Time Strategy (RTS) / Role-playing (RPG)",
-    "platforms": "PC, Mac",
-    "rating": 73,
-    "rating_count": 393,
-    "series": null,
-    "igdb_id": 1876
-  },
-  {
     "title": "Prototype",
     "developer": "Radical Entertainment",
     "year": 2009,
@@ -2913,6 +2957,17 @@
     "rating_count": 392,
     "series": null,
     "igdb_id": 570
+  },
+  {
+    "title": "Fallout Shelter",
+    "developer": "Bethesda Game Studios",
+    "year": 2015,
+    "genre": "Role-playing (RPG) / Simulator",
+    "platforms": "PS4, Mobile, PC, Xbox One, Switch",
+    "rating": 63,
+    "rating_count": 390,
+    "series": null,
+    "igdb_id": 11119
   },
   {
     "title": "Halo 3: ODST",
@@ -2937,17 +2992,6 @@
     "igdb_id": 981
   },
   {
-    "title": "Fallout Shelter",
-    "developer": "Bethesda Game Studios",
-    "year": 2015,
-    "genre": "Role-playing (RPG) / Simulator",
-    "platforms": "PS4, Mobile, PC, Xbox One, Switch",
-    "rating": 63,
-    "rating_count": 389,
-    "series": null,
-    "igdb_id": 11119
-  },
-  {
     "title": "Pokémon Gold Version",
     "developer": "Game Freak",
     "year": 1999,
@@ -2965,7 +3009,7 @@
     "genre": "Puzzle / Adventure",
     "platforms": "Wii, Wii U",
     "rating": 82,
-    "rating_count": 388,
+    "rating_count": 389,
     "series": null,
     "igdb_id": 534
   },
@@ -3091,6 +3135,17 @@
     "igdb_id": 105
   },
   {
+    "title": "Don't Starve",
+    "developer": "Klei Entertainment",
+    "year": 2013,
+    "genre": "Simulator / Adventure",
+    "platforms": "PS4, PC, Mac, Xbox One, Switch",
+    "rating": 76,
+    "rating_count": 377,
+    "series": null,
+    "igdb_id": 3152
+  },
+  {
     "title": "Mario Kart: Double Dash!!",
     "developer": "Nintendo Entertainment Analysis & Development",
     "year": 2003,
@@ -3111,17 +3166,6 @@
     "rating_count": 377,
     "series": null,
     "igdb_id": 130
-  },
-  {
-    "title": "Don't Starve",
-    "developer": "Klei Entertainment",
-    "year": 2013,
-    "genre": "Simulator / Adventure",
-    "platforms": "PS4, PC, Mac, Xbox One, Switch",
-    "rating": 76,
-    "rating_count": 376,
-    "series": null,
-    "igdb_id": 3152
   },
   {
     "title": "The Vanishing of Ethan Carter",

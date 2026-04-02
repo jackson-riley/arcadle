@@ -4,7 +4,7 @@
  * Downloads screenshots for games in scripts/candidates.json into
  * public/screenshots-staging/<slug>/original.jpg.
  *
- * Uses igdb_id directly — no search step needed.
+ * Uses igdb_id when set; otherwise resolves the game via IGDB search (manual candidates).
  *
  * Usage:
  *   npx tsx scripts/fetch-candidate-screenshots.ts
@@ -43,8 +43,64 @@ type Candidate = {
   rating: number;
   rating_count: number;
   series: string | null;
-  igdb_id: number;
+  igdb_id: number | null;
 };
+
+function normalizeTitle(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+type IgdbGameSearchResult = {
+  id: number;
+  name?: string;
+  screenshots?: number[];
+  first_release_date?: number;
+};
+
+async function searchGameByTitle(
+  title: string,
+  year: number,
+  token: string
+): Promise<IgdbGameSearchResult | null> {
+  const games = await igdbQuery<IgdbGameSearchResult>(
+    "games",
+    `search "${title.replace(/"/g, '\\"')}"; fields name, screenshots, first_release_date; limit 10;`,
+    token
+  );
+
+  if (!games.length) return null;
+
+  const hasScreenshots = (g: IgdbGameSearchResult): boolean =>
+    Array.isArray(g.screenshots) && g.screenshots.length > 0;
+  const queryTitleNorm = normalizeTitle(title);
+  const isNameMatch = (g: IgdbGameSearchResult): boolean =>
+    normalizeTitle(g.name ?? "") === queryTitleNorm;
+  const releaseYear = (g: IgdbGameSearchResult): number | null => {
+    if (typeof g.first_release_date !== "number") return null;
+    return new Date(g.first_release_date * 1000).getFullYear();
+  };
+
+  const nameAndYearAndScreenshots = games.find((g) => {
+    if (!hasScreenshots(g) || !isNameMatch(g)) return false;
+    const y = releaseYear(g);
+    return y !== null && Math.abs(y - year) <= 1;
+  });
+  if (nameAndYearAndScreenshots) return nameAndYearAndScreenshots;
+
+  const nameAndScreenshots = games.find(
+    (g) => hasScreenshots(g) && isNameMatch(g)
+  );
+  if (nameAndScreenshots) return nameAndScreenshots;
+
+  return games.find(hasScreenshots) ?? null;
+}
 
 function slugify(title: string): string {
   return title
@@ -113,9 +169,24 @@ async function main() {
     }
 
     try {
+      let gameId = candidate.igdb_id;
+      if (gameId == null) {
+        const found = await searchGameByTitle(
+          candidate.title,
+          candidate.year ?? 2000,
+          token
+        );
+        if (!found) {
+          console.warn(`  IGDB search miss: "${candidate.title}"`);
+          failed++;
+          continue;
+        }
+        gameId = found.id;
+      }
+
       const shots = await igdbQuery<{ image_id: string; width?: number; height?: number }>(
         "screenshots",
-        `fields image_id, width, height; where game = ${candidate.igdb_id}; limit 20;`,
+        `fields image_id, width, height; where game = ${gameId}; limit 20;`,
         token
       );
 
