@@ -38,7 +38,7 @@ export default function ClueStack({ clues, revealCount }: ClueStackProps) {
       const next = new Set<number>();
       for (let j = prev; j < revealCount; j++) next.add(j);
       setFadeIndices(next);
-      const t = window.setTimeout(() => setFadeIndices(new Set()), 380);
+      const t = window.setTimeout(() => setFadeIndices(new Set()), 640);
       prevRevealRef.current = revealCount;
       return () => window.clearTimeout(t);
     }
@@ -69,13 +69,13 @@ export default function ClueStack({ clues, revealCount }: ClueStackProps) {
                 <LockIcon className="text-zinc-700 opacity-90" />
               ) : null}
             </span>
-            <div className="min-w-0 leading-snug">
+            <div className="clue-stack-clue-perspective min-w-0 leading-snug">
               {revealed && (
                 <span
                   className={
                     fadeIndices.has(i)
-                      ? "text-white animate-fade-in"
-                      : "text-white"
+                      ? "clue-unlock-flip inline-block text-white"
+                      : "inline-block text-white"
                   }
                 >
                   {clue.value}
